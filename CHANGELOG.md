@@ -8,3 +8,10 @@
 - Readme
 - Node dependencies
 
+## Feb 28
+### Added
+- cleck.js sdk
+- Authentication Signup/SignIn setup
+- custom font(Meticula)
+
+
