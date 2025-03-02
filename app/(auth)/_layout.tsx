@@ -7,5 +7,5 @@ export default function GuestLayout() {
     if (isSignedIn) {
         return <Redirect href={'/(tabs)/profile'} />
     }
-    return <Stack/>
+    return <Stack screenOptions= {{headerShown: false}}/>
 }
