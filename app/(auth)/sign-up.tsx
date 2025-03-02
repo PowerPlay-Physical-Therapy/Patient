@@ -1,8 +1,11 @@
 import * as React from 'react'
-import { Text, TextInput, Button, View } from 'react-native'
+import { Text, TextInput, Button, View, Image, TouchableOpacity, StyleSheet } from 'react-native'
 import { useSignUp } from '@clerk/clerk-expo'
 import { Link, useRouter } from 'expo-router'
 import { ThemedText } from '@/components/ThemedText'
+import {ThemedView} from '@/components/ThemedView'
+import {AppColors } from '@/constants/Colors'
+import {LinearGradient} from 'expo-linear-gradient'
 
 export default function signUP() {
     const { isLoaded, signUp, setActive } = useSignUp()
@@ -51,58 +54,145 @@ export default function signUP() {
     }
 
     return (
-        <View>
+        <ThemedView style={{ flex: 1, justifyContent: 'center', padding: 40 }}>
             <>
-                <ThemedText>Sign up</ThemedText>
+            <ThemedView style={{ flex: 1, justifyContent: 'center' }}>
+                <Image
+                    source={require('@/assets/images/app-logo.png')}
+                    style={{ width: 140, height: 140, alignSelf: 'center', marginBottom: 20 }}
+                />
+                <ThemedText style={{alignSelf: 'center', fontSize: 24}}>Create an Account!</ThemedText>
 
+                <LinearGradient
+                    colors={[AppColors.LightBlue, AppColors.White]}
+                    style={styles.input}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                >
                 <TextInput
-                    style={{ "color": "white" }}
+                    style={{ "color": "black", marginLeft: 10 }}
                     autoCapitalize="none"
                     value={username}
                     placeholder="Username"
                     placeholderTextColor="#666666"
                     onChangeText={(username) => setUsername(username)}
                 />
+                </LinearGradient>
+                <LinearGradient
+                    colors={[AppColors.LightBlue, AppColors.White]}
+                    style={styles.input}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                >
                 <TextInput
-                    style={{ "color": "white" }}
+                    style={{ "color": "black", marginLeft: 10 }}
                     autoCapitalize="words"
                     value={firstName}
                     placeholder="First name"
                     placeholderTextColor="#666666"
                     onChangeText={(firstName) => setFirstName(firstName)}
                 />
+                </LinearGradient>
+                <LinearGradient
+                    colors={[AppColors.LightBlue, AppColors.White]}
+                    style={styles.input}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                >
                 <TextInput
-                    style={{ "color": "white" }}
+                    style={{ "color": "black", marginLeft: 10 }}
                     autoCapitalize="words"
                     value={lastName}
                     placeholder="Last name"
                     placeholderTextColor="#666666"
                     onChangeText={(lastName) => setLastName(lastName)}
                 />
+                </LinearGradient>
+                <LinearGradient
+                    colors={[AppColors.LightBlue, AppColors.White]}
+                    style={styles.input}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                >
                 <TextInput
-                    style={{ "color": "white" }}
+                    style={{ "color": "black", marginLeft: 10 }}
                     autoCapitalize="none"
                     value={emailAddress}
                     placeholder="Enter email"
                     placeholderTextColor="#666666"
                     onChangeText={(email) => setEmailAddress(email)}
                 />
+                </LinearGradient>
+                <LinearGradient
+                    colors={[AppColors.LightBlue, AppColors.White]}
+                    style={styles.input}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                >
                 <TextInput
-                    style={{ "color": "white" }}
+                    style={{ "color": "black", marginLeft: 10 }}
                     value={password}
                     placeholder="Enter password"
                     placeholderTextColor="#666666"
                     secureTextEntry={true}
                     onChangeText={(password) => setPassword(password)}
                 />
-                <Button title="Continue" onPress={onSignUpPress} />
-                <View style={{ flexDirection: 'row', gap: 4, backgroundColor: 'white' }}>
-                    <Text>Have an account?</Text>
-                    <Link href="/sign-in">
-                        <Text>Sign in</Text>
-                    </Link>
+                </LinearGradient>
+                <LinearGradient
+                    colors={[AppColors.Purple, AppColors.LightBlue]}
+                    style={styles.button}
+                >
+                    <TouchableOpacity style={styles.buttonInner} onPress={onSignUpPress}>
+                        <ThemedText style={styles.buttonText}>Create My Account</ThemedText>
+                    </TouchableOpacity>
+                </LinearGradient>
+            </ThemedView>
+                <View style={
+                
+                    styles.bottomView}>
+                    <ThemedText>Already have an account? 
+                        <Link href="/sign-in">
+                            <ThemedText style={{color: AppColors.Blue}}> Sign in!</ThemedText>
+                        </Link>
+                    </ThemedText>
+                    
                 </View>
             </>
-        </View>
+        </ThemedView>
     )
 }
+
+const styles = StyleSheet.create({
+    button: {
+        borderRadius: 25,
+        marginTop: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    buttonInner: {
+        padding: 12,
+        alignItems: 'center',
+        borderRadius: 20,
+    },
+    buttonText: {
+        fontWeight: 'bold',
+    },
+    bottomView: {
+        backgroundColor: 'white',
+        alignSelf: 'center',
+    },
+
+    input: {
+        borderRadius: 25,
+        marginTop: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+        padding: 15,
+    }
+})
