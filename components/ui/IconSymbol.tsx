@@ -16,6 +16,7 @@ const MAPPING = {
   'person.circle.fill' : 'person-circle',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-forward',
+  'gear': 'cog',
 } as Partial<
   Record<
     import('expo-symbols').SymbolViewProps['name'],

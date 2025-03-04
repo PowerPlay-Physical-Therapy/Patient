@@ -21,7 +21,7 @@ export default function RootLayout() {
     throw new Error('Add EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY to your .env file')
   }
 
-  const colorScheme = useColorScheme() || 'light';
+  const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     Meticula: require('../assets/fonts/Meticula-Regular.ttf'),
   });
