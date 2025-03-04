@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Text, TextInput, Button, View } from 'react-native'
+import { Text, TextInput, Button, View, Image, TouchableOpacity, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Alert } from 'react-native'
 import { useSignUp } from '@clerk/clerk-expo'
 import { Link, useRouter } from 'expo-router'
 import { ThemedText } from '@/components/ThemedText'
@@ -31,8 +31,22 @@ export default function signUP() {
 
             console.log(response)
 
-            //TODO: Write a function to handle the response
-            if(response.status === 'complete') {
+            if(response.status == 'complete') {
+                const backend_response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/create_patient`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id : response.id,
+                        username: response.username,
+                        firstname: response.firstName,
+                        lastname: response.lastName,
+                        email: response.emailAddress,
+                    }),
+                })
+                const data = await backend_response.json();
+                console.log("Successfully created new Patient with ID : ", JSON.stringify(data));
                 console.log("Signed up successfully")
                 // router.push('/(tabs)/index')
             }
