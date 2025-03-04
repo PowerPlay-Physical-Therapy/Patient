@@ -8,6 +8,9 @@ import { ThemedView } from '@/components/ThemedView';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { useAuth } from '@clerk/clerk-expo';
 import { Redirect } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
+import { AppColors } from '@/constants/Colors';
+import  ScreenHeader  from '@/components/ScreenHeader';
 
 export default function HomeScreen() {
   const { isSignedIn } = useAuth()
@@ -16,9 +19,9 @@ export default function HomeScreen() {
     return <Redirect href={'/sign-up'} />
   }
   return (
-      <ThemedView style={styles.title}>
-          <ThemedText>Home</ThemedText>
-      </ThemedView>
+    <LinearGradient style={{ flex: 1, paddingTop: Platform.OS == 'ios' ? 50 : 0}} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
+    <ScreenHeader title="Welcome!" />
+  </LinearGradient>
   )
 }
 

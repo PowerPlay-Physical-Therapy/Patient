@@ -17,12 +17,13 @@ export const AppColors = {
   Pink: '#EB9BD0',
   Black: '#000000',
   White: '#ffffff',
+  OffWhite: '#F1F6F2',
 };
 
 export const Colors = {
   light: {
     text: '#11181C',
-    background: '#fff',
+    background: "#fff",
     tint: tintColorLight,
     icon: '#687076',
     tabIconDefault: '#000000',
