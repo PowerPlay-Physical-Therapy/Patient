@@ -37,7 +37,11 @@
       {
         "fonts":["/assets/fonts/Meticula-Regular.ttf"]
       }
-    ]
+    ],
+    ["expo-image-picker",
+      {
+        "photoPermission": "The app accesses your photos to customize your profile picture."
+      }]
     ],
     "experiments": {
       "typedRoutes": true
