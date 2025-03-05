@@ -20,11 +20,14 @@ export default function ForgotPassword() {
 
         try {
             const passwordRecovery = await signIn.create({
-                identifier: emailAddress,
+                identifier: emailAddress.trim(),
+                strategy: "reset_password_email_code",
             });
             setStatus('Password reset link sent');
+            console.log("Reset link sent successfully");
         } catch (err) {
             setStatus('Error sending reset link');
+            console.log("Reset link unsuccessful");
             console.error(JSON.stringify(err, null, 2));
         }
     };
