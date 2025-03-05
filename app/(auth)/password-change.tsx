@@ -56,21 +56,25 @@ export default function ForgotPassword() {
                     />
                 </LinearGradient>
 
-                <LinearGradient
-                    colors={[AppColors.LightBlue, AppColors.White]}
-                    style={styles.input}
-                    start={{ x:0, y:0}}
-                    end={{ x: 1, y: 0}}
-                >
-                    <TouchableOpacity style={styles.buttonInner} onPress={onRecoverPasswordPress}>
-                        <ThemedText style={styles.buttonText}>Recover password</ThemedText>
-                    </TouchableOpacity>
-                </LinearGradient>
+                <View style={{ alignItems: 'center', marginTop: 2 }}>
+                    <LinearGradient
+                        colors={[AppColors.Purple, AppColors.LightBlue]}
+                        style={styles.buttonRecoverPassword}
+                    >
+                        <TouchableOpacity onPress={onRecoverPasswordPress}>
+                            <ThemedText style={styles.buttonText}>Recover password</ThemedText>
+                        </TouchableOpacity>
+                    </LinearGradient> 
+                </View>
+
 
                 </ThemedView>
                     <View style={styles.bottomView}>
-                        <ThemedText>Back to Login
+                        <ThemedText>
                             <Link href="/sign-in">
+                                <ThemedText style={{ color: AppColors.Blue }}>
+                                    Back to Login
+                                </ThemedText>
                             </Link>
                         </ThemedText>
                     </View>
@@ -80,28 +84,23 @@ export default function ForgotPassword() {
 }
 
         const styles = StyleSheet.create({
-            button: {
-                borderRadius: 25,
-                marginTop: 10,
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.25,
-                shadowRadius: 3.84,
-                elevation: 5,
-            },
-
-            buttonInner: {
-                padding: 12,
-                alignItems: 'center',
-                borderRadius: 20,
-            },
-
             buttonText: {
                 fontWeight: 'bold',
+            },
+
+            buttonRecoverPassword: {
+                padding: 10,
+                marginTop: 10,
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 25,
+                width: "60%",
             },
 
             bottomView: {
                 backgroundColor: 'white',
                 alignSelf: 'center',
+                marginTop: 20,
             },
 
             input: {
