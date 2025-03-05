@@ -1,4 +1,4 @@
-import { StyleSheet, Image, Platform, TouchableOpacity, Pressable, View } from 'react-native';
+import { StyleSheet, Image, Platform, TouchableOpacity, Pressable, View, TextInput } from 'react-native';
 import { useAuth, useUser } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -19,6 +19,7 @@ export default function TabTwoScreen() {
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [image, setImage] = useState(user?.imageUrl);
+  const [username, setUsername] = useState("");
 
   const handleSignOut = async () => {
     try {
@@ -67,7 +68,21 @@ export default function TabTwoScreen() {
             />
         </Pressable>
         <View style={{alignSelf: 'center'}}>
+        {isEditing? (
+          <TextInput
+                      style={{ color: "black", marginLeft: 10 }}
+                      value={username}
+                      placeholder="Enter new username"
+                      placeholderTextColor="#666666"
+                      onChangeText={(text) => {
+                        setUsername(text);
+                      }}
+                    />
+        ) : (
           <ThemedText style={styles.text}>{user?.username}</ThemedText>
+        )
+
+        }
           <ThemedText style={styles.text}>{user?.fullName}</ThemedText>
         </View>
         <View>
@@ -79,7 +94,9 @@ export default function TabTwoScreen() {
             <ThemedText style={styles.buttonText}>Save Changes?</ThemedText>
           </TouchableOpacity>
           </LinearGradient>) : (
-          <IconSymbol style={styles.cog} name="gear" size={24} color={'black'}/>)}
+          <IconSymbol style={styles.cog} name="gear" size={24} color={'black'}/>
+          
+          )}
           </Pressable>
         </View>
       </View>
