@@ -117,6 +117,10 @@ export default function signIN() {
         </ThemedView>
       </ThemedView>
       <View style={styles.bottomView}>
+        <ThemedText>Forgot Password?
+            <Link href="/password-change">
+            </Link>
+        </ThemedText>
         <ThemedText>
           Don't have an account?
           <Link href="/sign-up">
