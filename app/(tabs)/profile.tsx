@@ -46,6 +46,11 @@ export default function TabTwoScreen() {
     }
   };
 
+  const handleSave = async () => {
+    setIsEditing(!isEditing);
+    await user?.update({username: username});
+  }
+
   return (
     <LinearGradient style={{ flex: 1, paddingTop: Platform.OS == 'ios' ? 50 : 0}} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
       <ScreenHeader title="Your Profile & Settings"/>
@@ -67,30 +72,31 @@ export default function TabTwoScreen() {
             resizeMode="contain"
             />
         </Pressable>
-        <View style={{alignSelf: 'center'}}>
+        <View style={{alignSelf: 'center', paddingTop: 30}}>
         {isEditing? (
           <TextInput
-                      style={{ color: "black", marginLeft: 10 }}
+                      style={{ color: "black", borderBottomColor: "black", borderBottomWidth: 1, width: 120, fontSize: 20}}
                       value={username}
-                      placeholder="Enter new username"
+                      placeholder="Enter username"
                       placeholderTextColor="#666666"
                       onChangeText={(text) => {
                         setUsername(text);
                       }}
                     />
         ) : (
+
           <ThemedText style={styles.text}>{user?.username}</ThemedText>
         )
 
         }
-          <ThemedText style={styles.text}>{user?.fullName}</ThemedText>
+          <ThemedText style={{marginTop: 10, fontSize: 20}}>{user?.fullName}</ThemedText>
         </View>
         <View>
-          <Pressable onPress={() => setIsEditing(!isEditing)} style={{width: '100%'}}>
+          <Pressable onPress={handleSave} style={{width: '100%'}}>
            {isEditing? (
             <LinearGradient colors={["#E91313", "#EB9BD0"]}
             style={styles.saveButton}>
-            <TouchableOpacity onPress={() => setIsEditing(!isEditing)}>
+            <TouchableOpacity onPress={handleSave}>
             <ThemedText style={styles.buttonText}>Save Changes?</ThemedText>
           </TouchableOpacity>
           </LinearGradient>) : (
@@ -151,7 +157,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    padding: 8
+    padding: 6,
+    position: 'relative',
+    right: 50,
+
+
   },
   buttonInner: {
     padding: 12,
