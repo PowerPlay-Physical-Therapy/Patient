@@ -21,6 +21,7 @@ export default function TabTwoScreen() {
   const [isEditing, setIsEditing] = useState(false);
   const [image, setImage] = useState(user?.imageUrl);
   const [username, setUsername] = useState("");
+  console.log(user?.username)
 
   const handleSignOut = async () => {
     try {
@@ -54,7 +55,7 @@ export default function TabTwoScreen() {
   const handleSave = React.useCallback(async () => {
     setIsEditing(!isEditing);
     try {
-      const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/update_patient/`, {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/update_patient/${user?.username}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
