@@ -11,6 +11,7 @@ import  ScreenHeader  from '@/components/ScreenHeader';
 import { Alert } from 'react-native';
 import {useState} from 'react';
 import * as ImagePicker from 'expo-image-picker';
+import * as React from 'react';
 
 
 export default function TabTwoScreen() {
@@ -46,10 +47,47 @@ export default function TabTwoScreen() {
     }
   };
 
-  const handleSave = async () => {
+  const changeIcon = async () => {
     setIsEditing(!isEditing);
-    await user?.update({username: username});
   }
+
+  const handleSave = React.useCallback(async () => {
+    setIsEditing(!isEditing);
+    try {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/update_patient/`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: user?.id,
+          username: username,
+          firstname: user?.firstName,
+          lastname: user?.lastName,
+          email: user?.emailAddresses[0].emailAddress,
+        }),
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (data.errors) {
+          // Handle validation errors
+          data.errors.forEach((error: any) => {
+            console.error(`Validation error: ${error.message}`);
+          });
+        } else {
+          console.error('Error updating profile:', data);
+        }
+        throw new Error('Failed to update profile');
+      }
+
+      console.log('Profile updated successfully:', data);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
+    
+    await user?.update({username: username});
+  }, [username, isEditing, user]);
 
   return (
     <LinearGradient style={{ flex: 1, paddingTop: Platform.OS == 'ios' ? 50 : 0}} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
@@ -92,7 +130,7 @@ export default function TabTwoScreen() {
           <ThemedText style={{marginTop: 10, fontSize: 20}}>{user?.fullName}</ThemedText>
         </View>
         <View>
-          <Pressable onPress={handleSave} style={{width: '100%'}}>
+          <Pressable onPress={changeIcon} style={{width: '100%'}}>
            {isEditing? (
             <LinearGradient colors={["#E91313", "#EB9BD0"]}
             style={styles.saveButton}>
