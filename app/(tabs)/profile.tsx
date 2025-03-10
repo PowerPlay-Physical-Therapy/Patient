@@ -21,7 +21,6 @@ export default function TabTwoScreen() {
   const [isEditing, setIsEditing] = useState(false);
   const [image, setImage] = useState(user?.imageUrl);
   const [username, setUsername] = useState("");
-  console.log(user?.username)
 
   const handleSignOut = async () => {
     try {
