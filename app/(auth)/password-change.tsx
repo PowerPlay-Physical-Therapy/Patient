@@ -46,6 +46,7 @@ export default function ForgotPassword() {
         }
     };
 
+
     // Once the new password and correct code is inputted, password is reset when 'Reset password' is pressed
     const onResetPasswordPress = async () => {
         if (!isLoaded || !signIn) {
@@ -68,7 +69,11 @@ export default function ForgotPassword() {
                 
                 // Sign the User out to have them sign in with their new password
                 await signOut();
-                router.replace('/sign-in')
+
+                setTimeout(() => {
+                    router.replace('/sign-in');
+                }, 500);
+                // router.replace('/sign-in')
                 return;
             } else {
                 setStatus('Unable to reset password');
