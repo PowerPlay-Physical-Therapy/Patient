@@ -22,35 +22,53 @@ export default function signIN() {
 
   const [emailAddress, setEmailAddress] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [errors, setErrors] = React.useState({
+    email: '',
+    password: '',
+  });
 
-  // Handle the submission of the sign-in form
+  const validateInputs = () => {
+    let valid = true;
+    const newErrors = {
+      email: /\S+@\S+\.\S+/.test(emailAddress) ? '' : 'Invalid email format',
+      password: password.trim() ? '' : 'Password is required',
+    };
+
+    if (Object.values(newErrors).some(error => error !== '')) {
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
   const onSignInPress = React.useCallback(async () => {
     if (!isLoaded) return;
 
-    // Start the sign-in process using the email and password provided
+    if (!validateInputs()) {
+      return;
+    }
+
     try {
       const signInAttempt = await signIn.create({
         identifier: emailAddress,
         password,
       });
 
-      // If sign-in process is complete, set the created session as active
-      // and redirect the user
-      if (signInAttempt.status === "complete") {
+      if (signInAttempt.status == "complete") {
         await setActive({ session: signInAttempt.createdSessionId });
         console.log("Signed in Successfully");
-
         router.replace("/");
       } else {
-        // If the status is not complete, check why. User may need to
-        // complete further steps.
         console.error(JSON.stringify(signInAttempt, null, 2));
       }
     } catch (err) {
-      // See https://clerk.com/docs/custom-flows/error-handling
-      // for more info on error handling
       console.log("Signed in Error");
       console.error(JSON.stringify(err, null, 2));
+      setErrors({
+        email: 'Invalid email or password',
+        password: 'Invalid email or password'
+      });
     }
   }, [isLoaded, emailAddress, password]);
 
@@ -87,9 +105,15 @@ export default function signIN() {
             value={emailAddress}
             placeholder="Enter email"
             placeholderTextColor="#666666"
-            onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
+            onChangeText={(email) => {
+              setEmailAddress(email);
+              setErrors(prev => ({...prev, email: ''}));
+            }}
           />
         </LinearGradient>
+        {errors.email ? (
+          <Text style={styles.errorText}>{errors.email}</Text>
+        ) : null}
         <LinearGradient
           colors={[AppColors.LightBlue, AppColors.White]}
           style={styles.input}
@@ -102,19 +126,27 @@ export default function signIN() {
             placeholder="Enter password"
             placeholderTextColor="#666666"
             secureTextEntry={true}
-            onChangeText={(password) => setPassword(password)}
+            onChangeText={(pass) => {
+              setPassword(pass);
+              setErrors(prev => ({...prev, password: ''}));
+            }}
           />
         </LinearGradient>
-          
-          <ThemedView style={{alignItems: 'center', marginTop: 10}}>
-        <LinearGradient
-          colors={[AppColors.Purple, AppColors.LightBlue]}
-          style={styles.buttonLogin}
-        >
-          <TouchableOpacity onPress={onSignInPress}>
-            <ThemedText style={styles.buttonText}>Login</ThemedText>
-          </TouchableOpacity>
-        </LinearGradient>
+
+        {errors.password ? (
+          <Text style={styles.errorText}>{errors.password}</Text>
+        ) : null}
+        <ThemedView style={{alignItems: 'center', marginTop: 10}}>
+          <LinearGradient
+            colors={[AppColors.Purple, AppColors.LightBlue]}
+            style={styles.buttonLogin}
+          >
+            <TouchableOpacity onPress={onSignInPress}>
+              <ThemedText style={styles.buttonText}>Login</ThemedText>
+            </TouchableOpacity>
+          </LinearGradient>
+        </ThemedView>
+
       </ThemedView>
 
       <View style={styles.forgotPasswordView}>
@@ -140,7 +172,7 @@ export default function signIN() {
         </ThemedText>
         <ThemedText style={{ alignSelf: "center" }}>
           Review our
-          <Link href="/sign-up"> {/* This should be a link to the privacy policy */}
+          <Link href="/privacy-policy"> {/* This should be a link to the privacy policy */}
             <ThemedText style={{ color: AppColors.Blue }}>
               {" "}
               Privacy Policy
@@ -195,5 +227,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 25,
     width: "30%",
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginLeft: 15,
+    marginTop: 5,
   },
 });
