@@ -7,14 +7,11 @@ type ButtonProps = {
   title?: string,
   name?: string,
   logo?: boolean,
-  searchBar?: boolean,
-  placeholder?: string,
 }
 
-const ScreenHeader = ({ title, name = "", logo= false, searchBar = false, placeholder = "Search..."} : ButtonProps) => {
-  const [searchText, onChangeSearchText] = React.useState("");
+const ScreenHeader = ({ title, name = "", logo= false, } : ButtonProps) => {
   return (
-    <View style={searchBar? styles.searchBarHeader : styles.header}>
+    <View style={styles.header}>
       {logo? (
       <View style={styles.logoHeader}>
       <ThemedText style={styles.headerText}>{title} {name}</ThemedText>
@@ -25,7 +22,6 @@ const ScreenHeader = ({ title, name = "", logo= false, searchBar = false, placeh
                 <ThemedText style={{fontSize: 20, fontWeight: 'bold'}}>{title} {name}</ThemedText>
               </View>
             )}
-      {searchBar && <TextInput style={styles.searchbar} value={searchText} onChangeText={onChangeSearchText} placeholder= {placeholder}/>}
     </View>
   );
 };
