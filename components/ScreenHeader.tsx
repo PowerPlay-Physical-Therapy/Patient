@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   header: {
     height: 70,
     paddingTop: 30,
-    backgroundColor: AppColors.OffWhite,
+    backgroundColor: 'transparent',
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
     alignItems: 'center',
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   searchBarHeader: {
     height: 110,
     paddingTop: 30,
-    backgroundColor: AppColors.OffWhite,
+    backgroundColor: 'transparent',
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
     alignItems: 'center',
