@@ -14,6 +14,7 @@ import { StyleSheet } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { AppColors } from "@/constants/Colors";
 import { LinearGradient } from "expo-linear-gradient";
+import ForgotPassword from "./password-change";
 
 export default function signIN() {
   const { signIn, setActive, isLoaded } = useSignIn();
@@ -131,6 +132,7 @@ export default function signIN() {
             }}
           />
         </LinearGradient>
+
         {errors.password ? (
           <Text style={styles.errorText}>{errors.password}</Text>
         ) : null}
@@ -206,7 +208,6 @@ const styles = StyleSheet.create({
     marginTop: 14,
     alignSelf: "center",
   },
-  
   input: {
     borderRadius: 25,
     marginTop: 10,
