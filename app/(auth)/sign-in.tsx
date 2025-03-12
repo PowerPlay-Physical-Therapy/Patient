@@ -147,8 +147,6 @@ export default function signIN() {
           </LinearGradient>
         </ThemedView>
 
-      </ThemedView>
-
       <View style={styles.forgotPasswordView}>
         <ThemedText>
             <Link href="/password-change">
@@ -210,7 +208,6 @@ const styles = StyleSheet.create({
     marginTop: 14,
     alignSelf: "center",
   },
-
   input: {
     borderRadius: 25,
     marginTop: 10,
