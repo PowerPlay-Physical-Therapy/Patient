@@ -14,6 +14,7 @@ import { setStatusBarTranslucent } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SearchBar } from '@rneui/themed';
 import RoutineDetails from './routineDetails';
+import {BlurView} from 'expo-blur'
 
 const {height, width} = Dimensions.get("window")
 
@@ -42,43 +43,73 @@ export default function ExploreScreen() {
   }
 
   return (
-      <LinearGradient style={{ flex: 1, paddingTop: Platform.OS == 'ios' ? 50 : 0}} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
-        <ScreenHeader title="Explore" />
-        <SearchBar round={true} containerStyle= {{backgroundColor: 'transparent', borderTopWidth: 0, borderBottomWidth: 0}} inputContainerStyle= {{backgroundColor: AppColors.LightBlue}}placeholder='Search Routines/Categories' onChangeText={updateSearch} value={search} style={styles.search} />
-        <ScrollView style={{marginBottom:60}}>
-          {filteredResults.map((category, index) => (
-            <View style={{ padding: 16 }} key={index}>
-              <ThemedText>{category.title}</ThemedText>
-              {category["subcategory"].map((subcategory, index) => (
-                <View style={{ margin: 5, padding: 5, backgroundColor: AppColors.OffWhite, borderRadius: 15 }} key={index}>
-                  <ThemedText style={{ paddingLeft: 5 }}>{subcategory.subtitle}</ThemedText>
-                  <ScrollView horizontal={true}>
-                    {subcategory["exercises"].map((exercise, index) => (
-                      // <TouchableOpacity onPress={router.push(RoutineDetails)}>
-                      <View key={index}style={{ backgroundColor: AppColors.Green, alignItems: "center", justifyContent: "flex-end", margin: 5, borderRadius: 15, zIndex: 0, shadowOffset: { height: 0.2, width: 0.2 }, shadowRadius: 3, shadowOpacity: 0.5 }}>
-                        <Image source={{ uri: exercise.thumbnail_url }} style={{ width: width * 0.5, height: height * 0.2, borderRadius: 15, zIndex: 2 }} />
-                        <Text style={{ position: "absolute", zIndex: 3, backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: 5, padding: 2.5, margin:4 }} >{exercise.name}</Text>
-                      </View>
-                        // </TouchableOpacity>
-                    ))}
-                  </ScrollView>
-                </View>
-              ))}
-            </View>
-          ))}
-          {filteredResults.length == 0 && <ThemedText style={{flex: 1, alignSelf: 'center', padding: 40}}>No results found</ThemedText>}
-        </ScrollView>
-    </LinearGradient>   
-  )
+    <LinearGradient style={{ flex: 1, paddingTop: Platform.OS == 'ios' ? 50 : 0 }} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
+      <ScreenHeader title="Explore" />
+      <SearchBar
+        round={true}
+        containerStyle={{ backgroundColor: 'transparent', borderTopWidth: 0, borderBottomWidth: 0 }}
+        inputContainerStyle={{ backgroundColor: AppColors.LightBlue }}
+        placeholder='Search Routines/Categories'
+        onChangeText={updateSearch}
+        value={search}
+        style={styles.search}
+      />
+      <ScrollView style={{ marginBottom: 60 }}>
+        {filteredResults.map((category, index) => (
+          <View style={{ padding: 16 }} key={index}>
+            <ThemedText style={styles.categoryTitle}>{category.title}</ThemedText>
+            {category["subcategory"].map((subcategory, index) => (
+              <View style={{ margin: 5, padding: 5, backgroundColor: AppColors.OffWhite, borderRadius: 15 }} key={index}>
+                <ThemedText style={styles.subcategoryTitle}>{subcategory.subtitle}</ThemedText>
+                <ScrollView horizontal={true}>
+                  {subcategory["exercises"].map((exercise, index) => (
+                    <View key={index} style={{ backgroundColor: AppColors.Green, alignItems: "center", justifyContent: "flex-end", margin: 5, borderRadius: 15, zIndex: 0, shadowOffset: { height: 0.2, width: 0.2 }, shadowRadius: 3, shadowOpacity: 0.5 }}>
+                      <Image source={{ uri: exercise.thumbnail_url }} style={{ width: width * 0.5, height: height * 0.2, borderRadius: 15, zIndex: 2 }} />
+                      <BlurView intensity={10} style={styles.blurContainer}>
+                        <ThemedText style={styles.exerciseName}>{exercise.name}</ThemedText>
+                      </BlurView>
+                    </View>
+                  ))}
+                </ScrollView>
+              </View>
+            ))}
+          </View>
+        ))}
+        {filteredResults.length == 0 && <ThemedText style={{ flex: 1, alignSelf: 'center', padding: 40 }}>No results found</ThemedText>}
+      </ScrollView>
+    </LinearGradient>
+  );
 }
 
 const styles = StyleSheet.create({
-  title: {
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '100%',
-  },
   search: {
-    backgroundColor: AppColors.LightBlue,
-  }
+    // Add your search bar styles here
+  },
+  categoryTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  subcategoryTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    paddingLeft: 5,
+  },
+  exerciseName: {
+    padding: 2.5,
+    paddingBottom: 4,
+    fontSize: 14,
+    lineHeight: 12,
+    fontWeight: 'bold',
+    borderRadius: 15,
+  },
+  blurContainer: {
+    position: "absolute",
+    zIndex: 3,
+    borderRadius: 15,
+    padding: 2.5,
+    paddingBottom: 4,
+    width: '100%',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
 });
