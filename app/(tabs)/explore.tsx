@@ -46,7 +46,7 @@ export default function ExploreScreen() {
 
   return (
     <LinearGradient style={{ flex: 1, paddingTop: Platform.OS == 'ios' ? 50 : 0 }} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
-      <ScreenHeader title="Explore" />
+      <ScreenHeader title="Explore" logo={true}/>
       <SearchBar round={true} containerStyle={{ backgroundColor: 'transparent', borderTopWidth: 0, borderBottomWidth: 0 }} inputContainerStyle={{ backgroundColor: AppColors.LightBlue }} placeholder='Search Routines/Categories' onChangeText={updateSearch} value={search} style={styles.search} />
       <ScrollView style={{ marginBottom: 60 }}>
         {filteredResults.map((category) => (
