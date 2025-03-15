@@ -1,4 +1,3 @@
-import { StyleSheet, Image, Platform, ScrollView, View, Dimensions,Text, TouchableOpacity } from 'react-native';
 import { AppColors } from '@/constants/Colors';
 import { Collapsible } from '@/components/Collapsible';
 import { ExternalLink } from '@/components/ExternalLink';
@@ -8,10 +7,8 @@ import { ThemedView } from '@/components/ThemedView';
 import { LinearGradient } from 'expo-linear-gradient';
 import ScreenHeader from '@/components/ScreenHeader';
 import { useEffect, useState } from 'react';
-import { Link, router } from 'expo-router';
 import { rgbaColor } from 'react-native-reanimated/lib/typescript/Colors';
 import { setStatusBarTranslucent } from 'expo-status-bar';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { SearchBar } from '@rneui/themed';
 import RoutineDetails from './routineDetails';
 import {BlurView} from 'expo-blur'
