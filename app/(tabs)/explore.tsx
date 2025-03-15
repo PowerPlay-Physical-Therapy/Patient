@@ -52,32 +52,6 @@ export default function ExploreScreen() {
   return (
     <LinearGradient style={{ flex: 1, paddingTop: Platform.OS == 'ios' ? 50 : 0 }} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
       <ScreenHeader title="Explore" />
-<<<<<<< Updated upstream
-      <SearchBar
-        round={true}
-        containerStyle={{ backgroundColor: 'transparent', borderTopWidth: 0, borderBottomWidth: 0 }}
-        inputContainerStyle={{ backgroundColor: AppColors.LightBlue }}
-        placeholder='Search Routines/Categories'
-        onChangeText={updateSearch}
-        value={search}
-        style={styles.search}
-      />
-      <ScrollView style={{ marginBottom: 60 }}>
-        {filteredResults.map((category, index) => (
-          <View style={{ padding: 16 }} key={index}>
-            <ThemedText style={styles.categoryTitle}>{category.title}</ThemedText>
-            {category["subcategory"].map((subcategory, index) => (
-              <View style={{ margin: 5, padding: 5, backgroundColor: AppColors.OffWhite, borderRadius: 15 }} key={index}>
-                <ThemedText style={styles.subcategoryTitle}>{subcategory.subtitle}</ThemedText>
-                <ScrollView horizontal={true}>
-                  {subcategory["exercises"].map((exercise, index) => (
-                    <View key={index} style={{ backgroundColor: AppColors.Green, alignItems: "center", justifyContent: "flex-end", margin: 5, borderRadius: 15, zIndex: 0, shadowOffset: { height: 0.2, width: 0.2 }, shadowRadius: 3, shadowOpacity: 0.5 }}>
-                      <Image source={{ uri: exercise.thumbnail_url }} style={{ width: width * 0.5, height: height * 0.2, borderRadius: 15, zIndex: 2 }} />
-                      <BlurView intensity={10} style={styles.blurContainer}>
-                        <ThemedText style={styles.exerciseName}>{exercise.name}</ThemedText>
-                      </BlurView>
-                    </View>
-=======
       <SearchBar round={true} containerStyle={{ backgroundColor: 'transparent', borderTopWidth: 0, borderBottomWidth: 0 }} inputContainerStyle={{ backgroundColor: AppColors.LightBlue }} placeholder='Search Routines/Categories' onChangeText={updateSearch} value={search} style={styles.search} />
       <ScrollView style={{ marginBottom: 60 }}>
         {filteredResults.map((category) => (
@@ -97,7 +71,6 @@ export default function ExploreScreen() {
                         <Text style={{ position: "absolute", zIndex: 3, backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: 5, padding: 2.5, margin: 4 }} >{exercise.name}</Text>
                       </View>
                     </TouchableOpacity>
->>>>>>> Stashed changes
                   ))}
                 </ScrollView>
               </View>
@@ -107,12 +80,6 @@ export default function ExploreScreen() {
         {filteredResults.length == 0 && <ThemedText style={{ flex: 1, alignSelf: 'center', padding: 40 }}>No results found</ThemedText>}
       </ScrollView>
     </LinearGradient>
-<<<<<<< Updated upstream
-  );
-}
-
-const styles = StyleSheet.create({
-=======
   )
 }
 
@@ -122,7 +89,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: '100%',
   },
->>>>>>> Stashed changes
   search: {
     // Add your search bar styles here
   },
