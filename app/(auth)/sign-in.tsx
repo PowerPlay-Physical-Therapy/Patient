@@ -178,9 +178,9 @@ export default function signIN() {
           </Link>
         </ThemedText>
       </View>
-    </ThemedView>
-  );
-}
+  </ThemedView> )};
+  
+
 
 const styles = StyleSheet.create({
   button: {
@@ -230,5 +230,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginLeft: 15,
     marginTop: 5,
+  },
+  forgotPasswordView: {
+    marginTop: 14,
+    alignSelf: "center",
   },
 });
