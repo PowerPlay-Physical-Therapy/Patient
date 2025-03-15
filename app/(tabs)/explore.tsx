@@ -12,13 +12,8 @@ import { Link, router, Stack } from 'expo-router';
 import { rgbaColor } from 'react-native-reanimated/lib/typescript/Colors';
 import { setStatusBarTranslucent } from 'expo-status-bar';
 import { SearchBar } from '@rneui/themed';
-<<<<<<< Updated upstream
-import RoutineDetails from './routineDetails';
 import {BlurView} from 'expo-blur'
-=======
 import { useRouter } from "expo-router";
-import { dismissTo } from 'expo-router/build/global-state/routing';
->>>>>>> Stashed changes
 
 
 const { height, width } = Dimensions.get("window")
