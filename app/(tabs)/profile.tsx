@@ -18,7 +18,7 @@ export default function TabTwoScreen() {
   const handleSignOut = async () => {
     try {
       await signOut();
-      router.replace('/sign-in'); // Redirect to sign-in page after logout
+      router.push('/sign-in'); // Redirect to sign-in page after logout
     } catch (err) {
       console.error("Error signing out:", err);
     }

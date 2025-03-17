@@ -89,7 +89,7 @@ export default function signIN() {
           </ThemedText>
           <ThemedText style={{ color: "Black", fontSize: 24, marginTop: 10 }}>
             to{" "}
-            <ThemedText style={{ color: AppColors.Blue, fontSize: 24}}>Powerplay</ThemedText>
+            <ThemedText style={{ color: AppColors.Blue, fontSize: 24}}>Powerplay Patient</ThemedText>
           </ThemedText>
         </ThemedView>
         <LinearGradient
