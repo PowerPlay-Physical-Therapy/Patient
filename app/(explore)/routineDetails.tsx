@@ -45,13 +45,12 @@ export default function RoutineDetails() {
         console.log(1)
         const writeData = async () => {
             try {
-                
                 const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/add_explore_routine/${user?.id}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         name: routine[0].title,
-                        exercises: routine.map(exercise => ({ _id: {"$oid" : exercise._id }}))
+                        exercises: routine.map(exercise => ({ _id: exercise._id }))
                     })
                 });
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
