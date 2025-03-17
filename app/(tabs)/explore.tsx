@@ -46,11 +46,11 @@ export default function ExploreScreen() {
   }, []);
 
   useEffect(() => {
-    const filtered = exploreAll.filter((category) => {
+    const filtered = exploreAll.filter((category : any) => {
       return category.title.toLowerCase().includes(search.toLowerCase()) ||
-        category.subcategory.some(subcategory =>
+        category.subcategory.some((subcategory : any) =>
           subcategory.subtitle.toLowerCase().includes(search.toLowerCase()) ||
-          subcategory.exercises.some(exercise =>
+          subcategory.exercises.some((exercise: any)=>
             exercise.name.toLowerCase().includes(search.toLowerCase())
           )
         );
@@ -67,19 +67,20 @@ export default function ExploreScreen() {
           filteredResults.length == 0 ? (
               <ThemedText style={{ flex: 1, alignSelf: 'center', padding: 40 }}>No results found</ThemedText>
             ) : (
-              filteredResults.map((category) =>
-                <View key={category.title} style={{ padding: 16 }}>
+              filteredResults.map((category, index) =>
+                <View key={index} style={{ padding: 16 }}>
                   <ThemedText style={{fontSize:18, paddingLeft:10, fontWeight:'bold'}}>{category.title}</ThemedText>
-                  {category["subcategory"].map((subcategory) => (
-                    <View style={{ margin: 5, padding: 5, backgroundColor: AppColors.OffWhite, borderRadius: 15 }} key={subcategory.subtitle}>
+                  {category["subcategory"].map((subcategory : any, index2 : any) => (
+                    <View style={{ margin: 5, padding: 5, backgroundColor: AppColors.OffWhite, borderRadius: 15 }} key={index2}>
                       <ThemedText style={{ paddingLeft: 5 }}>{subcategory.subtitle}</ThemedText>
                       <ScrollView horizontal={true}>
-                        {subcategory["exercises"].map((exercise) => (
+                        {subcategory["exercises"].map((exercise : any, index3 : any) => (
                           <TouchableOpacity  onPress={() => {
                             // console.log("clicked");
 
                             router.push(`/(explore)/routineDetails?exerciseId=${JSON.stringify(exercise._id)}`);
-                          }}>
+                            
+                          }}key={index3}>
                             <View style={{ alignItems: "center", justifyContent: "flex-end", margin: 5, borderRadius: 15, zIndex: 0, shadowOffset: { height: 0.2, width: 0.2 }, shadowRadius: 3, shadowOpacity: 0.5 }}>
                               <Image source={{ uri: exercise.thumbnail_url }} style={{ width: width * 0.5, height: height * 0.2, borderRadius: 15, zIndex: 2 }} />
                               <Text style={{ position: "absolute", zIndex: 3, backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: 5, padding: 2.5, margin: 4 }} >{exercise.name}</Text>

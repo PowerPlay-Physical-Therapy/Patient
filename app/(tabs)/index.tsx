@@ -1,6 +1,5 @@
 import { Image, StyleSheet, Platform, TextInput, SafeAreaView } from 'react-native';
 import { useState } from 'react';
-
 // import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
@@ -11,13 +10,10 @@ import { Redirect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { AppColors } from '@/constants/Colors';
 import  ScreenHeader  from '@/components/ScreenHeader';
-
-
 import { useEffect } from 'react';
 import { Link, useRouter } from "expo-router";
 import * as React from 'react';
 import { Text, View, FlatList } from 'react-native';
-import { useUser } from '@clerk/clerk-expo';
 
 
 export default function HomeScreen() {
@@ -89,21 +85,14 @@ if (error) {
 }
 
 return (
-  <LinearGradient
-    colors={[AppColors.LightBlue, AppColors.White]}
-    start={{ x: 0, y: 0 }}
-    end={{ x: 1, y: 0 }}
-  >
-    {/* Welcome Message */}
-    <ThemedView style={styles.welcomeText}>
       <LinearGradient style={{ flex: 1, paddingTop: Platform.OS == 'ios' ? 50 : 0}} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
-      <ScreenHeader title="Welcome!" />
-      </LinearGradient>
-
+      <ScreenHeader title="Welcome!" name={user?.username} logo={true}/>
+      
       {/* Display each assigned routine */}
         <FlatList
           data={routines}
           keyExtractor={(item) => item._id["$oid"]}
+          style= {{padding: 20, marginBottom: 80}}
           renderItem={({ item: routine }) => (
             <View style={styles.routine}>
               <Text style={styles.routineTitle}>{routine.name}</Text>
@@ -127,7 +116,6 @@ return (
             </View>
           )}
         />
-    </ThemedView>
     </LinearGradient>
   );
 }
@@ -153,7 +141,7 @@ const styles = StyleSheet.create({
   routine: {
     marginVertical: 10,
     padding: 15,
-    backgroundColor: "#F9F9F9",
+    backgroundColor: AppColors.OffWhite,
     borderRadius: 10,
   },
 
@@ -174,7 +162,7 @@ const styles = StyleSheet.create({
   exerciseItem: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: AppColors.LightBlue,
     marginVertical: 5,
     padding: 10,
     borderRadius: 10,
@@ -197,6 +185,7 @@ const styles = StyleSheet.create({
   exerciseName: {
     fontSize: 15,
     fontWeight: "bold",
+    
   },
 
   exerciseDetails: {
