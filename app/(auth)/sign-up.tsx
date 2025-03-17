@@ -90,10 +90,25 @@ export default function signUP() {
                 password,
             });
 
-            if (response.status === 'complete') {
-                console.log("Signed up successfully");
-                // nav to home screen
-                router.replace("/");
+            if(response.status == 'complete') {
+                const backend_response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/create_patient`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id: response.createdUserId,
+                        username: response.username,
+                        firstname: response.firstName,
+                        lastname: response.lastName,
+                        email: response.emailAddress,
+                    }),
+                })
+                const data = await backend_response.json();
+                console.log("Successfully created new Patient with ID : ", JSON.stringify(data));
+                console.log("Signed up successfully")
+                router.push('/sign-in')
+              
             }
         } catch (err) {
             console.error("Sign-up error:", JSON.stringify(err, null, 2));

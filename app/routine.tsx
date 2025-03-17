@@ -1,37 +1,33 @@
-import { Image, StyleSheet, Platform, TextInput, SafeAreaView } from 'react-native';
-import { useState } from 'react';
-// import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
-import { useAuth, useUser } from '@clerk/clerk-expo';
-import { Redirect } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
-import { AppColors } from '@/constants/Colors';
-import  ScreenHeader  from '@/components/ScreenHeader';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useRouter } from "expo-router";
 import * as React from 'react';
-import { Text, View, FlatList } from 'react-native';
+import { Text, Button, View, FlatList, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { ThemedText } from '@/components/ThemedText';
+import { ThemedView } from '@/components/ThemedView';
+import { AppColors } from '@/constants/Colors';
+import { LinearGradient } from 'expo-linear-gradient';
+// import { FlatList } from 'react-native-gesture-handler';
+// import { exRoutine } from '@/components/exRoutine';
+import { useUser } from '@clerk/clerk-expo';
 
 
-export default function HomeScreen() {
-  const { isSignedIn } = useAuth()
+const API_BASE_URL = "http://127.0.0.1:8000";
+// const GET_ASSIGNED_ROUTINES_URL = (patient_id: string) => `${API_BASE_URL}/patient/get_assigned_routines/${patient_id}`;
+
+
+export default function Routine() {
   const router = useRouter();
+  const [patientData, setPatientData] = useState<string | null>(null);
   const [patientName, setPatientName] = useState<string | null>(null);
   const [routines, setRoutines] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const { user, isLoaded } = useUser();
   const [patientId, setPatientId] = useState<string | null>(null);
-
+ 
 
   useEffect(() => {
     const fetchAssignedRoutines = async () => {
-      if (!isSignedIn) {
-        return <Redirect href={'/sign-up'} />
-      }
-
       // Make sure user or user data is loaded
       if (!user || !isLoaded) {
         return;
@@ -64,6 +60,7 @@ export default function HomeScreen() {
         // Parse the response as JSON
         const data = await response.json();
         console.log("Fetched data:", data);
+        // setPatientData(data);
         setRoutines(data);
 
       } catch (err) {
@@ -85,14 +82,23 @@ if (error) {
 }
 
 return (
-      <LinearGradient style={{ flex: 1, paddingTop: Platform.OS == 'ios' ? 50 : 0}} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
-      <ScreenHeader title="Welcome!" name={user?.username} logo={true}/>
-      
+  <LinearGradient
+    colors={[AppColors.LightBlue, AppColors.White]}
+    start={{ x: 0, y: 0 }}
+    end={{ x: 1, y: 0 }}
+  >
+    {/* Welcome Message */}
+    <ThemedView style={styles.welcomeText}>
+        <View style={{ marginBottom: 20 }}>
+            <ThemedText style={styles.text}>
+              Welcome, {patientName}!
+            </ThemedText>
+        </View>
+
       {/* Display each assigned routine */}
         <FlatList
           data={routines}
           keyExtractor={(item) => item._id["$oid"]}
-          style= {{padding: 20, marginBottom: 80}}
           renderItem={({ item: routine }) => (
             <View style={styles.routine}>
               <Text style={styles.routineTitle}>{routine.name}</Text>
@@ -116,15 +122,30 @@ return (
             </View>
           )}
         />
+    </ThemedView>
     </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  title: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100%',
+  button: {
+    borderRadius: 25,
+    marginTop: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+
+  buttonInner: {
+    padding: 12,
+    alignItems: "center",
+    borderRadius: 20,
+  },
+
+  buttonText: {
+    fontWeight: "bold",
   },
 
   text: {
@@ -141,7 +162,7 @@ const styles = StyleSheet.create({
   routine: {
     marginVertical: 10,
     padding: 15,
-    backgroundColor: AppColors.OffWhite,
+    backgroundColor: "#F9F9F9",
     borderRadius: 10,
   },
 
@@ -162,7 +183,7 @@ const styles = StyleSheet.create({
   exerciseItem: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: AppColors.LightBlue,
+    backgroundColor: "white",
     marginVertical: 5,
     padding: 10,
     borderRadius: 10,
@@ -185,7 +206,6 @@ const styles = StyleSheet.create({
   exerciseName: {
     fontSize: 15,
     fontWeight: "bold",
-    
   },
 
   exerciseDetails: {
@@ -198,6 +218,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
 
+
   errorText: {
     color: 'red',
     fontSize: 12,
@@ -205,5 +226,4 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
 });
-
 

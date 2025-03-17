@@ -231,8 +231,4 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginTop: 5,
   },
-  forgotPasswordView: {
-    marginTop: 14,
-    alignSelf: "center",
-  },
 });
