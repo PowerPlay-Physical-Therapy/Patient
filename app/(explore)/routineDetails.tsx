@@ -1,10 +1,11 @@
 import ScreenHeader from "@/components/ScreenHeader";
 import { ThemedText } from "@/components/ThemedText";
 import { AppColors } from "@/constants/Colors";
+import { useUser } from "@clerk/clerk-expo";
 import { Card } from "@rneui/base";
 import { LinearGradient } from "expo-linear-gradient";
-import { Stack } from "expo-router";
-import React, { useState } from "react"
+import { router, Stack, useGlobalSearchParams, useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useState } from "react"
 import { ScrollView, View, Text, Platform, Dimensions, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -12,67 +13,110 @@ const { height, width } = Dimensions.get("window")
 
 export default function RoutineDetails() {
 
-    // const [routine,setRoutine] = useState(null);
+    const { user } = useUser();
 
-    const routine = require('@/assets/Exercises.json');
+    const local = useLocalSearchParams();
+    const parsedId = JSON.parse(local.exerciseId);
+    const exercise_id = parsedId.$oid;
+    
+    const [routine,setRoutine] = useState([]);
+
+    // const routine = require('@/assets/Exercises.json');
+
+    //TODO:Only for single exercise routine, need to change for multiple exercises
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/get_exercise/${exercise_id}`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                const data = await response.json();
+                setRoutine([data]);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+        fetchData();
+    }, []);
+
     const handleAddRoutine = () => {
-        //TO-DO: Complete the function
         console.log(1)
+        const writeData = async () => {
+            try {
+                
+                const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/add_explore_routine/${user?.id}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: routine[0].title,
+                        exercises: routine.map(exercise => ({ _id: {"$oid" : exercise._id }}))
+                    })
+                });
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                const data = await response.json();
+                console.log("Fetched data:", data);
+                router.back();
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+        writeData();
     }
 
     return (
-        <SafeAreaView>
-            <LinearGradient style={{ height: height }} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
-                <View style={{ alignItems: "center", width: width }}>
-                    <ScreenHeader title="Routine Information" />
-                    <ScrollView
-                        horizontal={true}
-                        decelerationRate={0}
-                        snapToInterval={width * 0.925} //your element width
-                        snapToAlignment={"center"}>
-                        {routine[0]["subcategory"][0]["exercises"].map((exercise) => (
-                            <View key={exercise.name} style={{}}>
-                                <Card containerStyle={{ width: width * 0.9, borderRadius: 15, shadowOffset: { height: 0.2, width: 0.2 }, shadowRadius: 3, shadowOpacity: 0.7 }}>
-                                    <Card.Title style={{ fontSize: 20 }}>{exercise.name}</Card.Title>
-                                    <Card.Divider />
-                                    <Card.Image source={{ uri: exercise.thumbnail_url }} style={{ resizeMode: 'center', borderRadius: 15 }} containerStyle={{ borderRadius: 15, shadowOffset: { height: 0.5, width: 0.5 }, shadowRadius: 3, shadowOpacity: 0.7 }} />
-                                    <View style={{ flexDirection: "row", justifyContent: 'space-between', }}>
-                                        <View style={{}}>
-                                            <Text style={{ fontSize: 20 }}><Text style={{ fontWeight: "bold" }}>Reps : </Text>{exercise.reps}</Text>
-                                            <Text style={{ fontSize: 20 }}><Text style={{ fontWeight: "bold" }}>Hold : </Text>{exercise.hold} sec</Text>
-                                        </View>
-                                        <View style={{}}>
-                                            <Text style={{ fontSize: 20 }}><Text style={{ fontWeight: "bold" }}>Sets: </Text>{exercise.sets}</Text>
-                                            <Text style={{ fontSize: 20 }}><Text style={{ fontWeight: "bold" }}>Frequency : </Text>{exercise.frequency} / week</Text>
-                                        </View>
+        <LinearGradient style={{ height: height }} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
+            <View style={{ width: width}}>
+                <ScrollView
+                    horizontal={true}
+                    decelerationRate={0}
+                    snapToInterval={width * 0.9} //your element width
+                    snapToAlignment={"center"}>
+                    {routine.map((exercise) => (
+                        <View key={exercise._id} style={{ maxHeight: height * 0.9 }}>
+                            <Card containerStyle={{ width: width * 0.9, borderRadius: 15, shadowOffset: { height: 0.2, width: 0.2 }, shadowRadius: 3, shadowOpacity: 0.7 }}>
+                                <Card.Title style={{ fontSize: 20 }}>{exercise.title}</Card.Title>
+                                <Card.Divider />
+                                <Card.Image source={{ uri: exercise.thumbnail_url }} style={{ borderRadius: 15 }} containerStyle={{ borderRadius: 15, shadowOffset: { height: 0.5, width: 0.5 }, shadowRadius: 3, shadowOpacity: 0.7 }} />
+                                <View style={{ flexDirection: "row", justifyContent: 'space-between', }}>
+                                    <View style={{}}>
+                                        <Text style={{ fontSize: 20 }}><Text style={{ fontWeight: "bold" }}>Reps : </Text>{exercise.reps}</Text>
+                                        <Text style={{ fontSize: 20 }}><Text style={{ fontWeight: "bold" }}>Hold : </Text>{exercise.hold} sec</Text>
                                     </View>
-                                    <Text style={{ fontWeight: "bold", fontSize: 20 }}>Description : </Text>
-                                    <ScrollView>
-                                        <Text style={{ fontSize: 18 }} >
-                                            {exercise.description}
-                                        </Text>
-                                    </ScrollView>
-                                    <View style={{ alignItems: "center", marginTop: 5 }}>
-                                        <LinearGradient
-                                            colors={[AppColors.Purple, AppColors.Blue]}
-                                            style={styles.button}
+                                    <View style={{}}>
+                                        <Text style={{ fontSize: 20 }}><Text style={{ fontWeight: "bold" }}>Sets: </Text>{exercise.sets}</Text>
+                                        <Text style={{ fontSize: 20 }}><Text style={{ fontWeight: "bold" }}>Frequency : </Text>{exercise.frequency} / week</Text>
+                                    </View>
+                                </View>
+                                <Text style={{ fontWeight: "bold", fontSize: 20 }}>Description : </Text>
+                                <ScrollView style={{ maxHeight: height * 0.2 }}>
+                                    <Text style={{ fontSize: 18 }} >
+                                        {exercise.description}
+                                    </Text>
+                                </ScrollView>
+                                <View style={{ alignItems: "center", marginTop: 5 }}>
+                                    <LinearGradient
+                                        colors={[AppColors.Purple, AppColors.Blue]}
+                                        style={styles.button}
+                                    >
+                                        <TouchableOpacity
+                                            style={styles.buttonInner}
+                                            onPress={() => { console.log("VideoPlay") }}
                                         >
-                                            <TouchableOpacity
-                                                style={styles.buttonInner}
-                                                onPress={() => { console.log("VideoPlay") }}
-                                            >
-                                                <ThemedText style={styles.buttonText}>Watch Video</ThemedText>
-                                            </TouchableOpacity>
-                                        </LinearGradient>
-                                    </View>
+                                            <ThemedText style={styles.buttonText}>Watch Video</ThemedText>
+                                        </TouchableOpacity>
+                                    </LinearGradient>
+                                </View>
 
-                                </Card>
-                            </View>
-                        ))}
-                    </ScrollView>
+                            </Card>
+                        </View>
+                    ))}
+                </ScrollView>  
+                <View style={{ alignItems: "center", justifyContent: "center" }}>
                     <LinearGradient
                         colors={[AppColors.Purple, AppColors.Blue]}
-                        style={[styles.button, { margin: 10 }]}
+                        style={[styles.button, { margin: 10, justifyContent: 'flex-end', alignItems: 'center' }]}
                     >
                         <TouchableOpacity
                             style={styles.buttonInner}
@@ -81,10 +125,10 @@ export default function RoutineDetails() {
                             <ThemedText style={styles.buttonText}>Add</ThemedText>
                         </TouchableOpacity>
                     </LinearGradient>
-                </View>
-            </LinearGradient>
-        </SafeAreaView>
-
+                </View> 
+            </View>
+            
+        </LinearGradient>
     );
 }
 

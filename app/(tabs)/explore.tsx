@@ -75,9 +75,10 @@ export default function ExploreScreen() {
                       <ThemedText style={{ paddingLeft: 5 }}>{subcategory.subtitle}</ThemedText>
                       <ScrollView horizontal={true}>
                         {subcategory["exercises"].map((exercise) => (
-                          <TouchableOpacity key={exercise.name} onPress={() => {
+                          <TouchableOpacity  onPress={() => {
                             // console.log("clicked");
-                            router.push("../(explore)/routineDetails")
+
+                            router.push(`/(explore)/routineDetails?exerciseId=${JSON.stringify(exercise._id)}`);
                           }}>
                             <View style={{ alignItems: "center", justifyContent: "flex-end", margin: 5, borderRadius: 15, zIndex: 0, shadowOffset: { height: 0.2, width: 0.2 }, shadowRadius: 3, shadowOpacity: 0.5 }}>
                               <Image source={{ uri: exercise.thumbnail_url }} style={{ width: width * 0.5, height: height * 0.2, borderRadius: 15, zIndex: 2 }} />
