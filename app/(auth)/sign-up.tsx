@@ -130,9 +130,9 @@ export default function signUP() {
                             />
                             <ThemedText style={styles.policyText}>
                                 I agree to the {' '}
-                                <Link href="/privacy-policy" asChild>
-                                    <TouchableOpacity>
-                                        <ThemedText style={styles.policyLink}>Privacy Policy</ThemedText>
+                                <Link style= {{flex: 1, alignItems: 'center'}}href="/privacy-policy" asChild>
+                                    <TouchableOpacity style={styles.policyLink}>
+                                        <ThemedText style={{ color: AppColors.Blue,  textDecorationLine: 'underline', lineHeight: 16 }}>Privacy Policy</ThemedText>
                                     </TouchableOpacity>
                                 </Link>
                             </ThemedText>
@@ -151,7 +151,7 @@ export default function signUP() {
                             <ThemedText>
                                 Already have an account? 
                                 <Link href="/sign-in">
-                                    <ThemedText style={{ color: AppColors.Blue }}> Sign in!</ThemedText>
+                                    <ThemedText style={{ color: AppColors.Blue, }}> Sign in!</ThemedText>
                                 </Link>
                             </ThemedText>
                         </View>
@@ -164,7 +164,7 @@ export default function signUP() {
 
 const InputField = ({ value, placeholder, onChangeText, secureTextEntry = false, error }) => (
     <>
-        <LinearGradient colors={[AppColors.LightBlue, AppColors.White]} style={styles.input}>
+        <LinearGradient start= {{x: 0, y: 0}} end={{x:1, y: 0}} colors={[AppColors.LightBlue, AppColors.OffWhite]} style={styles.input}>
             <TextInput
                 style={{ color: "black", marginLeft: 10 }}
                 autoCapitalize="none"
@@ -180,15 +180,15 @@ const InputField = ({ value, placeholder, onChangeText, secureTextEntry = false,
 );
 
 const styles = StyleSheet.create({
-    button: { borderRadius: 25, marginTop: 10, padding: 12, alignItems: 'center' },
+    button: { borderRadius: 25, marginTop: 10, padding: 12, alignItems: 'center', backgroundColor: 'transparent' },
     buttonInner: { alignItems: 'center' },
     buttonText: { fontWeight: 'bold' },
     bottomView: { alignSelf: 'center', marginTop: 20 },
     input: { borderRadius: 25, marginTop: 10, padding: 15, backgroundColor: 'white' },
-    policyContainer: { flexDirection: 'row', alignItems: 'center', marginVertical: 15 },
+    policyContainer: {flexDirection: 'row', alignItems: 'center', marginVertical: 15},
     checkbox: { marginRight: 10 },
-    policyText: { flex: 1 },
-    policyLink: { color: AppColors.Blue, textDecorationLine: 'underline' },
+    policyText: { flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' },
+    policyLink: { flex: 1, color: AppColors.Blue},
     errorText: { color: 'red', fontSize: 12, marginLeft: 15, marginTop: 5 },
-    powerplayTitle: { fontFamily: 'Meticula', fontSize: 28, textAlign: 'center', color: AppColors.Blue },
+    powerplayTitle: { fontFamily: 'Meticula', fontSize: 28, textAlign: 'center', color: AppColors.Blue , lineHeight: 26},
 });
