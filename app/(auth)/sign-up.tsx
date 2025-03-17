@@ -77,7 +77,7 @@ export default function signUP() {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        id : response.id,
+                        id: response.createdUserId,
                         username: response.username,
                         firstname: response.firstName,
                         lastname: response.lastName,
