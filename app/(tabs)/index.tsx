@@ -11,18 +11,24 @@ import { Redirect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { AppColors } from '@/constants/Colors';
 import  ScreenHeader  from '@/components/ScreenHeader';
+import Routine from '../routine';
+
 
 export default function HomeScreen() {
   const { isSignedIn } = useAuth()
+
 
   if (!isSignedIn) {
     return <Redirect href={'/sign-up'} />
   }
   return (
     <LinearGradient style={{ flex: 1, paddingTop: Platform.OS == 'ios' ? 50 : 0}} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
-    <ScreenHeader title="Welcome!" />
+    {/* <ScreenHeader title="Welcome!" /> */}
+
+    <Routine />
+
   </LinearGradient>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
