@@ -5,12 +5,13 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-import {Colors} from '@/constants/Colors';
+import {Colors, AppColors} from '@/constants/Colors';
 import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo'
 // import { Slot } from 'expo-router'
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { LinearGradient } from 'expo-linear-gradient';
+import {Button} from 'react-native';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -41,10 +42,20 @@ export default function RootLayout() {
       <ClerkProvider publishableKey={publishableKey}>
         <ClerkLoaded>
           
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack
+          screenOptions={{
+            headerShown: false,
+          }}
+          >
+            <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
             <Stack.Screen name="+not-found" />
+            <Stack.Screen name="privacy-policy" options={{headerStyle: {
+              backgroundColor: AppColors.OffWhite,
+            },
+            headerBackTitle: 'Back',
+            title: "Privacy Notice",
+          }}/>
           </Stack>
           <StatusBar style="auto" />
           
