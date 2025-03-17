@@ -8,6 +8,8 @@ import { router, Stack, useGlobalSearchParams, useLocalSearchParams, useRouter }
 import React, { useEffect, useState } from "react"
 import { ScrollView, View, Text, Platform, Dimensions, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Notification from "@/components/Notification";
+// import Toast from "react-native-toast-message";
 
 const { height, width } = Dimensions.get("window")
 
@@ -20,6 +22,16 @@ export default function RoutineDetails() {
     const exercise_id = parsedId.$oid;
     
     const [routine,setRoutine] = useState([]);
+    
+    const [notification, setNotification] = useState(null);
+
+    const showNotification = () => {
+        setNotification({ message: "Adding New Routine!!", type: "info" });
+
+        // Auto-hide after 3 seconds
+        setTimeout(() => setNotification(null), 3000);
+    };
+
 
     // const routine = require('@/assets/Exercises.json');
 
@@ -42,6 +54,8 @@ export default function RoutineDetails() {
     }, []);
 
     const handleAddRoutine = () => {
+        showNotification();
+        // Toast.show({ text1: "Hello", type: "success" })
         console.log(1)
         const writeData = async () => {
             try {
@@ -56,6 +70,7 @@ export default function RoutineDetails() {
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                 const data = await response.json();
                 console.log("Fetched data:", data);
+                
                 router.back();
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -66,6 +81,9 @@ export default function RoutineDetails() {
 
     return (
         <LinearGradient style={{ height: height }} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
+            {notification && (
+                <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />
+            )}
             <View style={{ width: width}}>
                 <ScrollView
                     horizontal={true}
