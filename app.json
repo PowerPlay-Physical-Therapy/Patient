@@ -33,15 +33,26 @@
           "backgroundColor": "#000000"
         }
       ],
-      ["expo-font",
-      {
-        "fonts":["/assets/fonts/Meticula-Regular.ttf"]
-      }
-    ],
-    ["expo-image-picker",
-      {
-        "photoPermission": "The app accesses your photos to customize your profile picture."
-      }]
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "/assets/fonts/Meticula-Regular.ttf"
+          ]
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photoPermission": "The app accesses your photos to customize your profile picture."
+        }
+      ],
+      [
+      "expo-video",
+        {
+          "supportsBackgroundPlayback": true,
+          "supportsPictureInPicture": true
+        }]
     ],
     "experiments": {
       "typedRoutes": true

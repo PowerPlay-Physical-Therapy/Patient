@@ -49,6 +49,7 @@ export default function RootLayout() {
           >
             <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+            <Stack.Screen name="(explore)" options={{headerShown: false}}/>
             <Stack.Screen name="+not-found" />
             <Stack.Screen name="privacy-policy" options={{headerStyle: {
               backgroundColor: AppColors.OffWhite,
@@ -56,6 +57,14 @@ export default function RootLayout() {
             headerBackTitle: 'Back',
             title: "Privacy Notice",
           }}/>
+            <Stack.Screen name="exerciseDetails" options={{headerStyle: {
+              backgroundColor: AppColors.OffWhite,
+            },
+            headerBackTitle: 'Back',
+            headerShown: true,
+            title: "Exercise Information",
+          }}/>
+          <Stack.Screen name="video" options= {{headerShown: false}}/>
           </Stack>
           <StatusBar style="auto" />
           

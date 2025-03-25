@@ -13,7 +13,7 @@ import  ScreenHeader  from '@/components/ScreenHeader';
 import { useEffect } from 'react';
 import { Link, useRouter } from "expo-router";
 import * as React from 'react';
-import { Text, View, FlatList } from 'react-native';
+import { Text, View, FlatList , TouchableOpacity} from 'react-native';
 
 
 export default function HomeScreen() {
@@ -29,7 +29,8 @@ export default function HomeScreen() {
   useEffect(() => {
     const fetchAssignedRoutines = async () => {
       if (!isSignedIn) {
-        return <Redirect href={'/sign-up'} />
+        return <Redirect href="/sign-in" />
+
       }
 
       // Make sure user or user data is loaded
@@ -110,6 +111,12 @@ return (
                       <Text>Reps: {exercise.reps}</Text>
                       <Text>Sets: {exercise.sets}</Text>
                     </View>
+                    <TouchableOpacity onPress={() => {
+                      console.log(exercise._id);
+                      router.push(`/exerciseDetails?exerciseId=${exercise._id}`);
+                    }}>
+                    <Image source={require('@/assets/images/chevron-right.png')} style={{ width: 20, height: 20, marginLeft: 'auto' }} />
+                    </TouchableOpacity>
                   </View>
                 )}
               />
@@ -180,6 +187,7 @@ const styles = StyleSheet.create({
 
   exerciseInfo: {
     marginLeft: 10,
+    width: '72%',
   },
 
   exerciseName: {

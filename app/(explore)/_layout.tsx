@@ -1,4 +1,5 @@
 import { Stack } from "expo-router";
+import {AppColors} from '@/constants/Colors';
 
 
 export default function ExploreLayout() {
@@ -8,7 +9,12 @@ export default function ExploreLayout() {
             headerBackButtonDisplayMode:'default',
             headerBackTitle: 'Explore',
         }}>
-            <Stack.Screen name="routineDetails" options={{ title: "Routine Details" }}  />
+            <Stack.Screen name="routineDetails" options={{headerStyle: {
+                          backgroundColor: AppColors.OffWhite,
+                        },
+                        headerBackTitle: 'Back',
+                        headerShown: true,
+                        headerTitle: "Routine Details"}}  />
         </Stack>
     );
 }

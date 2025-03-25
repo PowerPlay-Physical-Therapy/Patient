@@ -13,13 +13,13 @@ import Notification from "@/components/Notification";
 
 const { height, width } = Dimensions.get("window")
 
-export default function RoutineDetails() {
+export default function ExerciseDetails() {
 
     const { user } = useUser();
 
     const local = useLocalSearchParams();
-    const parsedId = JSON.parse(local.exerciseId);
-    const exercise_id = parsedId.$oid;
+    const parsedId = local.exerciseId;
+    const exercise_id = parsedId;
     
     const [routine,setRoutine] = useState([]);
     
@@ -112,7 +112,21 @@ export default function RoutineDetails() {
                                         {exercise.description}
                                     </Text>
                                 </ScrollView>
-                                <View style={{ alignItems: "center", marginTop: 5 }}>
+                                <View style={{ flexDirection: "row", justifyContent: 'space-between', marginTop: 10}}>
+                                <View style={{ alignItems: "center", marginTop: 5, width: '50%' }}>
+                                    <LinearGradient
+                                        colors={[AppColors.Purple, AppColors.Blue]}
+                                        style={styles.button}
+                                    >
+                                        <TouchableOpacity
+                                            style={styles.buttonInner}
+                                            onPress={() => { router.push(`/video?exerciseId=${exercise_id}`) }}
+                                        >
+                                            <ThemedText style={styles.buttonText}>Watch Video</ThemedText>
+                                        </TouchableOpacity>
+                                    </LinearGradient>
+                                </View>
+                                <View style={{ alignItems: "center", marginTop: 5, width: '50%'}}>
                                     <LinearGradient
                                         colors={[AppColors.Purple, AppColors.Blue]}
                                         style={styles.button}
@@ -121,28 +135,16 @@ export default function RoutineDetails() {
                                             style={styles.buttonInner}
                                             onPress={() => { console.log("VideoPlay") }}
                                         >
-                                            <ThemedText style={styles.buttonText}>Watch Video</ThemedText>
+                                            <ThemedText style={styles.buttonText}>Start</ThemedText>
                                         </TouchableOpacity>
                                     </LinearGradient>
+                                </View>
                                 </View>
 
                             </Card>
                         </View>
                     ))}
                 </ScrollView>  
-                <View style={{ alignItems: "center", justifyContent: "center" }}>
-                    <LinearGradient
-                        colors={[AppColors.Purple, AppColors.Blue]}
-                        style={[styles.button, { margin: 10, justifyContent: 'flex-end', alignItems: 'center' }]}
-                    >
-                        <TouchableOpacity
-                            style={styles.buttonInner}
-                            onPress={handleAddRoutine}
-                        >
-                            <ThemedText style={styles.buttonText}>Add</ThemedText>
-                        </TouchableOpacity>
-                    </LinearGradient>
-                </View> 
             </View>
             
         </LinearGradient>
@@ -161,7 +163,7 @@ const styles = StyleSheet.create({
     },
     button: {
         borderRadius: 25,
-        width: '50%',
+        width: '90%',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
