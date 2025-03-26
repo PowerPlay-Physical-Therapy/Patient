@@ -12,6 +12,7 @@ import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo'
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { LinearGradient } from 'expo-linear-gradient';
 import {Button} from 'react-native';
+import CustomTabs from '@/components/CustomTabs';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -47,8 +48,6 @@ export default function RootLayout() {
             headerShown: false,
           }}
           >
-            <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
             <Stack.Screen name="+not-found" />
             <Stack.Screen name="privacy-policy" options={{headerStyle: {
               backgroundColor: AppColors.OffWhite,
@@ -56,6 +55,7 @@ export default function RootLayout() {
             headerBackTitle: 'Back',
             title: "Privacy Notice",
           }}/>
+          <CustomTabs/>
           </Stack>
           <StatusBar style="auto" />
           
