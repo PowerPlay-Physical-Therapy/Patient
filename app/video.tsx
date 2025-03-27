@@ -30,7 +30,7 @@ export default function App() {
               }
           };
           fetchData();
-          videoSource = exercise.video_url;
+          videoSource = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
       }, []);
     const player = useVideoPlayer(videoSource, player => {
         player.loop = true;
