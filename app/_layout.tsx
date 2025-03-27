@@ -53,6 +53,7 @@ export default function RootLayout() {
               headerStyle: {
               backgroundColor: AppColors.OffWhite,
             },
+            headerShown: true,
             headerBackTitle: 'Back',
             title: "Privacy Notice",
           }}/>
