@@ -84,7 +84,7 @@ export default function RoutineDetails() {
             {notification && (
                 <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />
             )}
-            <View style={{ width: width}}>
+            <View style={{ width: width, justifyContent: 'center', alignItems: 'center'}}>
                 <ScrollView
                     horizontal={true}
                     decelerationRate={0}
@@ -130,7 +130,7 @@ export default function RoutineDetails() {
                         </View>
                     ))}
                 </ScrollView>  
-                <View style={{ alignItems: "center", justifyContent: "center" }}>
+
                     <LinearGradient
                         colors={[AppColors.Purple, AppColors.Blue]}
                         style={[styles.button, { margin: 10, justifyContent: 'flex-end', alignItems: 'center' }]}
@@ -142,7 +142,6 @@ export default function RoutineDetails() {
                             <ThemedText style={styles.buttonText}>Add</ThemedText>
                         </TouchableOpacity>
                     </LinearGradient>
-                </View> 
             </View>
             
         </LinearGradient>

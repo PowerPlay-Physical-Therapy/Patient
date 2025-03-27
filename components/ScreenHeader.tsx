@@ -5,11 +5,11 @@ import {ThemedText} from '@/components/ThemedText';
 
 type ButtonProps = {
   title?: string,
-  name?: string,
+  name?: string|null,
   logo?: boolean,
 }
 
-const ScreenHeader = ({ title, name = "", logo= false, } : ButtonProps) => {
+const ScreenHeader = ({ title, name , logo= false, } : ButtonProps) => {
   return (
     <View style={styles.header}>
       {logo? (
