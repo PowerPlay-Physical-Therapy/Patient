@@ -6,7 +6,7 @@ import { useEvent } from 'expo';
 
 let videoSource = ""
 
-export default function App() {
+export default function Video() {
   const video = useRef(null);
   const exercise_id = useLocalSearchParams().exerciseId;
   const [status, setStatus] = useState({});
@@ -66,8 +66,8 @@ export default function App() {
         paddingHorizontal: 50,
       },
       video: {
-        width: 350,
-        height: 275,
+        width: 'auto',
+        height: 'auto',
       },
       controlsContainer: {
         padding: 10,

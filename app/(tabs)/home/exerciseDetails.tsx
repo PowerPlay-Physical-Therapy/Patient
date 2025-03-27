@@ -25,16 +25,6 @@ export default function ExerciseDetails() {
     
     const [notification, setNotification] = useState(null);
 
-    const showNotification = () => {
-        setNotification({ message: "Adding New Routine!!", type: "info" });
-
-        // Auto-hide after 3 seconds
-        setTimeout(() => setNotification(null), 3000);
-    };
-
-
-    // const routine = require('@/assets/Exercises.json');
-
     //TODO:Only for single exercise routine, need to change for multiple exercises
     useEffect(() => {
         const fetchData = async () => {
@@ -53,31 +43,6 @@ export default function ExerciseDetails() {
         fetchData();
     }, []);
 
-    const handleAddRoutine = () => {
-        showNotification();
-        // Toast.show({ text1: "Hello", type: "success" })
-        console.log(1)
-        const writeData = async () => {
-            try {
-                const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/add_explore_routine/${user?.id}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: routine[0].title,
-                        exercises: routine.map(exercise => ({ _id: exercise._id }))
-                    })
-                });
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                const data = await response.json();
-                console.log("Fetched data:", data);
-                
-                router.back();
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        }
-        writeData();
-    }
 
     return (
         <LinearGradient style={{ height: height, flex: 1, justifyContent: 'center', alignItems: 'center' }} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
@@ -120,7 +85,7 @@ export default function ExerciseDetails() {
                                     >
                                         <TouchableOpacity
                                             style={styles.buttonInner}
-                                            onPress={() => { router.push(`/video?exerciseId=${exercise_id}`) }}
+                                            onPress={() => { router.push(`/home/video?exerciseId=${exercise_id}`) }}
                                         >
                                             <ThemedText style={styles.buttonText}>Watch Video</ThemedText>
                                         </TouchableOpacity>

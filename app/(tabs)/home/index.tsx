@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, TextInput, SafeAreaView } from 'react-native';
+import { Image, StyleSheet, Platform, TextInput, SafeAreaView, TouchableOpacity } from 'react-native';
 import { useState } from 'react';
 // import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -114,6 +114,13 @@ export default function HomeScreen() {
                                         <Text>Reps: {exercise.reps}</Text>
                                         <Text>Sets: {exercise.sets}</Text>
                                     </View>
+                                    
+                                    <TouchableOpacity onPress={() => {
+                                                    // console.log("clicked");
+
+                                                    router.push(`./home/exerciseDetails?exerciseId=${exercise._id}`);
+
+                                                }}><Image source={require('@/assets/images/chevron-right.png')} /></TouchableOpacity>
                                 </View>
                             )}
                         />
@@ -184,6 +191,7 @@ const styles = StyleSheet.create({
     },
 
     exerciseInfo: {
+        width: '70%',
         marginLeft: 10,
     },
 

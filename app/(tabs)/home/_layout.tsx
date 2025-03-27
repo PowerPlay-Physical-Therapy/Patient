@@ -1,10 +1,19 @@
 import { Stack } from "expo-router";
+import { AppColors } from "@/constants/Colors";
 
 export default function HomeLayout(){
 
     return (
         <Stack>
             <Stack.Screen name="index" options={{headerShown:false}}/>
+            <Stack.Screen name="exerciseDetails" options={{headerStyle: {
+              backgroundColor: AppColors.OffWhite,
+            },
+            headerBackTitle: 'Back',
+            headerShown: true,
+            title: "Exercise Information",
+          }}/>
+          <Stack.Screen name="video" options= {{headerShown: false}}/>
         </Stack>
     );
 }

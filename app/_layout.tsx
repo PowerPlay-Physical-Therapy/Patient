@@ -58,14 +58,7 @@ export default function RootLayout() {
             headerBackTitle: 'Back',
             title: "Privacy Notice",
           }}/>
-            <Stack.Screen name="exerciseDetails" options={{headerStyle: {
-              backgroundColor: AppColors.OffWhite,
-            },
-            headerBackTitle: 'Back',
-            headerShown: true,
-            title: "Exercise Information",
-          }}/>
-          <Stack.Screen name="video" options= {{headerShown: false}}/>
+          
           </Stack>
           <StatusBar style="auto" />
           
