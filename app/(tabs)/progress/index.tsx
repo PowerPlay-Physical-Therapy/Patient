@@ -7,13 +7,13 @@ import ScreenHeader from '@/components/ScreenHeader';
 
 export default function ProgressScreen() {
     return (
-        <LinearGradient style={{ flex: 1, paddingTop: Platform.OS == 'ios' ? 50 : 0}} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
-        <View style={styles.header}>
-            <Image source={require('@/assets/images/Leaderboard.png')}></Image>
-            <ThemedText style={{fontSize: 20}}>Progress</ThemedText>
-            <Image source={require('@/assets/images/Tracking.png')}></Image>
-        </View>
-      </LinearGradient>
+        <LinearGradient style={{ flex: 1, paddingTop: Platform.OS == 'ios' ? 50 : 0 }} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
+            <View style={styles.header}>
+                <Image source={require('@/assets/images/Leaderboard.png')}></Image>
+                <ThemedText style={{ fontSize: 20 }} type='subtitle'>Progress</ThemedText>
+                <Image source={require('@/assets/images/Tracking.png')}></Image>
+            </View>
+        </LinearGradient>
     )
 }
 
@@ -36,4 +36,5 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         paddingLeft: 20,
         paddingRight: 20,
-      }, });
+    },
+});
