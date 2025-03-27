@@ -8,7 +8,7 @@ import TabBarBackground from '@/components/ui/TabBarBackground';
 import { AppColors, Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
-const CustomTabs = () => {
+export default function TabLayout(){
     const colorScheme = useColorScheme();
 
     return (
@@ -45,14 +45,14 @@ const CustomTabs = () => {
                 }}
             />
             <Tabs.Screen
-                name="index"
+                name="home"
                 options={{
                     title: '',
                     tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
                 }}
             />
             <Tabs.Screen
-                name="messages"
+                name="message"
                 options={{
                     title: "",
                     tabBarIcon: ({ color }) => <IconSymbol size={28} name='message.fill' color={color} />,
@@ -68,5 +68,3 @@ const CustomTabs = () => {
         </Tabs>
     );
 };
-
-export default CustomTabs;

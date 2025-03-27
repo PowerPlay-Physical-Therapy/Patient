@@ -7,12 +7,11 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 import {Colors, AppColors} from '@/constants/Colors';
 import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo'
-// import { Slot } from 'expo-router'
+import { tokenCache } from '@clerk/clerk-expo/token-cache'
+
 
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { LinearGradient } from 'expo-linear-gradient';
-import {Button} from 'react-native';
-import CustomTabs from '@/components/CustomTabs';
+
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -40,22 +39,23 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <ClerkProvider publishableKey={publishableKey}>
+      <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
         <ClerkLoaded>
           
           <Stack
           screenOptions={{
             headerShown: false,
           }}
-          >
+          > 
+            <Stack.Screen name="(tabs)"/>
             <Stack.Screen name="+not-found" />
-            <Stack.Screen name="privacy-policy" options={{headerStyle: {
+            <Stack.Screen name="privacy-policy" options={{
+              headerStyle: {
               backgroundColor: AppColors.OffWhite,
             },
             headerBackTitle: 'Back',
             title: "Privacy Notice",
           }}/>
-          <CustomTabs/>
           </Stack>
           <StatusBar style="auto" />
           
@@ -65,4 +65,5 @@ export default function RootLayout() {
     </ThemeProvider>
   );
 }
+
 

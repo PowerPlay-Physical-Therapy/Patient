@@ -10,7 +10,7 @@ export default function ProgressScreen() {
         <LinearGradient style={{ flex: 1, paddingTop: Platform.OS == 'ios' ? 50 : 0 }} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
             <View style={styles.header}>
                 <Image source={require('@/assets/images/Leaderboard.png')}></Image>
-                <ThemedText style={{ fontSize: 20 }}>Progress</ThemedText>
+                <ThemedText style={{ fontSize: 20 }} type='subtitle'>Progress</ThemedText>
                 <Image source={require('@/assets/images/Tracking.png')}></Image>
             </View>
         </LinearGradient>

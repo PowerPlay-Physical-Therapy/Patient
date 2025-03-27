@@ -25,6 +25,10 @@ export default function HomeScreen() {
     const { user, isLoaded } = useUser();
     const [patientId, setPatientId] = useState<string | null>(null);
 
+    const [isTabVisible, setIsTabVisible] = useState(true);
+    const [activeTab, setActiveTab] = useState(0);
+
+
 
     useEffect(() => {
         const fetchAssignedRoutines = async () => {
@@ -94,9 +98,9 @@ export default function HomeScreen() {
                 keyExtractor={(item) => item._id["$oid"]}
                 style={{ padding: 20, marginBottom: 80 }}
                 renderItem={({ item: routine }) => (
+                    
                     <View style={styles.routine}>
                         <Text style={styles.routineTitle}>{routine.name}</Text>
-
                         {/* Exercises within routine */}
                         <FlatList
                             data={routine.exercises}
@@ -114,6 +118,7 @@ export default function HomeScreen() {
                             )}
                         />
                     </View>
+                    
                 )}
             />
         </LinearGradient>

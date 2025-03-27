@@ -30,7 +30,7 @@ export default function Profile() {
     const handleSignOut = async () => {
         try {
             await signOut();
-            router.push('/sign-in'); // Redirect to sign-in page after logout
+            router.replace('/sign-in'); // Redirect to sign-in page after logout
         } catch (err) {
             console.error("Error signing out:", err);
         }
@@ -97,7 +97,7 @@ export default function Profile() {
     return (
         <LinearGradient style={{ flex: 1, paddingTop: Platform.OS == 'ios' ? 50 : 0 }} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
             <ScreenHeader title="Your Profile & Settings" />
-            <ScrollView style={{ flex: 1 }}>
+            <ScrollView style={{ flex: 1}}>
                 <LinearGradient start={{ x: 0, y: 0.25 }} end={{ x: 0.5, y: 1 }} style={styles.buttonContainer} colors={[AppColors.LightBlue, AppColors.OffWhite]}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', width: '100%', marginBottom: 20 }}>
                         <ThemedView style={styles.headerImage}>
@@ -179,7 +179,7 @@ export default function Profile() {
                     <ThemedText style={{ fontSize: 12, color: 'grey', lineHeight: 14, paddingTop: 12, borderTopColor: "lightgrey", borderTopWidth: 1 }}>You'll recieve friendly notifications to stay on track with your fitness goals!</ThemedText>
 
                 </ThemedView>
-                <ThemedView style={styles.container}>
+                <ThemedView style={[styles.container, {marginBottom:80}]}>
                     <ThemedText style={{ fontSize: 16 }}>Privacy Policy</ThemedText>
                     <Link href="/privacy-policy" >
                         <Image source={require('@/assets/images/chevron-right.png')}></Image>

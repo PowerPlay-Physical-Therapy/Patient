@@ -105,7 +105,7 @@ export default function PrivacyPolicy() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 30,
   },
   scrollView: {
     flex: 1,
