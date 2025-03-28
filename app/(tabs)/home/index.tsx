@@ -110,9 +110,9 @@ export default function HomeScreen() {
 
                                     <Image source={{ uri: exercise.thumbnail_url }} style={styles.exerciseThumbnail} />
                                     <View style={styles.exerciseInfo}>
-                                        <Text style={styles.exerciseName}>{exercise.title}</Text>
-                                        <Text>Reps: {exercise.reps}</Text>
-                                        <Text>Sets: {exercise.sets}</Text>
+                                        <ThemedText style={styles.exerciseName}>{exercise.title}</ThemedText>
+                                        <ThemedText>Reps: {exercise.reps}</ThemedText>
+                                        <ThemedText>Sets: {exercise.sets}</ThemedText>
                                     </View>
                                     
                                     <TouchableOpacity onPress={() => {
@@ -120,7 +120,7 @@ export default function HomeScreen() {
 
                                                     router.push(`./home/exerciseDetails?exerciseId=${exercise._id}`);
 
-                                                }}><Image source={require('@/assets/images/chevron-right.png')} /></TouchableOpacity>
+                                                }}><Image source={require('@/assets/images/chevron-right.png')} style={{width: "20", height: '20'}}/></TouchableOpacity>
                                 </View>
                             )}
                         />
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     },
 
     exerciseInfo: {
-        width: '70%',
+        width: '75%',
         marginLeft: 10,
     },
 

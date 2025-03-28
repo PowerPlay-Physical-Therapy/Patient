@@ -3,6 +3,8 @@ import { View, StyleSheet, Button } from 'react-native';
 import { VideoView, useVideoPlayer } from 'expo-video';
 import { useLocalSearchParams } from 'expo-router';
 import { useEvent } from 'expo';
+import { AppColors } from '@/constants/Colors';
+import { LinearGradient } from 'expo-linear-gradient';
 
 let videoSource = ""
 
@@ -39,35 +41,24 @@ export default function Video() {
     const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player.playing });
     // video source url is not supported, consider another solution
       return (
-        <View style={styles.contentContainer}>
+        <LinearGradient colors={[AppColors.OffWhite, AppColors.LightBlue]} style={styles.contentContainer}>
           <VideoView style={styles.video} player={player} allowsFullscreen allowsPictureInPicture />
           <View style={styles.controlsContainer}>
-            <Button
-              title={isPlaying ? 'Pause' : 'Play'}
-              onPress={() => {
-                if (isPlaying) {
-                  player.pause();
-                } else {
-                  player.play();
-                }
-              }}
-            />
           </View>
-        </View>
+        </LinearGradient>
       );
     }
     
-    const styles = StyleSheet.create({
+const styles = StyleSheet.create({
       contentContainer: {
         flex: 1,
-        padding: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingHorizontal: 50,
+        
       },
       video: {
-        width: 'auto',
-        height: 'auto',
+        width: '100%',
+        height: '30%',
       },
       controlsContainer: {
         padding: 10,

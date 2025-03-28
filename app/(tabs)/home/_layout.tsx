@@ -13,7 +13,13 @@ export default function HomeLayout(){
             headerShown: true,
             title: "Exercise Information",
           }}/>
-          <Stack.Screen name="video" options= {{headerShown: false}}/>
+          <Stack.Screen name="video" options={{headerStyle: {
+              backgroundColor: AppColors.OffWhite,
+            },
+            headerBackTitle: 'Back',
+            headerShown: true,
+            title: "Video",
+          }}/>
         </Stack>
     );
 }

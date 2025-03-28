@@ -58,24 +58,24 @@ export default function ExerciseDetails() {
                     {routine.map((exercise) => (
                         <View key={exercise._id} style={{ maxHeight: height * 0.9 }}>
                             <Card containerStyle={{ width: width * 0.9, borderRadius: 15, shadowOffset: { height: 0.2, width: 0.2 }, shadowRadius: 3, shadowOpacity: 0.7, backgroundColor: AppColors.OffWhite }}>
-                                <Card.Title style={{ fontSize: 20 }}>{exercise.title}</Card.Title>
+                                <Card.Title style={{ fontSize: 20, fontFamily: 'Montserrat' }}>{exercise.title}</Card.Title>
                                 <Card.Divider />
                                 <Card.Image source={{ uri: exercise.thumbnail_url }} style={{ borderRadius: 15 }} containerStyle={{ borderRadius: 15, shadowOffset: { height: 0.5, width: 0.5 }, shadowRadius: 3, shadowOpacity: 0.7 }} />
                                 <View style={{ flexDirection: "row", justifyContent: 'space-between', }}>
                                     <View style={{}}>
-                                        <Text style={{ fontSize: 20 }}><Text style={{ fontWeight: "bold" }}>Reps : </Text>{exercise.reps}</Text>
-                                        <Text style={{ fontSize: 20 }}><Text style={{ fontWeight: "bold" }}>Hold : </Text>{exercise.hold} sec</Text>
+                                        <ThemedText style={{ fontSize: 20 }}><Text style={{ fontWeight: "bold" }}>Reps : </Text>{exercise.reps}</ThemedText>
+                                        <ThemedText style={{ fontSize: 20 }}><Text style={{ fontWeight: "bold" }}>Hold : </Text>{exercise.hold} sec</ThemedText>
                                     </View>
                                     <View style={{}}>
-                                        <Text style={{ fontSize: 20 }}><Text style={{ fontWeight: "bold" }}>Sets: </Text>{exercise.sets}</Text>
-                                        <Text style={{ fontSize: 20 }}><Text style={{ fontWeight: "bold" }}>Frequency : </Text>{exercise.frequency} / week</Text>
+                                        <ThemedText style={{ fontSize: 20 }}><Text style={{ fontWeight: "bold" }}>Sets: </Text>{exercise.sets}</ThemedText>
+                                        <ThemedText style={{ fontSize: 20 }}><Text style={{ fontWeight: "bold" }}>Frequency : </Text>{exercise.frequency} / week</ThemedText>
                                     </View>
                                 </View>
                                 <Text style={{ fontWeight: "bold", fontSize: 20 }}>Description : </Text>
                                 <ScrollView style={{ maxHeight: height * 0.2 }}>
-                                    <Text style={{ fontSize: 18 }} >
+                                    <ThemedText style={{ fontSize: 18 }} >
                                         {exercise.description}
-                                    </Text>
+                                    </ThemedText>
                                 </ScrollView>
                                 <View style={{ flexDirection: "row", justifyContent: 'space-between', marginTop: 10}}>
                                 <View style={{ alignItems: "center", marginTop: 5, width: '50%' }}>
