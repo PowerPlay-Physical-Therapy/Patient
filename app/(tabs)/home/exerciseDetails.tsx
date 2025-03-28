@@ -61,14 +61,14 @@ export default function ExerciseDetails() {
                                 <Card.Title style={{ fontSize: 20, fontFamily: 'Montserrat' }}>{exercise.title}</Card.Title>
                                 <Card.Divider />
                                 <Card.Image source={{ uri: exercise.thumbnail_url }} style={{ borderRadius: 15 }} containerStyle={{ borderRadius: 15, shadowOffset: { height: 0.5, width: 0.5 }, shadowRadius: 3, shadowOpacity: 0.7 }} />
-                                <View style={{ flexDirection: "row", justifyContent: 'space-between', }}>
+                                <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingTop: 10}}>
                                     <View style={{}}>
-                                        <ThemedText style={{ fontSize: 20 }}><Text style={{ fontWeight: "bold" }}>Reps : </Text>{exercise.reps}</ThemedText>
-                                        <ThemedText style={{ fontSize: 20 }}><Text style={{ fontWeight: "bold" }}>Hold : </Text>{exercise.hold} sec</ThemedText>
+                                        <ThemedText style={{ fontSize: 20 }}><ThemedText style={{ fontWeight: "bold", fontSize: 20 }}>Reps : </ThemedText>{exercise.reps}</ThemedText>
+                                        <ThemedText style={{ fontSize: 20 }}><ThemedText style={{ fontWeight: "bold", fontSize: 20 }}>Hold : </ThemedText>{exercise.hold} sec</ThemedText>
                                     </View>
                                     <View style={{}}>
-                                        <ThemedText style={{ fontSize: 20 }}><Text style={{ fontWeight: "bold" }}>Sets: </Text>{exercise.sets}</ThemedText>
-                                        <ThemedText style={{ fontSize: 20 }}><Text style={{ fontWeight: "bold" }}>Frequency : </Text>{exercise.frequency} / week</ThemedText>
+                                        <ThemedText style={{ fontSize: 20 }}><ThemedText style={{ fontWeight: "bold", fontSize: 20 }}>Sets: </ThemedText>{exercise.sets}</ThemedText>
+                                        <ThemedText style={{ fontSize: 20 }}><ThemedText style={{ fontWeight: "bold", fontSize: 20 }}>Frequency : </ThemedText>{exercise.frequency} / week</ThemedText>
                                     </View>
                                 </View>
                                 <Text style={{ fontWeight: "bold", fontSize: 20 }}>Description : </Text>
