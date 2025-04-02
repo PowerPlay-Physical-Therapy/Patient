@@ -1,15 +1,19 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform, View } from 'react-native';
 
+  import { usePathname } from 'expo-router';
+  import { Tabs } from 'expo-router';
+  import React from 'react';
+  import { Platform, View } from 'react-native';
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { AppColors, Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-
-export default function TabLayout(){
+  export default function TabLayout(){
     const colorScheme = useColorScheme();
+    const pathname = usePathname(); // Get the current route
+    const pathsToHide = ['/home/recording', '/home/video']
+  // Hide the TabList for specific routes
+    const hideTabs = pathsToHide.includes(pathname);
 
     return (
         <Tabs
@@ -26,8 +30,11 @@ export default function TabLayout(){
                 tabBarStyle: Platform.select({
                     ios: {
                         position: 'absolute',
+                        display: hideTabs? 'none' : 'flex',
                     },
-                    default: {},
+                    default: {
+                        display: hideTabs? 'none' : 'flex',
+                    },
                 }),
             }}>
             <Tabs.Screen

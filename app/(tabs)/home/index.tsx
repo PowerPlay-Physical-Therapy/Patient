@@ -14,6 +14,7 @@ import { useEffect } from 'react';
 import { Link, useRouter } from "expo-router";
 import * as React from 'react';
 import { Text, View, FlatList } from 'react-native';
+import Tabs from './tabs';
 
 
 export default function HomeScreen() {
@@ -96,7 +97,7 @@ export default function HomeScreen() {
             <FlatList
                 data={routines}
                 keyExtractor={(item) => item._id["$oid"]}
-                style={{ padding: 20, marginBottom: 80 }}
+                style={{ padding: 20, }}
                 renderItem={({ item: routine }) => (
                     
                     <View style={styles.routine}>
@@ -120,7 +121,7 @@ export default function HomeScreen() {
 
                                                     router.push(`./home/exerciseDetails?exerciseId=${exercise._id}`);
 
-                                                }}><Image source={require('@/assets/images/chevron-right.png')} style={{width: "20", height: '20'}}/></TouchableOpacity>
+                                                }}><Image source={require('@/assets/images/chevron-right.png')} style={{width: 20, height: 20}}/></TouchableOpacity>
                                 </View>
                             )}
                         />
@@ -128,6 +129,7 @@ export default function HomeScreen() {
                     
                 )}
             />
+            
         </LinearGradient>
     );
 }

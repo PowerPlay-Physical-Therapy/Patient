@@ -25,7 +25,6 @@ export default function ExerciseDetails() {
     
     const [notification, setNotification] = useState(null);
 
-    //TODO:Only for single exercise routine, need to change for multiple exercises
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -98,7 +97,7 @@ export default function ExerciseDetails() {
                                     >
                                         <TouchableOpacity
                                             style={styles.buttonInner}
-                                            onPress={() => { console.log("VideoPlay") }}
+                                            onPress={() => { router.push(`/home/recording?exerciseId=${exercise_id}`) }}
                                         >
                                             <ThemedText style={styles.buttonText}>Start</ThemedText>
                                         </TouchableOpacity>

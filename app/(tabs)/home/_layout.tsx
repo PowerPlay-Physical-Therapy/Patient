@@ -1,6 +1,7 @@
 import { Stack } from "expo-router";
 import { AppColors } from "@/constants/Colors";
 
+
 export default function HomeLayout(){
 
     return (
@@ -17,9 +18,15 @@ export default function HomeLayout(){
               backgroundColor: AppColors.OffWhite,
             },
             headerBackTitle: 'Back',
-            headerShown: true,
+            headerShown: false,
             title: "Video",
+            
           }}/>
+          <Stack.Screen name="recording" options={{headerShown: false,
+            
+
+            }}
+            />
         </Stack>
     );
 }
