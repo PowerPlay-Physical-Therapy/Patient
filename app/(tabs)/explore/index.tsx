@@ -65,7 +65,7 @@ export default function ExploreScreen() {
             <ScrollView style={{ marginBottom: 60 }}>
                 {exploreAll.length > 0 ? (
                     filteredResults.length == 0 ? (
-                        <ThemedText style={{ flex: 1, alignSelf: 'center', padding: 40 }}>No results found</ThemedText>
+                        <ThemedText style={{ flex: 1, alignSelf: 'center', padding: 40 , color : 'red'}} type='subtitle'>No results found</ThemedText>
                     ) : (
                         filteredResults.map((category, index) =>
                             <View key={index} style={{ padding: 16 }}>
