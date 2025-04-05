@@ -13,29 +13,18 @@ import Notification from "@/components/Notification";
 
 const { height, width } = Dimensions.get("window")
 
-export default function RoutineDetails() {
+export default function ExerciseDetails() {
 
     const { user } = useUser();
 
     const local = useLocalSearchParams();
-    const parsedId = JSON.parse(local.exerciseId);
-    const exercise_id = parsedId.$oid;
+    const parsedId = local.exerciseId;
+    const exercise_id = parsedId;
     
     const [routine,setRoutine] = useState([]);
     
     const [notification, setNotification] = useState(null);
 
-    const showNotification = () => {
-        setNotification({ message: "Adding New Routine!!", type: "info" });
-
-        // Auto-hide after 3 seconds
-        setTimeout(() => setNotification(null), 3000);
-    };
-
-
-    // const routine = require('@/assets/Exercises.json');
-
-    //TODO:Only for single exercise routine, need to change for multiple exercises
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -53,39 +42,13 @@ export default function RoutineDetails() {
         fetchData();
     }, []);
 
-    const handleAddRoutine = () => {
-        showNotification();
-        // Toast.show({ text1: "Hello", type: "success" })
-        console.log(1)
-        const writeData = async () => {
-            try {
-                const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/add_explore_routine/${user?.id}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: routine[0].title,
-                        exercises: routine.map(exercise => ({ _id: exercise._id }))
-                    })
-                });
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                const data = await response.json();
-                console.log("Fetched data:", data);
-                
-                router.back();
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        }
-        writeData();
-    }
 
     return (
         <LinearGradient style={{ height: height, flex: 1, justifyContent: 'center', alignItems: 'center' }} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
             {notification && (
                 <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />
             )}
-            <View style={{ width: width, justifyContent: 'center', alignItems: 'center'}}>
-
+            <View style={{ width: width, paddingBottom: 60}}>
                 <ScrollView
                     horizontal={true}
                     decelerationRate={0}
@@ -97,52 +60,55 @@ export default function RoutineDetails() {
                                 <Card.Title style={{ fontSize: 20, fontFamily: 'Montserrat' }}>{exercise.title}</Card.Title>
                                 <Card.Divider />
                                 <Card.Image source={{ uri: exercise.thumbnail_url }} style={{ borderRadius: 15 }} containerStyle={{ borderRadius: 15, shadowOffset: { height: 0.5, width: 0.5 }, shadowRadius: 3, shadowOpacity: 0.7 }} />
-                                <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingTop: 12}}>
+                                <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingTop: 10}}>
                                     <View style={{}}>
-                                        <ThemedText style={{ fontSize: 20 }}><ThemedText style={{ fontWeight: "bold" , fontSize: 20}}>Reps : </ThemedText>{exercise.reps}</ThemedText>
-                                        <ThemedText style={{ fontSize: 20 }}><ThemedText style={{ fontWeight: "bold" , fontSize: 20}}>Hold : </ThemedText>{exercise.hold} sec</ThemedText>
+                                        <ThemedText style={{ fontSize: 20 }}><ThemedText style={{ fontWeight: "bold", fontSize: 20 }}>Reps : </ThemedText>{exercise.reps}</ThemedText>
+                                        <ThemedText style={{ fontSize: 20 }}><ThemedText style={{ fontWeight: "bold", fontSize: 20 }}>Hold : </ThemedText>{exercise.hold} sec</ThemedText>
                                     </View>
                                     <View style={{}}>
-                                        <ThemedText style={{ fontSize: 20 }}><ThemedText style={{ fontWeight: "bold" , fontSize: 20}}>Sets: </ThemedText>{exercise.sets}</ThemedText>
-                                        <ThemedText style={{ fontSize: 20 }}><ThemedText style={{ fontWeight: "bold" , fontSize: 20}}>Frequency : </ThemedText>{exercise.frequency} / week</ThemedText>
+                                        <ThemedText style={{ fontSize: 20 }}><ThemedText style={{ fontWeight: "bold", fontSize: 20 }}>Sets: </ThemedText>{exercise.sets}</ThemedText>
+                                        <ThemedText style={{ fontSize: 20 }}><ThemedText style={{ fontWeight: "bold", fontSize: 20 }}>Frequency : </ThemedText>{exercise.frequency} / week</ThemedText>
                                     </View>
                                 </View>
-                                <ThemedText style={{ fontWeight: "bold", fontSize: 20 }}>Description : </ThemedText>
+                                <Text style={{ fontWeight: "bold", fontSize: 20 }}>Description : </Text>
                                 <ScrollView style={{ maxHeight: height * 0.2 }}>
                                     <ThemedText style={{ fontSize: 18 }} >
                                         {exercise.description}
                                     </ThemedText>
                                 </ScrollView>
-                                <View style={{ alignItems: "center", marginTop: 5 }}>
+                                <View style={{ flexDirection: "row", justifyContent: 'space-between', marginTop: 10}}>
+                                <View style={{ alignItems: "center", marginTop: 5, width: '50%' }}>
                                     <LinearGradient
                                         colors={[AppColors.Purple, AppColors.Blue]}
                                         style={styles.button}
                                     >
                                         <TouchableOpacity
                                             style={styles.buttonInner}
-                                            onPress={() => { console.log("VideoPlay") }}
+                                            onPress={() => { router.push(`/home/video?exerciseId=${exercise_id}`) }}
                                         >
                                             <ThemedText style={styles.buttonText}>Watch Video</ThemedText>
                                         </TouchableOpacity>
                                     </LinearGradient>
+                                </View>
+                                <View style={{ alignItems: "center", marginTop: 5, width: '50%'}}>
+                                    <LinearGradient
+                                        colors={[AppColors.Purple, AppColors.Blue]}
+                                        style={styles.button}
+                                    >
+                                        <TouchableOpacity
+                                            style={styles.buttonInner}
+                                            onPress={() => { router.push(`/home/recording?exerciseId=${exercise_id}`) }}
+                                        >
+                                            <ThemedText style={styles.buttonText}>Start</ThemedText>
+                                        </TouchableOpacity>
+                                    </LinearGradient>
+                                </View>
                                 </View>
 
                             </Card>
                         </View>
                     ))}
                 </ScrollView>  
-
-                    <LinearGradient
-                        colors={[AppColors.Purple, AppColors.Blue]}
-                        style={[styles.button, { margin: 10, justifyContent: 'flex-end', alignItems: 'center' }]}
-                    >
-                        <TouchableOpacity
-                            style={styles.buttonInner}
-                            onPress={handleAddRoutine}
-                        >
-                            <ThemedText style={styles.buttonText}>Add</ThemedText>
-                        </TouchableOpacity>
-                    </LinearGradient>
             </View>
             
         </LinearGradient>
@@ -161,7 +127,7 @@ const styles = StyleSheet.create({
     },
     button: {
         borderRadius: 25,
-        width: '50%',
+        width: '90%',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,

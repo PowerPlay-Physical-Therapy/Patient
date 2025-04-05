@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, TextInput, SafeAreaView } from 'react-native';
+import { Image, StyleSheet, Platform, TextInput, SafeAreaView, TouchableOpacity } from 'react-native';
 import { useState } from 'react';
 // import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -14,6 +14,7 @@ import { useEffect } from 'react';
 import { Link, useRouter } from "expo-router";
 import * as React from 'react';
 import { Text, View, FlatList } from 'react-native';
+import Tabs from './tabs';
 
 
 export default function HomeScreen() {
@@ -96,7 +97,7 @@ export default function HomeScreen() {
             <FlatList
                 data={routines}
                 keyExtractor={(item) => item._id["$oid"]}
-                style={{ padding: 20, marginBottom: 80 }}
+                style={{ padding: 20, }}
                 renderItem={({ item: routine }) => (
                     
                     <View style={styles.routine}>
@@ -110,10 +111,17 @@ export default function HomeScreen() {
 
                                     <Image source={{ uri: exercise.thumbnail_url }} style={styles.exerciseThumbnail} />
                                     <View style={styles.exerciseInfo}>
-                                        <Text style={styles.exerciseName}>{exercise.title}</Text>
-                                        <Text>Reps: {exercise.reps}</Text>
-                                        <Text>Sets: {exercise.sets}</Text>
+                                        <ThemedText style={styles.exerciseName}>{exercise.title}</ThemedText>
+                                        <ThemedText>Reps: {exercise.reps}</ThemedText>
+                                        <ThemedText>Sets: {exercise.sets}</ThemedText>
                                     </View>
+                                    
+                                    <TouchableOpacity onPress={() => {
+                                                    // console.log("clicked");
+
+                                                    router.push(`./home/exerciseDetails?exerciseId=${exercise._id}`);
+
+                                                }}><Image source={require('@/assets/images/chevron-right.png')} style={{width: 20, height: 20}}/></TouchableOpacity>
                                 </View>
                             )}
                         />
@@ -121,6 +129,7 @@ export default function HomeScreen() {
                     
                 )}
             />
+            
         </LinearGradient>
     );
 }
@@ -184,6 +193,7 @@ const styles = StyleSheet.create({
     },
 
     exerciseInfo: {
+        width: '75%',
         marginLeft: 10,
     },
 
