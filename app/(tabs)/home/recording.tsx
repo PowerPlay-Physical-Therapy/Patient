@@ -33,24 +33,6 @@ interface Exercise {
   video_url: string;
 }
 
-function ExerciseSummary(exercise: Exercise) {
-  // This component can be used to display a summary of the exercise
-  // For now, it just returns the name of the exercise
-  return (
-    <View>
-      <ThemedText>{exercise.title}</ThemedText>
-      <ThemedText>Reps: {exercise.reps}</ThemedText>
-      <ThemedText>Sets:{exercise.sets}</ThemedText>
-      <ThemedText>Hold: {exercise.hold} seconds</ThemedText>
-      <Link href={`/(tabs)/home/video?exerciseId=${exercise._id}`}>
-        <ThemedText>
-          Watch video tutorial here!{" "}
-          <Image source={require("@/assets/images/chevron-right.png")} />
-        </ThemedText>
-      </Link>
-    </View>
-  );
-}
 
 export default function Recording() {
   const local = useLocalSearchParams();
@@ -59,7 +41,7 @@ export default function Recording() {
   const [summary, setSummary] = useState(false);
   const router = useRouter();
   const [recording, setRecording] = useState(false); // State to track if recording is in progress
-  const [uri, setUri] = useState<string | null>(null); // State to store the recorded video URI
+  const [uri, setUri] = useState<String>(""); // State to store the recorded video URI
   const [facing, setFacing] = useState<CameraType>("front");
   const [permission, requestPermission] = useCameraPermissions();
   const [exercise, setExercise] = useState<Exercise>({
@@ -102,14 +84,13 @@ export default function Recording() {
     if (recording) {
       setRecording(false);
       const video = ref.current?.stopRecording();
-      console.log("recorded video", video);
-      setUri(video.uri);
       return;
     }
     setRecording(true);
     try {
       const video = await ref.current?.recordAsync();
-      console.log({ video });
+      setUri({video});
+      console.log("video uri", uri);
     } catch (error) {
       console.error("Error recording video:", error);
     }
@@ -131,8 +112,9 @@ export default function Recording() {
     );
   }
 
-  function toggleCameraFacing() {
-    setFacing((current) => (current === "back" ? "front" : "back"));
+  const startOver = () => {
+    setUri("");
+    setRecording(false);
   }
 
   return (
@@ -237,7 +219,7 @@ export default function Recording() {
 
           {uri &&
           <View style={{ flexDirection: "row", justifyContent: "space-around", width: screenWidth }}>
-            <TouchableOpacity style={{backgroundColor: "white", width: screenWidth * 0.4, padding: 12, borderRadius: 8, alignItems: 'center'}}>
+            <TouchableOpacity onPress={()=> startOver()} style={{backgroundColor: "white", width: screenWidth * 0.4, padding: 12, borderRadius: 8, alignItems: 'center'}}>
               <ThemedText style={{fontWeight: 'bold'}}>Start Over</ThemedText>
             </TouchableOpacity>
             <LinearGradient
