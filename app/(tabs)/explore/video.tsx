@@ -66,7 +66,7 @@ export default function Video() {
     };
     fetchData();
     videoSource =
-      "https://youtu.be/F7hw1w8gcq4?si=XJp4_k_-qkq7sy9p";
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
   }, []);
   
   const player = useVideoPlayer(videoSource, (player) => {
@@ -90,7 +90,7 @@ export default function Video() {
         <View style={{width: '56%', flexDirection: 'row', justifyContent: 'space-between', alignItems: "center"}}>
         <Link
           dismissTo
-          href={`/(tabs)/home/exerciseDetails?exerciseId=${exercise_id}`}
+          href={`/explore/routineDetails?exerciseId=${exercise_id}`}
         >
           <Image source={require("@/assets/images/chevron-back.png")} />
         </Link>

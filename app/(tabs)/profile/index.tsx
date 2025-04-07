@@ -97,7 +97,7 @@ export default function Profile() {
     return (
         <LinearGradient style={{ flex: 1, paddingTop: Platform.OS == 'ios' ? 50 : 0 }} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
             <ScreenHeader title="Your Profile & Settings" />
-            <ScrollView style={{ flex: 1}}>
+            <ScrollView style={{ flex: 1, marginBottom: 40 }}>
                 <LinearGradient start={{ x: 0, y: 0.25 }} end={{ x: 0.5, y: 1 }} style={styles.buttonContainer} colors={[AppColors.LightBlue, AppColors.OffWhite]}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', width: '100%', marginBottom: 20 }}>
                         <ThemedView style={styles.headerImage}>

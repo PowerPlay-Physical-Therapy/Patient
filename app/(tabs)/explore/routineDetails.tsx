@@ -6,9 +6,10 @@ import { Card } from "@rneui/base";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, Stack, useGlobalSearchParams, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react"
-import { ScrollView, View, Text, Platform, Dimensions, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { ScrollView, View, Text, Platform, Dimensions, TouchableOpacity, StyleSheet, Image, Touchable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Notification from "@/components/Notification";
+import {Link} from "expo-router";
 // import Toast from "react-native-toast-message";
 
 const { height, width } = Dimensions.get("window")
@@ -16,10 +17,23 @@ const { height, width } = Dimensions.get("window")
 export default function RoutineDetails() {
 
     const { user } = useUser();
+    let exercise_id = "";
 
     const local = useLocalSearchParams();
-    const parsedId = JSON.parse(local.exerciseId);
-    const exercise_id = parsedId.$oid;
+    const parse = () => {
+        try {
+            return JSON.parse(local.exerciseId);
+        } catch (error) {
+            return null;
+        }
+    };
+    const parsedId = parse();
+
+    if (parsedId) {
+        exercise_id = parsedId.$oid;}
+    else {
+        exercise_id = local.exerciseId;
+    }
     
     const [routine,setRoutine] = useState([]);
     
@@ -118,12 +132,9 @@ export default function RoutineDetails() {
                                         colors={[AppColors.Purple, AppColors.Blue]}
                                         style={styles.button}
                                     >
-                                        <TouchableOpacity
-                                            style={styles.buttonInner}
-                                            onPress={() => { console.log("VideoPlay") }}
-                                        >
+                                        <Link style={styles.buttonInner} href={`/explore/video?exerciseId=${exercise_id}`}>
                                             <ThemedText style={styles.buttonText}>Watch Video</ThemedText>
-                                        </TouchableOpacity>
+                                        </Link>
                                     </LinearGradient>
                                 </View>
 
@@ -158,6 +169,7 @@ const styles = StyleSheet.create({
     buttonText: {
         fontWeight: 'bold',
         color: 'white',
+        textAlign: 'center',
     },
     button: {
         borderRadius: 25,

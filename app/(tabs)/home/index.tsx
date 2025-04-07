@@ -97,7 +97,7 @@ export default function HomeScreen() {
             <FlatList
                 data={routines}
                 keyExtractor={(item) => item._id["$oid"]}
-                style={{ padding: 20, }}
+                style={{ padding: 20, marginBottom: 80}}
                 renderItem={({ item: routine }) => (
                     
                     <View style={styles.routine}>
@@ -115,13 +115,9 @@ export default function HomeScreen() {
                                         <ThemedText>Reps: {exercise.reps}</ThemedText>
                                         <ThemedText>Sets: {exercise.sets}</ThemedText>
                                     </View>
-                                    
-                                    <TouchableOpacity onPress={() => {
-                                                    // console.log("clicked");
-
-                                                    router.push(`./home/exerciseDetails?exerciseId=${exercise._id}`);
-
-                                                }}><Image source={require('@/assets/images/chevron-right.png')} style={{width: 20, height: 20}}/></TouchableOpacity>
+                                    <Link href={`/home/exerciseDetails?exerciseId=${exercise._id}`}>
+                                    <Image source={require('@/assets/images/chevron-right.png')} style={{width: 20, height: 20}}/>
+                                    </Link>
                                 </View>
                             )}
                         />
