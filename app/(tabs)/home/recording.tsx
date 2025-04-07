@@ -9,10 +9,15 @@ import {
   View,
   Image,
   Touchable,
+  Dimensions
 } from "react-native";
 import { Redirect, useRouter, useLocalSearchParams, Link } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
 import { AppColors } from "@/constants/Colors";
+import { LinearGradient } from "expo-linear-gradient";
+
+
+const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
 
 interface Exercise {
   _id: string;
@@ -96,12 +101,18 @@ export default function Recording() {
   const recordVideo = async () => {
     if (recording) {
       setRecording(false);
-      ref.current?.stopRecording();
+      const video = ref.current?.stopRecording();
+      console.log("recorded video", video);
+      setUri(video.uri);
       return;
     }
     setRecording(true);
-    const video = await ref.current?.recordAsync();
-    console.log({ video });
+    try {
+      const video = await ref.current?.recordAsync();
+      console.log({ video });
+    } catch (error) {
+      console.error("Error recording video:", error);
+    }
   };
   if (!permission) {
     // Camera permissions are still loading.
@@ -145,22 +156,41 @@ export default function Recording() {
           </TouchableOpacity>
           {summary && (
             <View style={styles.exerciseSummary}>
-              <View >
+              <View>
                 <ThemedText style={styles.text}>{exercise.title}</ThemedText>
-                <ThemedText style={styles.text}>Reps: {exercise.reps}</ThemedText>
-                <ThemedText style={styles.text}>Sets: {exercise.sets}</ThemedText>
-                <ThemedText style={styles.text}>Hold: {exercise.hold} seconds</ThemedText>
+                <ThemedText style={styles.text}>
+                  Reps: {exercise.reps}
+                </ThemedText>
+                <ThemedText style={styles.text}>
+                  Sets: {exercise.sets}
+                </ThemedText>
+                <ThemedText style={styles.text}>
+                  Hold: {exercise.hold} seconds
+                </ThemedText>
                 <Link href={`/(tabs)/home/video?exerciseId=${exercise._id}`}>
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', width: '100%'}}>
-                  <ThemedText style={{fontSize: 16, color: 'white', textAlign: 'right'}}>
-                    Watch video tutorial here!{" "}
-                  </ThemedText>
-                  <Image style={{tintColor: 'white'}}
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "flex-end",
+                      width: "100%",
+                    }}
+                  >
+                    <ThemedText
+                      style={{
+                        fontSize: 16,
+                        color: "white",
+                        textAlign: "right",
+                      }}
+                    >
+                      Watch video tutorial here!{" "}
+                    </ThemedText>
+                    <Image
+                      style={{ tintColor: "white" }}
                       source={require("@/assets/images/chevron-right.png")}
                     />
-                </View>
+                  </View>
                 </Link>
-                
               </View>
               <TouchableOpacity
                 onPress={() => setSummary(false)}
@@ -170,12 +200,14 @@ export default function Recording() {
               </TouchableOpacity>
             </View>
           )}
+          <View style={{flexDirection: "column", alignItems: "center", justifyContent: "center", width: "100%"}}>
           <View
             style={{
               flexDirection: "row",
               justifyContent: "space-around",
               alignItems: "center",
               width: "100%",
+              marginBottom: 28,
             }}
           >
             <Link
@@ -201,6 +233,22 @@ export default function Recording() {
                 style={styles.messages}
               />
             </TouchableOpacity>
+          </View>
+
+          {uri &&
+          <View style={{ flexDirection: "row", justifyContent: "space-around", width: screenWidth }}>
+            <TouchableOpacity style={{backgroundColor: "white", width: screenWidth * 0.4, padding: 12, borderRadius: 8, alignItems: 'center'}}>
+              <ThemedText style={{fontWeight: 'bold'}}>Start Over</ThemedText>
+            </TouchableOpacity>
+            <LinearGradient
+              colors={[AppColors.Purple, AppColors.Blue]}
+              style={styles.button}
+            >
+              <TouchableOpacity style={styles.buttonInner}>
+                <ThemedText style={styles.buttonText}>Next</ThemedText>
+              </TouchableOpacity>
+            </LinearGradient>
+          </View>}
           </View>
         </View>
       </CameraView>
@@ -234,37 +282,54 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   text: {
     fontSize: 24,
     fontWeight: "bold",
     color: "white",
     lineHeight: 24,
-    padding: 4
+    padding: 4,
   },
   back: {
     flex: 1,
     maxWidth: 25,
     maxHeight: 45,
-    
   },
   messages: {
     // This is for the chat bubbles icon
     width: 40,
     height: 40,
     tintColor: "white",
-    
+
     // You can add more styles if needed
   },
   exerciseSummary: {
-    backgroundColor: '#3764BECC',
+    backgroundColor: "#3764BECC",
     borderRadius: 20,
     padding: 20,
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
     bottom: 300,
-    paddingTop: 200
-  }
+    paddingTop: 200,
+  },
+  buttonInner: {
+    padding: 12,
+    alignItems: 'center',
+    borderRadius: 4,
+},
+buttonText: {
+    fontWeight: 'bold',
+    color: 'white',
+},
+button: {
+    borderRadius: 8,
+    width: screenWidth * 0.4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+},
 });
