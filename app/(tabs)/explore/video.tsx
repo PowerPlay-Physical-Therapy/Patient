@@ -7,8 +7,9 @@ import { AppColors } from "@/constants/Colors";
 import { LinearGradient } from "expo-linear-gradient";
 import { TouchableOpacity, Image, Dimensions } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
+import { WebView } from 'react-native-webview';
 
-let videoSource = "";
+
 const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
 
 interface Exercise {
@@ -65,14 +66,8 @@ export default function Video() {
       }
     };
     fetchData();
-    videoSource =
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+    
   }, []);
-  
-  const player = useVideoPlayer(videoSource, (player) => {
-    player.loop = true;
-    player.play();
-  });
   
   // video source url is not supported, consider another solution
   return (
@@ -122,13 +117,8 @@ export default function Video() {
             
         </View>*/}
       </View>)}
-      <VideoView
-        nativeControls={true}
-        ref={ref}
-        style={styles.video}
-        player={player}
-        allowsFullscreen={false}
-        allowsPictureInPicture={false}
+      <WebView
+      source={{uri: exercise.video_url}} style={styles.video}
       />
     </View>
   );
@@ -142,10 +132,11 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
   },
   video: {
-    position: "absolute",
-    top: screenHeight / 3,
-    width: "100%",
-    height: "30%",
+    position: 'relative',
+    backgroundColor: "black",
+    width: screenWidth,
+    height: screenHeight / 3,
+    zIndex: 1,
   },
   controlsContainer: {
     padding: 10,

@@ -2,13 +2,11 @@ import { useState, useRef, useEffect } from "react";
 import { View, StyleSheet, Button, Touchable } from "react-native";
 import { VideoView, useVideoPlayer } from "expo-video";
 import { useLocalSearchParams, Link } from "expo-router";
-import { useEvent } from "expo";
-import { AppColors } from "@/constants/Colors";
-import { LinearGradient } from "expo-linear-gradient";
+import {WebView} from 'react-native-webview';
 import { TouchableOpacity, Image, Dimensions } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 
-let videoSource = "";
+
 const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
 
 interface Exercise {
@@ -26,9 +24,7 @@ interface Exercise {
 }
 
 export default function Video() {
-  const video = useRef(null);
   const exercise_id = useLocalSearchParams().exerciseId;
-  const [status, setStatus] = useState({});
   const [exercise, setExercise] = useState<Exercise>({
     _id: "",
     category: "",
@@ -42,7 +38,6 @@ export default function Video() {
     title: "",
     video_url: "",
   });
-  const ref = useRef<VideoView>(null);
   const [summary, setSummary] = useState<boolean>(false);
   // Fallback URL if exercise.video_url is not available
 
@@ -65,14 +60,8 @@ export default function Video() {
       }
     };
     fetchData();
-    videoSource =
-      "https://youtu.be/F7hw1w8gcq4?si=XJp4_k_-qkq7sy9p";
   }, []);
-  
-  const player = useVideoPlayer(videoSource, (player) => {
-    player.loop = true;
-    player.play();
-  });
+
   
   // video source url is not supported, consider another solution
   return (
@@ -122,17 +111,14 @@ export default function Video() {
             
         </View>*/}
       </View>)}
-      <VideoView
-        nativeControls={true}
-        ref={ref}
-        style={styles.video}
-        player={player}
-        allowsFullscreen={false}
-        allowsPictureInPicture={false}
+      <WebView
+      source={{uri: exercise.video_url}} style={styles.video}
       />
     </View>
   );
 }
+
+
 
 const styles = StyleSheet.create({
   contentContainer: {
@@ -142,10 +128,12 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
   },
   video: {
-    position: "absolute",
-    top: screenHeight / 3,
-    width: "100%",
-    height: "30%",
+    position: 'relative',
+    backgroundColor: "black",
+    width: screenWidth,
+    height: screenHeight / 3,
+    zIndex: 1,
+
   },
   controlsContainer: {
     padding: 10,
