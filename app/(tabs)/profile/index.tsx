@@ -168,7 +168,9 @@ export default function Profile() {
                 </ThemedView>
                 <ThemedView style={styles.container}>
                     <ThemedText style={{ fontSize: 16 }}>Manage Therapists</ThemedText>
-                    <Image source={require('@/assets/images/chevron-right.png')}></Image>
+                    <TouchableOpacity onPress={() => router.push("/(tabs)/profile/manage_therapists")}>
+                        <Image source={require('@/assets/images/chevron-right.png')}></Image>
+                    </TouchableOpacity>
                 </ThemedView>
                 <ThemedView style={{ ...styles.container, flexDirection: 'column' }}>
                     <ThemedView style={{ flexDirection: 'row', backgroundColor: AppColors.OffWhite, alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingBottom: 12 }}>
