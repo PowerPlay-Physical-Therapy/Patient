@@ -14,6 +14,8 @@ import { useEffect } from 'react';
 import { Link, useRouter } from "expo-router";
 import * as React from 'react';
 import { Text, View, FlatList } from 'react-native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { format, differenceInCalendarDays } from "date-fns";
 
 
 export default function HomeScreen() {
@@ -27,9 +29,7 @@ export default function HomeScreen() {
 
     const [isTabVisible, setIsTabVisible] = useState(true);
     const [activeTab, setActiveTab] = useState(0);
-
-
-
+    
     useEffect(() => {
         const fetchAssignedRoutines = async () => {
             if (!isSignedIn) {
@@ -90,7 +90,7 @@ export default function HomeScreen() {
 
     return (
         <LinearGradient style={{ flex: 1, paddingTop: Platform.OS == 'ios' ? 50 : 0 }} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
-            <ScreenHeader title="Welcome!" name={user?.username} logo={true} />
+            <ScreenHeader title="Welcome!" name={user?.username} logo={true} streak={true}/>
 
             {/* Display each assigned routine */}
             <FlatList

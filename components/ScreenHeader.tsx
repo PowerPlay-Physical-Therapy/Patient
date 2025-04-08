@@ -2,19 +2,24 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, TextInput } from 'react-native';
 import {AppColors} from '@/constants/Colors';
 import {ThemedText} from '@/components/ThemedText';
+import Streak from '@/components/streak';
 
 type ButtonProps = {
   title?: string,
   name?: string|null,
   logo?: boolean,
+  streak?:boolean
 }
 
-const ScreenHeader = ({ title, name , logo= false, } : ButtonProps) => {
+const ScreenHeader = ({ title, name , logo= false, streak=false } : ButtonProps) => {
   return (
     <View style={styles.header}>
       {logo? (
       <View style={styles.logoHeader}>
-      <ThemedText style={styles.headerText}>{title} {name}</ThemedText>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+      <ThemedText style={styles.headerText}>{title} {name} </ThemedText>
+      {streak &&<Streak/>}
+      </View>
       <Image source={require('@/assets/images/app-logo.png')} 
             resizeMode="contain"
             style= {styles.image}></Image></View>) : (
@@ -60,6 +65,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginLeft: 30,
+    marginRight: 20,
   },
   image: {
     width: 50,

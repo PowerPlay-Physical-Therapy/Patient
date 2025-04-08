@@ -160,8 +160,9 @@ export default function Share() {
             borderRadius: 4,
           }}
         >
-
-          <Image source={{ uri: thumbnail }} style={{borderRadius: 4, width: "100%", height: "100%" }} />
+          <View style={{position: "absolute", width: "100%", height: "100%", justifyContent: "center", alignItems: "center", zIndex: 1 }}>
+          <ThemedText style={{fontSize: 10, color: 'white', }}>Video Preview</ThemedText>
+          </View><Image source={{ uri: thumbnail }} style={{borderRadius: 4, width: "100%", height: "100%", zIndex: -1 }} />
         </View>
       </View>
       <ScrollView style={{ maxHeight: screenHeight * 0.54 }}>
