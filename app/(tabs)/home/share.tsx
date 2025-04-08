@@ -18,6 +18,32 @@ import { useUser } from "@clerk/clerk-expo";
 import { useEvent } from "expo";
 import * as FileSystem from "expo-file-system";
 import { router, useRouter } from "expo-router";
+import aws from 'aws-sdk'
+
+const region = "us-east-2"
+const bucketName = "powerplaypatientvids"
+const accessKeyId = process.env.EXPO_PUBLIC_AWS_KEY
+const secretAccessKey = process.env.EXPO_PUBLIC_AWS_SECRET_KEY
+
+const s3 = new aws.S3({
+  region,
+  accessKeyId,
+  secretAccessKey,
+  signatureVersion: 'v4'
+})
+
+async function generateUploadURL() {
+  const imageName = `${Date.now()}.mov`;
+
+  const params = ({
+    Bucket: bucketName,
+    Key: imageName,
+    Expires: 60
+  })
+  
+  const uploadURL = await s3.getSignedUrlPromise('putObject', params)
+  return {uploadURL}
+}
 
 const { height: screenHeight, width: screenWidth } = Dimensions.get("window");
 
@@ -84,7 +110,7 @@ export default function Share() {
   };
 
   const handleUpload = async () => {
-    console.log("pressed");
+
     const fileInfo = await FileSystem.getInfoAsync(uri);
 
     if (!fileInfo.exists) {
@@ -94,13 +120,21 @@ export default function Share() {
     const video = await FileSystem.readAsStringAsync(uri, {
       encoding: FileSystem.EncodingType.Base64,
     });
+    console.log("pressed")
+    const binaryData = Uint8Array.from(atob(video), (char) =>
+      char.charCodeAt(0)
+    );
     
-    const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/upload_video`, {
-      method: "POST",
+    const url = await generateUploadURL();
+    console.log("uploadUrl", url.uploadURL)
+    
+    
+    const response = await fetch(url.uploadURL, {
+      method: "PUT",
       headers: {
         "Content-Type": "video/quicktime",
       },
-      body: Buffer.from(video, "base64"),
+      body: binaryData,
     });
 
     if (!response.ok) {
@@ -108,6 +142,7 @@ export default function Share() {
     }
 
     console.log("✅ Video uploaded!");
+    router.push('/home')
   };
 
   return (
