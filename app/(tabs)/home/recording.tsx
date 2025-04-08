@@ -89,8 +89,8 @@ export default function Recording() {
     setRecording(true);
     try {
       const video = await ref.current?.recordAsync();
-      setUri({video});
-      console.log("video uri", uri);
+      setUri(video.uri);
+      
     } catch (error) {
       console.error("Error recording video:", error);
     }
@@ -99,7 +99,7 @@ export default function Recording() {
     // Camera permissions are still loading.
     return <View />;
   }
-
+  
   if (!permission.granted) {
     // Camera permissions are not granted yet.
     return (
@@ -116,6 +116,8 @@ export default function Recording() {
     setUri("");
     setRecording(false);
   }
+
+  console.log("uri", uri);
 
   return (
     <View style={styles.container}>
@@ -202,13 +204,14 @@ export default function Recording() {
                 style={styles.back}
               />
             </Link>
+            {!uri &&
             <Pressable onPress={recordVideo}>
               {recording ? (
                 <Image source={require("@/assets/images/stop-record.png")} />
               ) : (
                 <Image source={require("@/assets/images/record.png")} />
               )}
-            </Pressable>
+            </Pressable>}
             <TouchableOpacity onPress={() => router.push("/(tabs)/message")}>
               <Image
                 source={require("@/assets/images/chat-bubbles.png")}
@@ -226,9 +229,9 @@ export default function Recording() {
               colors={[AppColors.Purple, AppColors.Blue]}
               style={styles.button}
             >
-              <TouchableOpacity style={styles.buttonInner}>
+              <Link href={`/home/share?videoUri=${uri}&exerciseId=${exercise_id}`} style={styles.buttonInner}>
                 <ThemedText style={styles.buttonText}>Next</ThemedText>
-              </TouchableOpacity>
+              </Link>
             </LinearGradient>
           </View>}
           </View>
@@ -300,10 +303,12 @@ const styles = StyleSheet.create({
     padding: 12,
     alignItems: 'center',
     borderRadius: 4,
+    justifyContent: 'center',
 },
 buttonText: {
     fontWeight: 'bold',
     color: 'white',
+    textAlign: 'center',
 },
 button: {
     borderRadius: 8,
