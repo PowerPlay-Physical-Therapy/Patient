@@ -10,12 +10,17 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
 import { useUser } from '@clerk/clerk-expo';
+import Constants from 'expo-constants';
+
 
 type Therapist = {
   id: string;
   name: string;
   imageUrl?: any;
 };
+
+const BACKEND_URL = Constants.expoConfig?.extra?.EXPO_PUBLIC_BACKEND_URL ?? "http://127.0.0.1:8000";
+
 
 export default function ManageTherapists() {
   const router = useRouter();
@@ -30,7 +35,8 @@ export default function ManageTherapists() {
 
   const fetchTherapists = async () => {
     try {
-      const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/get_connections/${user?.id}/patient`);
+      console.log(BACKEND_URL)
+      const response = await fetch(`${BACKEND_URL}/get_connections/${user?.id}/patient`)
       const data = await response.json();
       if (data.connections) {
         const formattedTherapists = data.connections.map((therapist: any) => ({
@@ -54,7 +60,7 @@ export default function ManageTherapists() {
 
   const handleRemove = async (id: string) => {
     try {
-      const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/disconnect_patient_therapist/${user?.id}/${id}`, {
+      const response = await fetch(`${BACKEND_URL}/disconnect_patient_therapist/${user?.id}/${id}`, {
         method: 'DELETE',
       });
       const result = await response.json();
@@ -76,12 +82,14 @@ export default function ManageTherapists() {
 
   const connectTherapist = async () => {
     try {
-      const res = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/therapist/get_therapist_by_email?email=${encodeURIComponent(email)}`);
+      //print email to console
+      console.log(email);
+      const res = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/therapist/get_therapist_by_email/?email=${email}`);
       if (!res.ok) {
         throw new Error('Therapist not found');
       }
       const therapist = await res.json();
-
+      console.log("User Id:", user?.id)
       const therapistId = therapist._id;
       const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/connect_patient_therapist/${user?.id}/${therapistId}`, {
         method: 'POST',
