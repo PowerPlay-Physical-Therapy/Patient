@@ -96,6 +96,7 @@ export default function Profile() {
                     firstname: user?.firstName,
                     lastname: user?.lastName,
                     email: user?.emailAddresses[0].emailAddress,
+                    image: image
                 }),
             });
             const data = await response.json();
@@ -118,7 +119,7 @@ export default function Profile() {
         }
 
         await user?.update({ username: username });
-    }, [username, isEditing, user]);
+    }, [username, isEditing, image, user]);
 
     return (
         <LinearGradient style={{ flex: 1, paddingTop: Platform.OS == 'ios' ? 50 : 0 }} colors={[AppColors.OffWhite, AppColors.LightBlue]}>

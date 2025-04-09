@@ -1,11 +1,9 @@
-import { StyleSheet, View, Image, TextInput, TouchableOpacity, Platform, ImageSourcePropType, Alert } from 'react-native';
+import { StyleSheet, View, Image, TextInput, TouchableOpacity, Platform, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { AppColors } from '@/constants/Colors';
 import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
 import ScreenHeader from '@/components/ScreenHeader';
 import { ScrollView } from 'react-native';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
@@ -13,51 +11,36 @@ import { useUser } from '@clerk/clerk-expo';
 import Constants from 'expo-constants';
 import { Stack } from 'expo-router';
 
-
-type Therapist = {
-  id: string;
-  name: string;
-  imageUrl?: any;
-};
-
 const BACKEND_URL = Constants.expoConfig?.extra?.EXPO_PUBLIC_BACKEND_URL ?? "http://127.0.0.1:8000";
-
 
 export default function ManageTherapists() {
   const router = useRouter();
   const { user } = useUser();
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [therapists, setTherapists] = useState<any[]>([]);
   const [email, setEmail] = useState('');
-  const [therapists, setTherapists] = useState<Therapist[]>([]);
+  const [isModalVisible, setModalVisible] = useState(false);
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
+  const toggleModal = () => setModalVisible(!isModalVisible);
 
   const fetchTherapists = async () => {
     try {
-      console.log(BACKEND_URL)
-      const response = await fetch(`${BACKEND_URL}/get_connections/${user?.id}/patient`)
+      const response = await fetch(`${BACKEND_URL}/get_connections/${user?.id}/patient`);
       const data = await response.json();
       if (data.connections) {
-        const formattedTherapists = data.connections.map((therapist: any) => ({
+        const sorted = data.connections.sort((a: any, b: any) => a.status.localeCompare(b.status));
+        const formatted = sorted.map((therapist: any) => ({
           id: therapist._id,
           name: therapist.firstname + ' ' + (therapist.lastname || ''),
-          imageUrl: therapist.imageUrl ? { uri: therapist.imageUrl } : require('@/assets/images/profile.png')
+          imageUrl: therapist.imageUrl ? { uri: therapist.imageUrl } : require('@/assets/images/profile.png'),
+          status: therapist.status || 'accepted',
         }));
-        setTherapists(formattedTherapists);
+        setTherapists(formatted);
       }
     } catch (error) {
       console.error('Failed to fetch therapists:', error);
       Alert.alert('Error', 'Failed to fetch therapists');
     }
   };
-
-  useEffect(() => {
-    if (user?.id) {
-      fetchTherapists();
-    }
-  }, [user?.id]);
 
   const handleRemove = async (id: string) => {
     try {
@@ -67,7 +50,7 @@ export default function ManageTherapists() {
       const result = await response.json();
       if (response.ok) {
         Alert.alert('Success', 'Therapist removed successfully');
-        fetchTherapists(); // Refresh the list
+        fetchTherapists();
       } else {
         throw new Error(result.message || 'Failed to remove therapist');
       }
@@ -77,26 +60,18 @@ export default function ManageTherapists() {
     }
   };
 
-  const navigateToTab = (path: string) => {
-    router.push(path as any);
-  };
-
   const connectTherapist = async () => {
     try {
-      //print email to console
-      console.log(email);
-      const res = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/therapist/get_therapist_by_email/?email=${email}`);
-      if (!res.ok) {
-        throw new Error('Therapist not found');
-      }
+      const res = await fetch(`${BACKEND_URL}/therapist/get_therapist_by_email/?email=${email}`);
+      if (!res.ok) throw new Error('Therapist not found');
       const therapist = await res.json();
-      console.log("User Id:", user?.id)
-      const therapistId = therapist._id;
-      const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/connect_patient_therapist/${user?.id}/${therapistId}`, {
+      const response = await fetch(`${BACKEND_URL}/connect_patient_therapist/${user?.id}/${therapist._id}`, {
         method: 'POST',
+        headers: {
+          'X-User-Role': 'patient',
+        },
       });
       const result = await response.json();
-
       if (response.ok) {
         Alert.alert('Success', result.message);
         toggleModal();
@@ -110,45 +85,50 @@ export default function ManageTherapists() {
     }
   };
 
+  useEffect(() => {
+    if (user?.id) fetchTherapists();
+  }, [user?.id]);
+
   return (
     <>
-    <Stack.Screen options={{ headerShown: false }} />
-    {<LinearGradient
-      style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 50 : 0 }}
-      colors={[AppColors.OffWhite, AppColors.LightBlue]}
-    >
-<ScreenHeader
-  title="Manage Your Therapists"
-  leftButton={
-    <TouchableOpacity onPress={() => router.push('/profile')}>
-            <Image
-        source={require('@/assets/images/chevron-left.png')}
-        style={{ width: 24, height: 24 }}
-        resizeMode="contain"
-      />
-    </TouchableOpacity>
-  }
-  rightButton={
-    <TouchableOpacity onPress={toggleModal}>
-      <Image
-        source={require('@/assets/images/user-add-icon.png')}
-        style={{ width: 24, height: 24 }}
-        resizeMode="contain"
-      />
-    </TouchableOpacity>
-  }
-/>
+      <Stack.Screen options={{ headerShown: false }} />
+      <LinearGradient
+        style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 50 : 0 }}
+        colors={[AppColors.OffWhite, AppColors.LightBlue]}
+      >
+        <ScreenHeader
+          title="Manage Your Therapists"
+          leftButton={
+            <TouchableOpacity onPress={() => router.push('/profile')}>
+              <Image
+                source={require('@/assets/images/chevron-left.png')}
+                style={{ width: 24, height: 24 }}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+          }
+          rightButton={
+            <TouchableOpacity onPress={toggleModal}>
+              <Image
+                source={require('@/assets/images/user-add-icon.png')}
+                style={{ width: 24, height: 24 }}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+          }
+        />
 
-
-          {/* Therapist list rendering */}
+        <ScrollView style={{ flex: 1 }}>
           {therapists.map((therapist) => (
             <View key={therapist.id} style={styles.therapistItem}>
               <View style={styles.therapistInfo}>
-                <Image
-                  source={therapist.imageUrl}
-                  style={styles.therapistImage}
-                />
-                <ThemedText style={styles.therapistName}>{therapist.name}</ThemedText>
+                <Image source={therapist.imageUrl} style={styles.therapistImage} />
+                <View>
+                  <ThemedText style={styles.therapistName}>{therapist.name}</ThemedText>
+                  {therapist.status === 'pending' && (
+                    <ThemedText style={{ fontSize: 12, color: 'orange' }}>Pending Approval</ThemedText>
+                  )}
+                </View>
               </View>
               <LinearGradient
                 colors={["#E91313", "#EB9BD0"]}
@@ -162,13 +142,13 @@ export default function ManageTherapists() {
               </LinearGradient>
             </View>
           ))}
-        
-  
+        </ScrollView>
+
         <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
           <View style={styles.modalContainer}>
             <ThemedText style={styles.modalTitle}>Add By Email</ThemedText>
             <ThemedText style={styles.modalSubtitle}>Who is your therapist?</ThemedText>
-  
+
             <LinearGradient colors={['#E0F7FA', '#F1F8E9']} style={styles.modalInputGradient}>
               <TextInput
                 placeholder="Enter email:"
@@ -178,7 +158,7 @@ export default function ManageTherapists() {
                 style={styles.modalInput}
               />
             </LinearGradient>
-  
+
             <TouchableOpacity style={styles.modalButton} onPress={connectTherapist}>
               <LinearGradient
                 colors={['#B39DDB', '#81D4FA']}
@@ -191,66 +171,12 @@ export default function ManageTherapists() {
             </TouchableOpacity>
           </View>
         </Modal>
-    </LinearGradient>
-    }
+      </LinearGradient>
     </>
-  );  
+  );
 }
 
-
 const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-  },    
-  buttonContainer: {
-    alignItems: 'center',
-    margin: 20,
-    marginBottom: 10,
-    padding: 20,
-    backgroundColor: AppColors.LightBlue,
-    borderRadius: 20,
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    paddingTop: Platform.OS === 'ios' ? 50 : 20,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    marginBottom: 10,
-  },
-  backButton: {
-    padding: 8,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-  },
-  addButton: {
-    padding: 8,
-  },
-  addButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: 'black',
-  },
-  searchContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  searchInput: {
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    borderRadius: 10,
-    padding: 10,
-    fontSize: 16,
-  },
-  therapistList: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
   therapistItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -265,7 +191,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
     elevation: 2,
-  }, 
+  },
   therapistInfo: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -286,7 +212,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 1,
     paddingVertical: 1,
   },
-  
   removeButton: {
     borderRadius: 25,
     backgroundColor: 'transparent',
@@ -295,25 +220,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  
   removeButtonText: {
     color: 'white',
     fontSize: 14,
     fontWeight: '600',
-  },
-  
-  navBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: AppColors.OffWhite,
-    paddingVertical: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#eee',
-  },
-  navItem: {
-    alignItems: 'center',
-    padding: 10,
   },
   modalContainer: {
     backgroundColor: 'white',
@@ -355,9 +265,4 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 16,
   },
-  addButtonIcon: {
-    width: 28,
-    height: 28,
-  },
-  
 });
