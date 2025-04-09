@@ -44,7 +44,7 @@
         "expo-font",
         {
           "fonts": [
-            "/assets/fonts/Montserrat.ttf"
+            "./assets/fonts/Montserrat.ttf"
           ]
         }
       ],

@@ -12,6 +12,20 @@ import { Alert } from 'react-native';
 import { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import * as React from 'react';
+import * as Notifications from 'expo-notifications';
+
+async function schedulePushNotification() {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "PowerPlay misses you!",
+        body: 'Log into the app to stay on track with your fitness goals!',
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        seconds: 2,
+      },
+    });
+  }
 
 
 export default function Profile() {
@@ -25,6 +39,11 @@ export default function Profile() {
 
     const toggleNotifications = () => {
         setNotifications(!notifications);
+        if (notifications) {
+            schedulePushNotification();
+        } else {
+            Notifications.cancelAllScheduledNotificationsAsync();
+        }
     }
 
     const handleSignOut = async () => {
