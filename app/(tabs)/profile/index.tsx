@@ -12,6 +12,20 @@ import { Alert } from 'react-native';
 import { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import * as React from 'react';
+import * as Notifications from 'expo-notifications';
+
+async function schedulePushNotification() {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "PowerPlay misses you!",
+        body: 'Log into the app to stay on track with your fitness goals!',
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        seconds: 2,
+      },
+    });
+  }
 
 
 export default function Profile() {
@@ -25,6 +39,11 @@ export default function Profile() {
 
     const toggleNotifications = () => {
         setNotifications(!notifications);
+        if (notifications) {
+            schedulePushNotification();
+        } else {
+            Notifications.cancelAllScheduledNotificationsAsync();
+        }
     }
 
     const handleSignOut = async () => {
@@ -37,20 +56,46 @@ export default function Profile() {
     };
 
     const pickImage = async () => {
-        // No permissions request is necessary for launching the image library
         let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ['images'],
-            allowsEditing: true,
-            quality: 1,
+          mediaTypes: ['images'],
+          allowsEditing: true,
+          quality: 1,
         });
-
-        console.log(result);
-
+      
         if (!result.canceled) {
-            setImage(result.assets[0].uri);
-            await user?.setProfileImage({ file: result.assets[0].uri })
+          const uri = result.assets[0].uri;
+      
+          setImage(uri); // Update local display
+          await user?.setProfileImage({ file: uri }); // Upload to Clerk
+      
+          // After upload, refetch user data so we get the latest URL
+          await user?.reload();
+      
+          const imageUrl = user?.imageUrl; // Get latest Clerk-hosted image URL
+      
+          try {
+            const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/update_patient/${user?.username}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                id: user?.id,
+                username: user?.username,
+                firstname: user?.firstName,
+                lastname: user?.lastName,
+                email: user?.primaryEmailAddress?.emailAddress,
+                imageUrl: imageUrl
+              }),
+            });
+      
+            const data = await response.json();
+            console.log("Updated profile image in Mongo:", data);
+          } catch (error) {
+            console.error("Failed to update image in backend:", error);
+          }
         }
-    };
+      };
 
     const changeIcon = async () => {
         setIsEditing(!isEditing);
@@ -70,6 +115,7 @@ export default function Profile() {
                     firstname: user?.firstName,
                     lastname: user?.lastName,
                     email: user?.emailAddresses[0].emailAddress,
+                    image: image
                 }),
             });
             const data = await response.json();
@@ -92,12 +138,12 @@ export default function Profile() {
         }
 
         await user?.update({ username: username });
-    }, [username, isEditing, user]);
+    }, [username, isEditing, image, user]);
 
     return (
         <LinearGradient style={{ flex: 1, paddingTop: Platform.OS == 'ios' ? 50 : 0 }} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
             <ScreenHeader title="Your Profile & Settings" />
-            <ScrollView style={{ flex: 1}}>
+            <ScrollView style={{ flex: 1, marginBottom: 40 }}>
                 <LinearGradient start={{ x: 0, y: 0.25 }} end={{ x: 0.5, y: 1 }} style={styles.buttonContainer} colors={[AppColors.LightBlue, AppColors.OffWhite]}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', width: '100%', marginBottom: 20 }}>
                         <ThemedView style={styles.headerImage}>
@@ -168,7 +214,9 @@ export default function Profile() {
                 </ThemedView>
                 <ThemedView style={styles.container}>
                     <ThemedText style={{ fontSize: 16 }}>Manage Therapists</ThemedText>
-                    <Image source={require('@/assets/images/chevron-right.png')}></Image>
+                    <TouchableOpacity onPress={() => router.push("/(tabs)/profile/manage_therapists")}>
+                        <Image source={require('@/assets/images/chevron-right.png')}></Image>
+                    </TouchableOpacity>
                 </ThemedView>
                 <ThemedView style={{ ...styles.container, flexDirection: 'column' }}>
                     <ThemedView style={{ flexDirection: 'row', backgroundColor: AppColors.OffWhite, alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingBottom: 12 }}>

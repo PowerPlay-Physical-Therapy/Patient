@@ -11,7 +11,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
   export default function TabLayout(){
     const colorScheme = useColorScheme();
     const pathname = usePathname(); // Get the current route
-    const pathsToHide = ['/home/recording', '/home/video']
+    const pathsToHide = ['/home/recording', '/home/video', '/explore/video']
   // Hide the TabList for specific routes
     const hideTabs = pathsToHide.includes(pathname);
 
