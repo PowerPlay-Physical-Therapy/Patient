@@ -96,6 +96,7 @@ export default function ManageTherapists() {
         style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 50 : 0 }}
         colors={[AppColors.OffWhite, AppColors.LightBlue]}
       >
+        {/*
         <ScreenHeader
           title="Manage Your Therapists"
           leftButton={
@@ -116,7 +117,7 @@ export default function ManageTherapists() {
               />
             </TouchableOpacity>
           }
-        />
+        /> */}
 
         <ScrollView style={{ flex: 1 }}>
           {therapists.map((therapist) => (

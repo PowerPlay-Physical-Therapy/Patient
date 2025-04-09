@@ -23,7 +23,9 @@ export default function MessageLayout() {
     return (
         <Stack>
             <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="[chat]" options={{ headerShown: true, headerBackTitle: "messages", headerTitle: therapistName ?? 'Chat'}} />
+            <Stack.Screen name="[chat]" options={{ headerShown: true, headerStyle: {
+                    backgroundColor: AppColors.OffWhite,
+                }, headerBackTitle: "Messages", headerTitle: therapistName ?? 'Chat'}} />
             <Stack.Screen name="video" options={{
                 headerStyle: {
                     backgroundColor: AppColors.OffWhite,

@@ -22,6 +22,7 @@ export default function ChatMessagesScreen() {
     const [chatHistory, setChatHistory] = useState([]);
     const [message, setMessage] = useState("");
     const [newMessage, setNewMessage] = useState(false);
+    const [focused, setFocused] = useState(false);  
 
     useEffect(() => {
         const fetchChatHistory = async () => {
@@ -80,7 +81,7 @@ export default function ChatMessagesScreen() {
             <LinearGradient style={{ flex: 1 }} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
                 <View style={{ flex: 1 }}>
                     <ScrollView
-                        contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 10, paddingBottom: 70 }}
+                        contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 10, paddingBottom: 140 }}
                         keyboardShouldPersistTaps="handled"
                     >
                         {chatHistory.map((item) => {
@@ -136,13 +137,15 @@ export default function ChatMessagesScreen() {
                         })}
                     </ScrollView>
 
-                    <View style={[styles.inputContainer, { position: "absolute", bottom: 80, width: "100%" }]}>
+                    <View style={[styles.inputContainer,( focused? { position: "absolute", bottom: 36, width: "100%" } : { position: "absolute", bottom: 80, width: "100%" }) ]}>
                         <TextInput
                             style={styles.input}
                             value={message}
                             onChangeText={setMessage}
                             placeholder="Message..."
                             placeholderTextColor="#888"
+                            onFocus={() => setFocused(true)}
+                            onBlur={() => setFocused(false)}
                         />
                         <TouchableOpacity onPress={() => onMessageSend(message)}>
                             <Image

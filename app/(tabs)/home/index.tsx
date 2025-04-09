@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, TextInput, SafeAreaView, TouchableOpacity } from 'react-native';
+import { Image, StyleSheet, Platform, TextInput, SafeAreaView, TouchableOpacity, Touchable } from 'react-native';
 import { useState } from 'react';
 // import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -109,7 +109,10 @@ export default function HomeScreen() {
                                 keyExtractor={(exercise, index) => exercise._id["$oid"] || index.toString()}
                                 ItemSeparatorComponent={() => <View style={styles.separator} />}
                                 renderItem={({ item: exercise }) => (
-                                    <View style={styles.exerciseItem}>
+                                    
+                                    <Link href={`/home/exerciseDetails?exerciseId=${exercise._id}`}>
+                                        
+                                        <View style={styles.exerciseItem}>
 
                                         <Image source={{ uri: exercise.thumbnail_url }} style={styles.exerciseThumbnail} />
                                         <View style={styles.exerciseInfo}>
@@ -124,9 +127,12 @@ export default function HomeScreen() {
                                             </ThemedText>
                                         </View>
                                         
-                                        <Link href={`/home/exerciseDetails?exerciseId=${exercise._id}`}><Image source={require('@/assets/images/chevron-right.png')} style={{width: 20, height: 20}}/>
-                                        </Link>
+                                        <Image source={require('@/assets/images/chevron-right.png')} style={{width: 20, height: 20}}/>
+                                        
                                     </View>
+                                    
+                                    </Link>
+                                    
                                 )}
                             />
                         </View>
