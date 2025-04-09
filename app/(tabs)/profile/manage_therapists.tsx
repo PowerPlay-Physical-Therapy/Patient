@@ -118,6 +118,24 @@ export default function ManageTherapists() {
             </TouchableOpacity>
           }
         /> */}
+        <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.push('/profile')}>
+              <Image
+                source={require('@/assets/images/chevron-left.png')}
+                style={{ width: 24, height: 24 }}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+            <ThemedText style={{fontWeight: 'bold', fontSize: 20}}>Manage Therapists</ThemedText>
+            <TouchableOpacity onPress={toggleModal}>
+              <Image
+                source={require('@/assets/images/user-add-icon.png')}
+                style={{ width: 24, height: 24 }}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+
+        </View>
 
         <ScrollView style={{ flex: 1 }}>
           {therapists.map((therapist) => (
@@ -266,4 +284,18 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 16,
   },
+  header: {
+    height: 70,
+    paddingTop: 30,
+    width: '100%',
+    justifyContent: 'space-between',
+    backgroundColor: AppColors.OffWhite,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+    alignItems: 'center',
+    flexDirection: 'row',
+    alignSelf: 'center',
+    paddingLeft: 20,
+    paddingRight: 20,
+},
 });
