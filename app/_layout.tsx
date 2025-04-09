@@ -8,9 +8,19 @@ import 'react-native-reanimated';
 import {Colors, AppColors} from '@/constants/Colors';
 import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo'
 import { tokenCache } from '@clerk/clerk-expo/token-cache'
+import * as Notifications from 'expo-notifications';
+import { NotificationProvider } from '@/context/NotificationContext';
 
 
 import { useColorScheme } from '@/hooks/useColorScheme';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }), 
+})
 
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -38,6 +48,7 @@ export default function RootLayout() {
   }
 
   return (
+    <NotificationProvider>
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
         <ClerkLoaded>
@@ -66,6 +77,7 @@ export default function RootLayout() {
       </ClerkProvider>
 
     </ThemeProvider>
+    </NotificationProvider>
   );
 }
 

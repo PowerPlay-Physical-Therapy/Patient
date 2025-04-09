@@ -23,10 +23,10 @@ export default function HomeLayout(){
             
           }}/>
           <Stack.Screen name="recording" options={{headerShown: false,
-            
-
+          
             }}
             />
+            <Stack.Screen name="share" options={{headerShown: false}}/>
         </Stack>
     );
 }
