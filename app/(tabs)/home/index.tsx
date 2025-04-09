@@ -95,7 +95,7 @@ export default function HomeScreen() {
             {/* Display each assigned routine */}
             <FlatList
                 data={routines}
-                keyExtractor={(item) => item._id["$oid"]}
+                keyExtractor={(item) => item._id}
                 style={{ padding: 20, }}
                 renderItem={({ item: routine }) => (
                     
@@ -104,7 +104,7 @@ export default function HomeScreen() {
                         {/* Exercises within routine */}
                         <FlatList
                             data={routine.exercises}
-                            keyExtractor={(exercise) => exercise._id["$oid"]}
+                            keyExtractor={(exercise) => exercise._id}
                             renderItem={({ item: exercise }) => (
                                 <View style={styles.exerciseItem}>
 

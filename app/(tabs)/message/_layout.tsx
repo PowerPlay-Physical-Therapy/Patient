@@ -1,4 +1,5 @@
 
+import { AppColors } from "@/constants/Colors";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 
@@ -23,6 +24,16 @@ export default function MessageLayout() {
         <Stack>
             <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen name="[chat]" options={{ headerShown: true, headerBackTitle: "messages", headerTitle: therapistName ?? 'Chat'}} />
+            <Stack.Screen name="video" options={{
+                headerStyle: {
+                    backgroundColor: AppColors.OffWhite,
+                },
+                headerBackTitle: 'Chat',
+                headerShown: true,
+                title: "Video",
+
+            }} />
+            <Stack.Screen name="routineDetails" options={{ headerShown: true, headerBackTitle: 'Chat', title: 'Routine Detail' }} />
         </Stack>
     );
 }

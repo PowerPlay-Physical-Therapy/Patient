@@ -1,265 +1,206 @@
 import { ThemedText } from "@/components/ThemedText";
 import { AppColors } from "@/constants/Colors";
 import { useUser } from "@clerk/clerk-expo";
-import { Icon } from "@rneui/base";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState, useEffect } from "react";
-import { Image, FlatList, Platform, View, Dimensions, StyleSheet, TouchableOpacity, TextInput, KeyboardAvoidingView } from "react-native";
-import { io } from "socket.io-client";
-
-const { height, width } = Dimensions.get("window")
+import {
+    Image,
+    Platform,
+    View,
+    StyleSheet,
+    TouchableOpacity,
+    TextInput,
+    KeyboardAvoidingView,
+    ScrollView,
+} from "react-native";
 
 export default function ChatMessagesScreen() {
     const { user } = useUser();
     const { chat } = useLocalSearchParams<{ chat: string }>();
-    // const socket = io(`${EXPO_PUBLIC_BACKEND_URL}/common/chat` );
-    const { patientId, therapistId} = JSON.parse(chat);
-    const [chatHistory, setChatHistory] = useState([])
+    const { patientId, therapistId } = JSON.parse(chat);
+    const [chatHistory, setChatHistory] = useState([]);
     const [message, setMessage] = useState("");
-    const [notification, setNotification] = useState(null);
-    const [routine,setRoutine] = useState([]);
-    const [routineThumbnail, setRoutineThumbnail] = useState< string| null>()
+    const [newMessage, setNewMessage] = useState(false);
 
-    useEffect(() =>  {
+    useEffect(() => {
         const fetchChatHistory = async () => {
             try {
-                const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/messages/${patientId}/${therapistId}`, {
-                    method: 'GET'
-                });
-
+                const response = await fetch(
+                    `${process.env.EXPO_PUBLIC_BACKEND_URL}/messages/${patientId}/${therapistId}`
+                );
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                 const data = await response.json();
-                // console.log("Chat History:",data);
                 setChatHistory(data);
+                setNewMessage(false)
             } catch (error) {
                 console.error("Error Fetching Connections", error);
             }
         };
         fetchChatHistory();
-    },[])
+    }, [newMessage,]);
 
-    const showNotification = () => {
-        setNotification({ message: "Adding New Routine!!", type: "info" });
+    const onMessageSend = (message: string) => {
+        const sendingMessage = message;
+        setMessage("");
+        const sendMessage = async (sendingMessage) => {
+            try {
+                const response = await fetch(
+                    `${process.env.EXPO_PUBLIC_BACKEND_URL}/message/${patientId}/${therapistId}`,
+                    {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            message: sendingMessage,
+                            type: "text",
+                        }),
+                    }
+                );
 
-        // Auto-hide after 3 seconds
-        setTimeout(() => setNotification(null), 3000);
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+                const data = await response.json();
+                console.log("Fetched data:", data.message, "message ID", data.message_id);
+                setNewMessage(true);
+            } catch (error) {
+                console.error("Error Fetching Connections", error);
+            }
+        };
+        sendMessage(sendingMessage);
     };
 
-    function getRoutineData(routineID: any){
-
-    }
-
-    function handleAddRoutine(routineID: string){
-        showNotification();
-        // Toast.show({ text1: "Hello", type: "success" })
-        console.log("Check Check ", routineID)
-        const writeData = async () => {
-            try {
-                const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/update_assigned_routines/${user?.id}/${routineID}`, {
-                    method: 'PUT'
-                });
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                const data = await response.json();
-                console.log("Fetched data:", data);
-                // router.back();
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        }
-        writeData();
-    }
-
     return (
-        <LinearGradient style= {{ flex: 1}} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
-            <View style={{ paddingLeft: 20, paddingRight: 20 }}>
-                <FlatList
-                    // contentContainerStyle = {{ height: "95%"}}
-                    data = {chatHistory}
-                    keyExtractor={(item) => item["_id"]}
-                    renderItem={({item}) =>(
-                        item["sender_id"] === patientId ? (
-                                <View style={{ justifyContent: "flex-end", alignItems:"flex-end"}}>
-                                    {   
-                                        item["type"] === "text" ? ( 
-                                            <ThemedText style={styles.senderMessage}>
-                                                {item["message"]}
-                                            </ThemedText>
-                                                ) : (
-                                                item["type"] === "feedback" ? (
-                                                    <View style={styles.senderMessage}>
-                                                        <Image 
-                                                            style = {{width : 100, height : 100, borderRadius: 15}}
-                                                            source={{
-                                                                uri: item["message"],
-                                                            }} 
-                                                        />
-                                                    </View>
-                                                ) : (
-                                                    item["type"] === "routine" ? (
-                                                        <View style={{ flexDirection: "row-reverse"}}>
-                                                            <View style={styles.senderMessage}>
-                                                                <Image
-                                                                style={{ width: 100, height: 100, borderRadius: 15 }}
-                                                                    source={{
-                                                                        uri: item?.message.thumbnail
-                                                                    }}
-                                                                />
-                                                            </View>
-                                                            <View style={{ justifyContent: "center", flex: 1, alignItems: 'flex-end' }}>
-                                                                <LinearGradient
-                                                                    colors={[AppColors.Purple, AppColors.Blue]}
-                                                                    style={[styles.button, { margin: 10, justifyContent: 'center', alignItems: 'center' }]}
-                                                                >
-                                                                    <TouchableOpacity
-                                                                        style={styles.buttonInner}
-                                                                        onPress={() => {
-                                                                            handleAddRoutine(item?.message)
-                                                                        }}
-                                                                    >
-                                                                        <ThemedText style={styles.buttonText}>Add</ThemedText>
-                                                                    </TouchableOpacity>
-                                                                </LinearGradient>
-                                                            </View>
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
+        >
+            <LinearGradient style={{ flex: 1 }} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
+                <View style={{ flex: 1 }}>
+                    <ScrollView
+                        contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 10, paddingBottom: 70 }}
+                        keyboardShouldPersistTaps="handled"
+                    >
+                        {chatHistory.map((item) => {
+                            const isSender = item["sender_id"] === patientId;
+                            const isRoutine = item["type"] === "routine";
+                            const isFeedback = item["type"] === "feedback";
 
-                                                        </View>
-                                                        
-                                                    ) : (
-                                                        <ThemedText style = {styles.senderMessage}>
-                                                            {item["message"]}
-                                                        </ThemedText>
-                                                    )
-                                                )
-                                            )
-                                    }
-                                </View>
-                                
-                            ): (
-                                // FOR MESSAGES FROM RECIEVER
-                                <View style={{ justifyContent: "flex-start", alignItems: "flex-start" }}>
-                                    {
-                                        item["type"] === "text" ? (
-                                            <ThemedText style={styles.recieverMessage}>
-                                                {item["message"]}
-                                            </ThemedText>) : (
-                                            item["type"] === "feedback" ? (
-                                                <View style={styles.recieverMessage}>
-                                                    <Image
-                                                        style={{ width: 100, height: 100, borderRadius: 15 }}
-                                                        source={{
-                                                            uri: item["message"],
-                                                        }}
-                                                    />
+                            return (
+                                <View
+                                    key={item["_id"]}
+                                    style={[
+                                        styles.bubble,
+                                        isSender ? styles.bubbleSender : styles.bubbleReceiver,
+                                    ]}
+                                >
+                                    {isRoutine ? (
+                                        <View style = {{flex: isSender? 'row' : 'reverse-row'}}>
+                                            <TouchableOpacity onPress={() => {
+                                                router.push(`/(tabs)/message/routineDetails?routineId=${JSON.stringify(item?.message.routine_id)}`)
+                                            }}>
+                                                <Image
+                                                    style={styles.image}
+                                                    source={{ uri: item?.message?.thumbnail }}
+                                                />
+                                                <View style={{ flexDirection: 'row', paddingTop: 2 }}>
+                                                    <ThemedText style={{ color: 'white' }}> More Info </ThemedText>
+                                                    <Image style={{
+                                                        width: 20,
+                                                        height: 20,
+                                                        tintColor: 'white'
+                                                    }}
+                                                        source={require("@/assets/images/info.png")} />
                                                 </View>
-                                            ) : (
-                                                item["type"] === "routine" ? (
-                                                        <View style={{ flexDirection: "row"}}>
-                                                        {/* {item["message"] = {}} */}
-                                                            <View style = {styles.recieverMessage}>
-                                                                <Image
-                                                                    style={{ width: 100, height: 100, borderRadius: 15 }}
-                                                                    source={{
-                                                                        uri: item?.message.thumbnail
-                                                                    }}
-                                                                />
-                                                            </View>
-                                                            <View style={{ justifyContent: "center", flex: 1 }}>
-                                                                <LinearGradient
-                                                                    colors={[AppColors.Purple, AppColors.Blue]}
-                                                                            style={[styles.button, { margin: 10, justifyContent: 'center', alignItems: 'center' }]}
-                                                                >
-                                                                    <TouchableOpacity
-                                                                        style={styles.buttonInner}
-                                                                        onPress={() => {
-                                                                            handleAddRoutine(item?.message)
-                                                                        }}
-                                                                    >
-                                                                        <ThemedText style={styles.buttonText}>Add</ThemedText>
-                                                                    </TouchableOpacity>
-                                                                </LinearGradient>
-                                                            </View>
-                                                    </View>
-                                                ) : (
-                                                    <ThemedText style={styles.recieverMessage}>
-                                                        {item["message"]}
-                                                    </ThemedText>
-                                                )
-                                            )
-                                        )
-                                    }
+
+                                            </TouchableOpacity>
+                                        </View>
+                                        
+                                    ) : isFeedback ? (
+                                            <TouchableOpacity onPress={()=>{
+                                                router.push(`/(tabs)/message/video?videoLink=${item?.message.video_url}`)
+                                            }} >
+                                                <Image
+                                                    style={styles.image}
+                                                    source={{ uri: item?.message?.thumbnail }}
+                                                />
+                                            </TouchableOpacity>
+                                        
+                                    ) : (
+                                        <ThemedText style={styles.bubbleText}>{item["message"]}</ThemedText>
+                                    )}
                                 </View>
-                            )
-                    )}
-                />
-                <View style={{
-                    flexDirection: "row",
-                    zIndex: 10,
-                    elevation: 5,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    padding: 10
-                }}>
-                    <TextInput
-                        style={{
-                            width: "85%",
-                            height: 40,
-                            borderWidth: 1,
-                            borderRadius: 20,
-                            padding: 15,
-                            backgroundColor: AppColors.BlueGray
-                        }}
-                        value={message}
-                        onChangeText={setMessage}
-                        placeholder="Message..."
-                    />
-                    <TouchableOpacity onPress={() => console.log("Message was", message)}>
-                        <Image source={require("@/assets/images/send.svg")} style={{ tintColor: AppColors.Blue }} />
-                    </TouchableOpacity>
+                            );
+                        })}
+                    </ScrollView>
+
+                    <View style={[styles.inputContainer, { position: "absolute", bottom: 0, width: "100%" }]}>
+                        <TextInput
+                            style={styles.input}
+                            value={message}
+                            onChangeText={setMessage}
+                            placeholder="Message..."
+                            placeholderTextColor="#888"
+                        />
+                        <TouchableOpacity onPress={() => onMessageSend(message)}>
+                            <Image
+                                source={require("@/assets/images/send.png")}
+                                style={styles.sendIcon}
+                            />
+                        </TouchableOpacity>
+                    </View>
                 </View>
-            </View>
-        </LinearGradient>
+            </LinearGradient>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
-    senderMessage: {
+    bubble: {
+        maxWidth: "80%",
         padding: 10,
         borderRadius: 20,
-        marginVertical: 3,
-        paddingHorizontal: 15,
-        borderBottomRightRadius: 5, 
-        justifyContent: "flex-end", 
-        alignItems: 'flex-end', 
-        backgroundColor: AppColors.BlueGray
+        marginBottom: 12,
     },
-    recieverMessage:{
-        padding: 10,
-        borderRadius: 20,
-        marginVertical: 3,
-        paddingHorizontal: 15,
+    bubbleSender: {
+        alignSelf: "flex-end",
+        backgroundColor: AppColors.BlueGray,
+        borderBottomRightRadius: 5,
+    },
+    bubbleReceiver: {
+        alignSelf: "flex-start",
+        backgroundColor: AppColors.Blue,
         borderBottomLeftRadius: 5,
-        justifyContent: "flex-start", 
-        alignItems: 'flex-start', 
-        backgroundColor: AppColors.Blue
     },
-
-    buttonInner: {
-        padding: 3,
-        alignItems: 'center',
+    bubbleText: {
+        color: "white",
+    },
+    image: {
+        width: 100,
+        height: 100,
+        borderRadius: 15,
+    },
+    inputContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 10,
+        backgroundColor: AppColors.LightBlue,
+    },
+    input: {
+        flex: 1,
+        height: 40,
+        borderWidth: 1,
         borderRadius: 20,
+        paddingHorizontal: 15,
+        backgroundColor: AppColors.BlueGray,
+        color: "black",
     },
-    buttonText: {
-        fontWeight: 'bold',
-        color: 'white',
-    },
-    button: {
-        borderRadius: 25,
-        width: Platform.OS == 'ios' ? "30%" : "100%",
-        height:"30%",
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
+    sendIcon: {
+        width: 35,
+        height: 35,
+        tintColor: AppColors.Blue,
+        marginLeft: 10,
     },
 });
