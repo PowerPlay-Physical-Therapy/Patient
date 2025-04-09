@@ -11,6 +11,7 @@ import React, { useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
 import { useUser } from '@clerk/clerk-expo';
 import Constants from 'expo-constants';
+import { Stack } from 'expo-router';
 
 
 type Therapist = {
@@ -41,8 +42,8 @@ export default function ManageTherapists() {
       if (data.connections) {
         const formattedTherapists = data.connections.map((therapist: any) => ({
           id: therapist._id,
-          name: therapist.firstName + ' ' + (therapist.lastName || ''),
-          imageUrl: therapist.image || require('@/assets/images/profile.png'),
+          name: therapist.firstname + ' ' + (therapist.lastname || ''),
+          imageUrl: therapist.imageUrl ? { uri: therapist.imageUrl } : require('@/assets/images/profile.png')
         }));
         setTherapists(formattedTherapists);
       }
@@ -110,76 +111,104 @@ export default function ManageTherapists() {
   };
 
   return (
-    <View style={styles.mainContainer}>
-      <LinearGradient style={styles.container} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <IconSymbol name="chevron.left" size={24} color="black" />
-          </TouchableOpacity>
-          <ThemedText style={styles.headerTitle}>Therapists</ThemedText>
-          <TouchableOpacity style={styles.addButton} onPress={toggleModal}>
-            <ThemedText style={styles.addButtonText}>ADD</ThemedText>
-          </TouchableOpacity>
-        </View>
+    <>
+    <Stack.Screen options={{ headerShown: false }} />
+    {<LinearGradient
+      style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 50 : 0 }}
+      colors={[AppColors.OffWhite, AppColors.LightBlue]}
+    >
+<ScreenHeader
+  title="Manage Your Therapists"
+  leftButton={
+    <TouchableOpacity onPress={() => router.push('/profile')}>
+            <Image
+        source={require('@/assets/images/chevron-left.png')}
+        style={{ width: 24, height: 24 }}
+        resizeMode="contain"
+      />
+    </TouchableOpacity>
+  }
+  rightButton={
+    <TouchableOpacity onPress={toggleModal}>
+      <Image
+        source={require('@/assets/images/user-add-icon.png')}
+        style={{ width: 24, height: 24 }}
+        resizeMode="contain"
+      />
+    </TouchableOpacity>
+  }
+/>
 
-        <View style={styles.searchContainer}>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search..."
-            placeholderTextColor="#666"
-          />
-        </View>
 
-        <ScrollView style={styles.therapistList}>
+          {/* Therapist list rendering */}
           {therapists.map((therapist) => (
             <View key={therapist.id} style={styles.therapistItem}>
               <View style={styles.therapistInfo}>
                 <Image
-                  source={therapist.imageUrl || require('@/assets/images/profile.png')}
+                  source={therapist.imageUrl}
                   style={styles.therapistImage}
                 />
                 <ThemedText style={styles.therapistName}>{therapist.name}</ThemedText>
               </View>
-              <TouchableOpacity
-                style={styles.removeButton}
-                onPress={() => handleRemove(therapist.id)}
+              <LinearGradient
+                colors={["#E91313", "#EB9BD0"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={styles.removeButtonGradient}
               >
-                <ThemedText style={styles.removeButtonText}>Remove</ThemedText>
-              </TouchableOpacity>
+                <TouchableOpacity style={styles.removeButton} onPress={() => handleRemove(therapist.id)}>
+                  <ThemedText style={styles.removeButtonText}>Remove</ThemedText>
+                </TouchableOpacity>
+              </LinearGradient>
             </View>
           ))}
-        </ScrollView>
-      </LinearGradient>
-
-      <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
-        <View style={styles.modalContainer}>
-          <ThemedText style={styles.modalTitle}>Add By Email</ThemedText>
-          <ThemedText style={styles.modalSubtitle}>Who is your therapist?</ThemedText>
-
-          <LinearGradient colors={['#E0F7FA', '#F1F8E9']} style={styles.modalInputGradient}>
-            <TextInput
-              placeholder="Enter email:"
-              placeholderTextColor="#555"
-              value={email}
-              onChangeText={setEmail}
-              style={styles.modalInput}
-            />
-          </LinearGradient>
-
-          <TouchableOpacity style={styles.modalButton} onPress={connectTherapist}>
-            <LinearGradient colors={['#B39DDB', '#81D4FA']} style={styles.modalButtonGradient}>
-              <ThemedText style={styles.modalButtonText}>Send Therapist Request</ThemedText>
+        
+  
+        <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
+          <View style={styles.modalContainer}>
+            <ThemedText style={styles.modalTitle}>Add By Email</ThemedText>
+            <ThemedText style={styles.modalSubtitle}>Who is your therapist?</ThemedText>
+  
+            <LinearGradient colors={['#E0F7FA', '#F1F8E9']} style={styles.modalInputGradient}>
+              <TextInput
+                placeholder="Enter email:"
+                placeholderTextColor="#555"
+                value={email}
+                onChangeText={setEmail}
+                style={styles.modalInput}
+              />
             </LinearGradient>
-          </TouchableOpacity>
-        </View>
-      </Modal>
-    </View>
-  );
+  
+            <TouchableOpacity style={styles.modalButton} onPress={connectTherapist}>
+              <LinearGradient
+                colors={['#B39DDB', '#81D4FA']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={styles.modalButtonGradient}
+              >
+                <ThemedText style={styles.modalButtonText}>Send Therapist Request</ThemedText>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </Modal>
+    </LinearGradient>
+    }
+    </>
+  );  
 }
 
 
 const styles = StyleSheet.create({
   mainContainer: {
+    flex: 1,
+  },    
+  buttonContainer: {
+    alignItems: 'center',
+    margin: 20,
+    marginBottom: 10,
+    padding: 20,
+    backgroundColor: AppColors.LightBlue,
+    borderRadius: 20,
     flex: 1,
   },
   container: {
@@ -226,11 +255,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    borderRadius: 15,
-    padding: 15,
-    marginVertical: 5,
-  },
+    padding: 20,
+    backgroundColor: AppColors.OffWhite,
+    borderRadius: 20,
+    marginHorizontal: 20,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 2,
+  }, 
   therapistInfo: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -244,18 +279,29 @@ const styles = StyleSheet.create({
   therapistName: {
     fontSize: 16,
     fontWeight: '500',
+    color: 'black'
   },
+  removeButtonGradient: {
+    borderRadius: 25,
+    paddingHorizontal: 1,
+    paddingVertical: 1,
+  },
+  
   removeButton: {
-    backgroundColor: '#FF6B6B',
-    paddingHorizontal: 15,
+    borderRadius: 25,
+    backgroundColor: 'transparent',
+    paddingHorizontal: 20,
     paddingVertical: 8,
-    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+  
   removeButtonText: {
     color: 'white',
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '600',
   },
+  
   navBar: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -309,4 +355,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 16,
   },
+  addButtonIcon: {
+    width: 28,
+    height: 28,
+  },
+  
 });
