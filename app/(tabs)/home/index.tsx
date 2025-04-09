@@ -95,7 +95,7 @@ export default function HomeScreen() {
             {/* Display each assigned routine */}
             <FlatList
                 data={routines}
-                keyExtractor={(item) => item._id["$oid"]}
+                keyExtractor={(item, index) => item._id["$oid"] || index.toString()}
                 style={{ padding: 12, marginBottom: 80 }}
                 renderItem={({ item: routine }) => (
                     
@@ -106,7 +106,7 @@ export default function HomeScreen() {
                         <View style={styles.exerciseList}>
                             <FlatList
                                 data={routine.exercises}
-                                keyExtractor={(exercise) => exercise._id["$oid"]}
+                                keyExtractor={(exercise, index) => exercise._id["$oid"] || index.toString()}
                                 ItemSeparatorComponent={() => <View style={styles.separator} />}
                                 renderItem={({ item: exercise }) => (
                                     <View style={styles.exerciseItem}>

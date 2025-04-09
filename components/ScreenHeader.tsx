@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
+import Streak from '@/components/streak';
 
 type ScreenHeaderProps = {
   title?: string;
@@ -15,6 +16,7 @@ const ScreenHeader = ({ title, name, logo = false, leftButton, rightButton, stre
   return (
     <View style={styles.header}>
       <View style={styles.headerRow}>
+        
         <View style={styles.side}>{leftButton}</View>
 
         <View style={styles.center}>
@@ -32,7 +34,7 @@ const ScreenHeader = ({ title, name, logo = false, leftButton, rightButton, stre
             <ThemedText style={styles.headerText}>{title} {name}</ThemedText>
           )}
         </View>
-
+        
         <View style={styles.side}>{rightButton}</View>
       </View>
     </View>
