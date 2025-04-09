@@ -9,10 +9,17 @@ import {
   View,
   Image,
   Touchable,
+  Dimensions
 } from "react-native";
 import { Redirect, useRouter, useLocalSearchParams, Link } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
 import { AppColors } from "@/constants/Colors";
+import { LinearGradient } from "expo-linear-gradient";
+import {ResizeMode, Video} from "expo-av";
+import * as VideoThumbnails from "expo-video-thumbnails";
+
+
+const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
 
 interface Exercise {
   _id: string;
@@ -28,33 +35,16 @@ interface Exercise {
   video_url: string;
 }
 
-function ExerciseSummary(exercise: Exercise) {
-  // This component can be used to display a summary of the exercise
-  // For now, it just returns the name of the exercise
-  return (
-    <View>
-      <ThemedText>{exercise.title}</ThemedText>
-      <ThemedText>Reps: {exercise.reps}</ThemedText>
-      <ThemedText>Sets:{exercise.sets}</ThemedText>
-      <ThemedText>Hold: {exercise.hold} seconds</ThemedText>
-      <Link href={`/(tabs)/home/video?exerciseId=${exercise._id}`}>
-        <ThemedText>
-          Watch video tutorial here!{" "}
-          <Image source={require("@/assets/images/chevron-right.png")} />
-        </ThemedText>
-      </Link>
-    </View>
-  );
-}
 
 export default function Recording() {
   const local = useLocalSearchParams();
   const parsedId = local.exerciseId;
   const exercise_id = parsedId;
   const [summary, setSummary] = useState(false);
+  const [thumbnail, setThumbnail] = useState(null);
   const router = useRouter();
   const [recording, setRecording] = useState(false); // State to track if recording is in progress
-  const [uri, setUri] = useState<string | null>(null); // State to store the recorded video URI
+  const [uri, setUri] = useState<String>(""); // State to store the recorded video URI
   const [facing, setFacing] = useState<CameraType>("front");
   const [permission, requestPermission] = useCameraPermissions();
   const [exercise, setExercise] = useState<Exercise>({
@@ -71,6 +61,7 @@ export default function Recording() {
     video_url: "",
   }); // State to store exercise data
   const ref = useRef<CameraView>(null); // Create a ref for the CameraView to access methods like recordAsync
+  const videoRef = useRef<Video>(null); // Create a ref for the Video component to access methods like playAsync
 
   useEffect(() => {
     const fetchData = async () => {
@@ -93,35 +84,199 @@ export default function Recording() {
     fetchData();
   }, []);
 
+  const generateThumbnail = async () => {
+    try {
+      const url = await VideoThumbnails.getThumbnailAsync(
+        uri,
+        {
+          time: 15000,
+        }
+      );
+      console.log("Thumbnail URL:", url);
+      setThumbnail(url.uri);
+    } catch (e) {
+      console.warn(e);
+    }
+  };
+
   const recordVideo = async () => {
     if (recording) {
       setRecording(false);
-      ref.current?.stopRecording();
+      const video = ref.current?.stopRecording();
       return;
     }
     setRecording(true);
-    const video = await ref.current?.recordAsync();
-    console.log({ video });
+    try {
+      let options= {
+        maxDuration: 60, // Set the maximum duration to 60 seconds
+      }
+      const video = await ref.current?.recordAsync(options);
+      setUri(video.uri);
+      
+      
+    } catch (error) {
+      console.error("Error recording video:", error);
+    }
   };
+
+  useEffect(() => {
+    if (uri) {
+      generateThumbnail();
+    }
+  }, [uri])
+
   if (!permission) {
     // Camera permissions are still loading.
     return <View />;
   }
-
+  
   if (!permission.granted) {
     // Camera permissions are not granted yet.
     return (
       <View style={styles.container}>
         <Text style={styles.message}>
-          We need your permission to show the camera
+          We need your permission to show the camera!
         </Text>
-        <Button onPress={requestPermission} title="grant permission" />
+        <Button onPress={requestPermission} title="Grant Permission" />
       </View>
     );
   }
+  console.log("thumbnail", thumbnail);
+  const startOver = () => {
+    setUri("");
+    setRecording(false);
+  }
 
-  function toggleCameraFacing() {
-    setFacing((current) => (current === "back" ? "front" : "back"));
+  console.log("uri", uri);
+
+  const mute = async () => {
+    if (videoRef.current) {
+      await videoRef.current.setIsMutedAsync(true);
+    }
+  }
+
+  if (uri) {
+    return (
+    <View style={styles.container}>
+      <Video 
+        source={{ uri: uri }}
+        ref={videoRef}
+        style={styles.video}
+        resizeMode={ResizeMode.CONTAIN}
+        isLooping={true}
+        shouldPlay={true}
+        useNativeControls={false}
+        
+      />
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={() => setSummary(!summary)}>
+            {!summary && (
+              <Image
+                source={require("@/assets/images/chevron-down.png")}
+                style={styles.more}
+              />
+            )}
+          </TouchableOpacity>
+          {summary && (
+            <View style={styles.exerciseSummary}>
+              <View>
+                <ThemedText style={styles.text}>{exercise.title}</ThemedText>
+                <ThemedText style={styles.text}>
+                  Reps: {exercise.reps}
+                </ThemedText>
+                <ThemedText style={styles.text}>
+                  Sets: {exercise.sets}
+                </ThemedText>
+                <ThemedText style={styles.text}>
+                  Hold: {exercise.hold} seconds
+                </ThemedText>
+                <Link href={`/(tabs)/home/video?exerciseId=${exercise._id}`}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "flex-end",
+                      width: "100%",
+                    }}
+                  >
+                    <ThemedText
+                      style={{
+                        fontSize: 16,
+                        color: "white",
+                        textAlign: "right",
+                      }}
+                    >
+                      Watch video tutorial here!{" "}
+                    </ThemedText>
+                    <Image
+                      style={{ tintColor: "white" }}
+                      source={require("@/assets/images/chevron-right.png")}
+                    />
+                  </View>
+                </Link>
+              </View>
+              <TouchableOpacity
+                onPress={() => setSummary(false)}
+                style={{ marginTop: 10 }}
+              >
+                <Image source={require("@/assets/images/chevron-up.png")} />
+              </TouchableOpacity>
+            </View>
+          )}
+          <View style={{flexDirection: "column", alignItems: "center", justifyContent: "center", width: "100%"}}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-around",
+              alignItems: "center",
+              width: "100%",
+              marginBottom: 28,
+            }}
+          >
+            <Link
+              dismissTo
+              href={`/(tabs)/home/exerciseDetails?exerciseId=${exercise_id}`}
+              style={{ flexDirection: "row", alignItems: "center" }}
+            >
+              <Image
+                source={require("@/assets/images/chevron-left.png")}
+                style={styles.back}
+              />
+            </Link>
+            {!uri &&
+            <Pressable onPress={recordVideo}>
+              {recording ? (
+                <Image source={require("@/assets/images/stop-record.png")} />
+              ) : (
+                <Image source={require("@/assets/images/record.png")} />
+              )}
+            </Pressable>}
+            <TouchableOpacity onPress={() => router.push("/(tabs)/message")}>
+              <Image
+                source={require("@/assets/images/chat-bubbles.png")}
+                style={styles.messages}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {uri &&
+          <View style={{ flexDirection: "row", justifyContent: "space-around", width: screenWidth }}>
+            <TouchableOpacity onPress={()=> startOver()} style={{backgroundColor: "white", width: screenWidth * 0.4, padding: 12, borderRadius: 8, alignItems: 'center'}}>
+              <ThemedText style={{fontWeight: 'bold'}}>Start Over</ThemedText>
+            </TouchableOpacity>
+            <LinearGradient
+              colors={[AppColors.Purple, AppColors.Blue]}
+              style={styles.button}
+            >
+              <Link onPress={() => mute()} href={`/home/share?videoUri=${uri}&exerciseId=${exercise_id}&thumbnailUri=${thumbnail}`} style={styles.buttonInner}>
+                <ThemedText style={styles.buttonText}>Next</ThemedText>
+              </Link>
+            </LinearGradient>
+          </View>}
+          </View>
+        </View>
+      
+    </View>);
   }
 
   return (
@@ -145,22 +300,41 @@ export default function Recording() {
           </TouchableOpacity>
           {summary && (
             <View style={styles.exerciseSummary}>
-              <View >
+              <View>
                 <ThemedText style={styles.text}>{exercise.title}</ThemedText>
-                <ThemedText style={styles.text}>Reps: {exercise.reps}</ThemedText>
-                <ThemedText style={styles.text}>Sets: {exercise.sets}</ThemedText>
-                <ThemedText style={styles.text}>Hold: {exercise.hold} seconds</ThemedText>
+                <ThemedText style={styles.text}>
+                  Reps: {exercise.reps}
+                </ThemedText>
+                <ThemedText style={styles.text}>
+                  Sets: {exercise.sets}
+                </ThemedText>
+                <ThemedText style={styles.text}>
+                  Hold: {exercise.hold} seconds
+                </ThemedText>
                 <Link href={`/(tabs)/home/video?exerciseId=${exercise._id}`}>
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', width: '100%'}}>
-                  <ThemedText style={{fontSize: 16, color: 'white', textAlign: 'right'}}>
-                    Watch video tutorial here!{" "}
-                  </ThemedText>
-                  <Image style={{tintColor: 'white'}}
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "flex-end",
+                      width: "100%",
+                    }}
+                  >
+                    <ThemedText
+                      style={{
+                        fontSize: 16,
+                        color: "white",
+                        textAlign: "right",
+                      }}
+                    >
+                      Watch video tutorial here!{" "}
+                    </ThemedText>
+                    <Image
+                      style={{ tintColor: "white" }}
                       source={require("@/assets/images/chevron-right.png")}
                     />
-                </View>
+                  </View>
                 </Link>
-                
               </View>
               <TouchableOpacity
                 onPress={() => setSummary(false)}
@@ -170,12 +344,14 @@ export default function Recording() {
               </TouchableOpacity>
             </View>
           )}
+          <View style={{flexDirection: "column", alignItems: "center", justifyContent: "center", width: "100%"}}>
           <View
             style={{
               flexDirection: "row",
               justifyContent: "space-around",
               alignItems: "center",
               width: "100%",
+              marginBottom: 28,
             }}
           >
             <Link
@@ -188,19 +364,36 @@ export default function Recording() {
                 style={styles.back}
               />
             </Link>
+            {!uri &&
             <Pressable onPress={recordVideo}>
               {recording ? (
                 <Image source={require("@/assets/images/stop-record.png")} />
               ) : (
                 <Image source={require("@/assets/images/record.png")} />
               )}
-            </Pressable>
+            </Pressable>}
             <TouchableOpacity onPress={() => router.push("/(tabs)/message")}>
               <Image
                 source={require("@/assets/images/chat-bubbles.png")}
                 style={styles.messages}
               />
             </TouchableOpacity>
+          </View>
+
+          {uri &&
+          <View style={{ flexDirection: "row", justifyContent: "space-around", width: screenWidth }}>
+            <TouchableOpacity onPress={()=> startOver()} style={{backgroundColor: "white", width: screenWidth * 0.4, padding: 12, borderRadius: 8, alignItems: 'center'}}>
+              <ThemedText style={{fontWeight: 'bold'}}>Start Over</ThemedText>
+            </TouchableOpacity>
+            <LinearGradient
+              colors={[AppColors.Purple, AppColors.Blue]}
+              style={styles.button}
+            >
+              <Link href={`/home/share?videoUri=${uri}&exerciseId=${exercise_id}`} style={styles.buttonInner}>
+                <ThemedText style={styles.buttonText}>Next</ThemedText>
+              </Link>
+            </LinearGradient>
+          </View>}
           </View>
         </View>
       </CameraView>
@@ -234,37 +427,67 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   text: {
     fontSize: 24,
     fontWeight: "bold",
     color: "white",
     lineHeight: 24,
-    padding: 4
+    padding: 4,
   },
   back: {
     flex: 1,
     maxWidth: 25,
     maxHeight: 45,
-    
   },
   messages: {
     // This is for the chat bubbles icon
     width: 40,
     height: 40,
     tintColor: "white",
-    
+
     // You can add more styles if needed
   },
   exerciseSummary: {
-    backgroundColor: '#3764BECC',
+    backgroundColor: "#3764BECC",
     borderRadius: 20,
     padding: 20,
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
     bottom: 300,
-    paddingTop: 200
-  }
+    paddingTop: 200,
+  },
+  buttonInner: {
+    padding: 12,
+    alignItems: 'center',
+    borderRadius: 4,
+    justifyContent: 'center',
+},
+buttonText: {
+    fontWeight: 'bold',
+    color: 'white',
+    textAlign: 'center',
+},
+button: {
+    borderRadius: 8,
+    width: screenWidth * 0.4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+},
+video: {
+  width: screenWidth,
+  height: screenHeight,
+  position: "absolute",
+  flex: 1,
+  top: 0,
+  left: 0,
+  zIndex: -1, // Ensure the video is behind other components
+  backgroundColor: "black",
+},
+
 });

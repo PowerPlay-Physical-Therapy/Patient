@@ -8,9 +8,10 @@ type ScreenHeaderProps = {
   logo?: boolean;
   leftButton?: React.ReactNode;
   rightButton?: React.ReactNode;
+  streak?: boolean;
 };
 
-const ScreenHeader = ({ title, name, logo = false, leftButton, rightButton }: ScreenHeaderProps) => {
+const ScreenHeader = ({ title, name, logo = false, leftButton, rightButton, streak=false }: ScreenHeaderProps) => {
   return (
     <View style={styles.header}>
       <View style={styles.headerRow}>
@@ -20,6 +21,7 @@ const ScreenHeader = ({ title, name, logo = false, leftButton, rightButton }: Sc
           {logo ? (
             <View style={styles.logoRow}>
               <ThemedText style={styles.headerText}>{title} {name}</ThemedText>
+              {streak &&<Streak/>}
               <Image
                 source={require('@/assets/images/app-logo.png')}
                 resizeMode="contain"
@@ -69,6 +71,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: 'black',
+    marginLeft: 30,
+    marginRight: 20,
+
   },
   image: {
     width: 40,

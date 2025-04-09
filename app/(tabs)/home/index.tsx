@@ -14,7 +14,8 @@ import { useEffect } from 'react';
 import { Link, useRouter } from "expo-router";
 import * as React from 'react';
 import { Text, View, FlatList } from 'react-native';
-import Tabs from './tabs';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { format, differenceInCalendarDays } from "date-fns";
 
 
 export default function HomeScreen() {
@@ -28,9 +29,7 @@ export default function HomeScreen() {
 
     const [isTabVisible, setIsTabVisible] = useState(true);
     const [activeTab, setActiveTab] = useState(0);
-
-
-
+    
     useEffect(() => {
         const fetchAssignedRoutines = async () => {
             if (!isSignedIn) {
@@ -91,40 +90,46 @@ export default function HomeScreen() {
 
     return (
         <LinearGradient style={{ flex: 1, paddingTop: Platform.OS == 'ios' ? 50 : 0 }} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
-            <ScreenHeader title="Welcome!" name={user?.username} logo={true} />
+            <ScreenHeader title="Welcome!" name={user?.username} logo={true} streak={true}/>
 
             {/* Display each assigned routine */}
             <FlatList
                 data={routines}
                 keyExtractor={(item) => item._id["$oid"]}
-                style={{ padding: 20, }}
+                style={{ padding: 12, marginBottom: 80 }}
                 renderItem={({ item: routine }) => (
                     
                     <View style={styles.routine}>
                         <Text style={styles.routineTitle}>{routine.name}</Text>
+
                         {/* Exercises within routine */}
-                        <FlatList
-                            data={routine.exercises}
-                            keyExtractor={(exercise) => exercise._id["$oid"]}
-                            renderItem={({ item: exercise }) => (
-                                <View style={styles.exerciseItem}>
+                        <View style={styles.exerciseList}>
+                            <FlatList
+                                data={routine.exercises}
+                                keyExtractor={(exercise) => exercise._id["$oid"]}
+                                ItemSeparatorComponent={() => <View style={styles.separator} />}
+                                renderItem={({ item: exercise }) => (
+                                    <View style={styles.exerciseItem}>
 
-                                    <Image source={{ uri: exercise.thumbnail_url }} style={styles.exerciseThumbnail} />
-                                    <View style={styles.exerciseInfo}>
-                                        <ThemedText style={styles.exerciseName}>{exercise.title}</ThemedText>
-                                        <ThemedText>Reps: {exercise.reps}</ThemedText>
-                                        <ThemedText>Sets: {exercise.sets}</ThemedText>
+                                        <Image source={{ uri: exercise.thumbnail_url }} style={styles.exerciseThumbnail} />
+                                        <View style={styles.exerciseInfo}>
+                                            <ThemedText style={styles.exerciseName}>{exercise.title}</ThemedText>
+                                            <ThemedText>
+                                                <Text style={styles.exerciseDetails}>Reps: </Text> 
+                                                {exercise.reps}
+                                            </ThemedText>
+                                            <ThemedText>
+                                                <Text style={styles.exerciseDetails}>Sets: </Text>
+                                                {exercise.sets}
+                                            </ThemedText>
+                                        </View>
+                                        
+                                        <Link href={`/home/exerciseDetails?exerciseId=${exercise._id}`}><Image source={require('@/assets/images/chevron-right.png')} style={{width: 20, height: 20}}/>
+                                        </Link>
                                     </View>
-                                    
-                                    <TouchableOpacity onPress={() => {
-                                                    // console.log("clicked");
-
-                                                    router.push(`./home/exerciseDetails?exerciseId=${exercise._id}`);
-
-                                                }}><Image source={require('@/assets/images/chevron-right.png')} style={{width: 20, height: 20}}/></TouchableOpacity>
-                                </View>
-                            )}
-                        />
+                                )}
+                            />
+                        </View>
                     </View>
                     
                 )}
@@ -155,7 +160,6 @@ const styles = StyleSheet.create({
     routine: {
         marginVertical: 10,
         padding: 15,
-        backgroundColor: AppColors.OffWhite,
         borderRadius: 10,
     },
 
@@ -167,45 +171,51 @@ const styles = StyleSheet.create({
     routineList: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "white",
-        marginVertical: 5,
-        padding: 10,
-        borderRadius: 10,
-    },
-
-    exerciseItem: {
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: AppColors.LightBlue,
-        marginVertical: 5,
-        padding: 10,
-        borderRadius: 10,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.2,
-        shadowRadius: 1.5,
-    },
-
-    exerciseThumbnail: {
-        width: 50,
-        height: 50,
-        borderRadius: 5,
     },
 
     exerciseInfo: {
-        width: '75%',
-        marginLeft: 10,
+        flex: 1,
+    },
+
+    exerciseList: {
+        marginTop: 10,
+        backgroundColor: AppColors.OffWhite,
+        borderRadius: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+    },
+
+    exerciseThumbnail: {
+        width: 82,
+        height: 76,
+        borderRadius: 5,
+        marginRight: 10,
     },
 
     exerciseName: {
-        fontSize: 15,
+        fontSize: 16,
         fontWeight: "bold",
+        marginBottom: 5,
 
     },
 
     exerciseDetails: {
         fontSize: 14,
+        fontWeight: "bold",
         color: "black",
+    },
+
+    exerciseItem: {
+        flexDirection: "row",
+        alignItems: "center",
+        paddingVertical: 10,
+    },
+
+    separator: {
+        height: 1,
+        backgroundColor: "#9BB4D6",
+        marginVertical: 5,
+        width: "100%",
     },
 
     bottomView: {

@@ -2,9 +2,12 @@ import { useState, useRef, useEffect } from "react";
 import { View, StyleSheet, Button, Touchable } from "react-native";
 import { VideoView, useVideoPlayer } from "expo-video";
 import { useLocalSearchParams, Link } from "expo-router";
-import {WebView} from 'react-native-webview';
+import { useEvent } from "expo";
+import { AppColors } from "@/constants/Colors";
+import { LinearGradient } from "expo-linear-gradient";
 import { TouchableOpacity, Image, Dimensions } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
+import { WebView } from 'react-native-webview';
 
 
 const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
@@ -24,7 +27,9 @@ interface Exercise {
 }
 
 export default function Video() {
+  const video = useRef(null);
   const exercise_id = useLocalSearchParams().exerciseId;
+  const [status, setStatus] = useState({});
   const [exercise, setExercise] = useState<Exercise>({
     _id: "",
     category: "",
@@ -38,6 +43,7 @@ export default function Video() {
     title: "",
     video_url: "",
   });
+  const ref = useRef<VideoView>(null);
   const [summary, setSummary] = useState<boolean>(false);
   // Fallback URL if exercise.video_url is not available
 
@@ -60,8 +66,8 @@ export default function Video() {
       }
     };
     fetchData();
+    
   }, []);
-
   
   // video source url is not supported, consider another solution
   return (
@@ -79,7 +85,7 @@ export default function Video() {
         <View style={{width: '56%', flexDirection: 'row', justifyContent: 'space-between', alignItems: "center"}}>
         <Link
           dismissTo
-          href={`/(tabs)/home/exerciseDetails?exerciseId=${exercise_id}`}
+          href={`/explore/routineDetails?exerciseId=${exercise_id}`}
         >
           <Image source={require("@/assets/images/chevron-back.png")} />
         </Link>
@@ -118,8 +124,6 @@ export default function Video() {
   );
 }
 
-
-
 const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
@@ -133,7 +137,6 @@ const styles = StyleSheet.create({
     width: screenWidth,
     height: screenHeight / 3,
     zIndex: 1,
-
   },
   controlsContainer: {
     padding: 10,

@@ -12,6 +12,20 @@ import { Alert } from 'react-native';
 import { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import * as React from 'react';
+import * as Notifications from 'expo-notifications';
+
+async function schedulePushNotification() {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "PowerPlay misses you!",
+        body: 'Log into the app to stay on track with your fitness goals!',
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        seconds: 2,
+      },
+    });
+  }
 
 
 export default function Profile() {
@@ -25,6 +39,11 @@ export default function Profile() {
 
     const toggleNotifications = () => {
         setNotifications(!notifications);
+        if (notifications) {
+            schedulePushNotification();
+        } else {
+            Notifications.cancelAllScheduledNotificationsAsync();
+        }
     }
 
     const handleSignOut = async () => {
@@ -124,7 +143,7 @@ export default function Profile() {
     return (
         <LinearGradient style={{ flex: 1, paddingTop: Platform.OS == 'ios' ? 50 : 0 }} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
             <ScreenHeader title="Your Profile & Settings" />
-            <ScrollView style={{ flex: 1}}>
+            <ScrollView style={{ flex: 1, marginBottom: 40 }}>
                 <LinearGradient start={{ x: 0, y: 0.25 }} end={{ x: 0.5, y: 1 }} style={styles.buttonContainer} colors={[AppColors.LightBlue, AppColors.OffWhite]}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', width: '100%', marginBottom: 20 }}>
                         <ThemedView style={styles.headerImage}>
