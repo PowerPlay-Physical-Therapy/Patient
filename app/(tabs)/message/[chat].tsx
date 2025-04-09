@@ -97,7 +97,7 @@ export default function ChatMessagesScreen() {
                                     ]}
                                 >
                                     {isRoutine ? (
-                                        <View style = {{flex: isSender? 'row' : 'reverse-row'}}>
+                                        // <View style = {{flex: isSender? 'row' : 'reverse-row'}}>
                                             <TouchableOpacity onPress={() => {
                                                 router.push(`/(tabs)/message/routineDetails?routineId=${JSON.stringify(item?.message.routine_id)}`)
                                             }}>
@@ -116,7 +116,7 @@ export default function ChatMessagesScreen() {
                                                 </View>
 
                                             </TouchableOpacity>
-                                        </View>
+                                        // </View>
                                         
                                     ) : isFeedback ? (
                                             <TouchableOpacity onPress={()=>{
@@ -136,7 +136,7 @@ export default function ChatMessagesScreen() {
                         })}
                     </ScrollView>
 
-                    <View style={[styles.inputContainer, { position: "absolute", bottom: 0, width: "100%" }]}>
+                    <View style={[styles.inputContainer, { position: "absolute", bottom: 80, width: "100%" }]}>
                         <TextInput
                             style={styles.input}
                             value={message}
