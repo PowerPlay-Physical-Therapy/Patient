@@ -14,7 +14,6 @@ import { useEffect } from 'react';
 import { Link, useRouter } from "expo-router";
 import * as React from 'react';
 import { Text, View, FlatList } from 'react-native';
-import Tabs from './tabs';
 
 
 export default function HomeScreen() {
