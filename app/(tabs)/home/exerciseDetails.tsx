@@ -9,6 +9,7 @@ import React, { useEffect, useState } from "react"
 import { ScrollView, View, Text, Platform, Dimensions, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Notification from "@/components/Notification";
+import capitalizeWords from "@/utils/capitalizeWords";
 // import Toast from "react-native-toast-message";
 
 const { height, width } = Dimensions.get("window")
@@ -57,7 +58,7 @@ export default function ExerciseDetails() {
                     {routine.map((exercise) => (
                         <View key={exercise._id} style={{ maxHeight: height * 0.9 }}>
                             <Card containerStyle={{ width: width * 0.9, borderRadius: 15, shadowOffset: { height: 0.2, width: 0.2 }, shadowRadius: 3, shadowOpacity: 0.7, backgroundColor: AppColors.OffWhite }}>
-                                <Card.Title style={{ fontSize: 20, fontFamily: 'Montserrat' }}>{exercise.title}</Card.Title>
+                                <Card.Title style={{ fontSize: 20, fontFamily: 'Montserrat' }}>{capitalizeWords(exercise.title)}</Card.Title>
                                 <Card.Divider />
                                 <Card.Image source={{ uri: exercise.thumbnail_url }} style={{ borderRadius: 15 }} containerStyle={{ borderRadius: 15, shadowOffset: { height: 0.5, width: 0.5 }, shadowRadius: 3, shadowOpacity: 0.7 }} />
                                 <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingTop: 10}}>

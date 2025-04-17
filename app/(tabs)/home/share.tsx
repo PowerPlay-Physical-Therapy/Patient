@@ -120,7 +120,7 @@ export default function Share() {
     const video = await FileSystem.readAsStringAsync(uri, {
       encoding: FileSystem.EncodingType.Base64,
     });
-    console.log("pressed")
+    
     const binaryData = Uint8Array.from(atob(video), (char) =>
       char.charCodeAt(0)
     );
@@ -128,7 +128,7 @@ export default function Share() {
     const url = await generateUploadURL();
     console.log("uploadUrl", url.uploadURL)
     
-    
+    console.log("pressed")
     const response = await fetch(url.uploadURL, {
       method: "PUT",
       headers: {

@@ -10,6 +10,7 @@ import { ScrollView, View, Text, Platform, Dimensions, TouchableOpacity, StyleSh
 import { SafeAreaView } from "react-native-safe-area-context";
 import Notification from "@/components/Notification";
 import {Link} from "expo-router";
+import capitalizeWords from "@/utils/capitalizeWords";
 // import Toast from "react-native-toast-message";
 
 const { height, width } = Dimensions.get("window")
@@ -108,7 +109,7 @@ export default function RoutineDetails() {
                     {routine.map((exercise) => (
                         <View key={exercise._id} style={{ maxHeight: height * 0.9 }}>
                             <Card containerStyle={{ width: width * 0.9, borderRadius: 15, shadowOffset: { height: 0.2, width: 0.2 }, shadowRadius: 3, shadowOpacity: 0.7, backgroundColor: AppColors.OffWhite }}>
-                                <Card.Title style={{ fontSize: 20, fontFamily: 'Montserrat' }}>{exercise.title}</Card.Title>
+                                <Card.Title style={{ fontSize: 20, fontFamily: 'Montserrat' }}>{capitalizeWords(exercise.title)}</Card.Title>
                                 <Card.Divider />
                                 <Card.Image source={{ uri: exercise.thumbnail_url }} style={{ borderRadius: 15 }} containerStyle={{ borderRadius: 15, shadowOffset: { height: 0.5, width: 0.5 }, shadowRadius: 3, shadowOpacity: 0.7 }} />
                                 <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingTop: 12}}>
@@ -145,7 +146,7 @@ export default function RoutineDetails() {
 
                     <LinearGradient
                         colors={[AppColors.Purple, AppColors.Blue]}
-                        style={[styles.button, { margin: 10, justifyContent: 'flex-end', alignItems: 'center' }]}
+                        style={[styles.button, { width: '30%', margin: 10, justifyContent: 'flex-end', alignItems: 'center' }]}
                     >
                         <TouchableOpacity
                             style={styles.buttonInner}
@@ -173,7 +174,7 @@ const styles = StyleSheet.create({
     },
     button: {
         borderRadius: 25,
-        width: '50%',
+        width: '40%',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,

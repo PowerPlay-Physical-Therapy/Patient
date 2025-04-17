@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, TextInput, SafeAreaView, TouchableOpacity, Touchable } from 'react-native';
+import { RefreshControl, Image, StyleSheet, Platform, TextInput, SafeAreaView, TouchableOpacity, Touchable } from 'react-native';
 import { useState } from 'react';
 // import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -13,16 +13,18 @@ import ScreenHeader from '@/components/ScreenHeader';
 import { useEffect } from 'react';
 import { Link, useRouter } from "expo-router";
 import * as React from 'react';
-import { Text, View, FlatList } from 'react-native';
+import { Text, View, FlatList, Dimensions, ScrollView } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { format, differenceInCalendarDays } from "date-fns";
+import capitalizeWords from '@/utils/capitalizeWords';
 
+const { height, width } = Dimensions.get("window");
 
 export default function HomeScreen() {
     const { isSignedIn } = useAuth()
     const router = useRouter();
     const [patientName, setPatientName] = useState<string | null>(null);
-    const [routines, setRoutines] = useState<any[]>([]);
+    const [routines, setRoutines] = useState<any[] | null>(null);
     const [error, setError] = useState<string | null>(null);
     const { user, isLoaded } = useUser();
     const [patientId, setPatientId] = useState<string | null>(null);
@@ -90,17 +92,31 @@ export default function HomeScreen() {
 
     return (
         <LinearGradient style={{ flex: 1, paddingTop: Platform.OS == 'ios' ? 50 : 0 }} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
-            <ScreenHeader title="Welcome!" name={user?.username} logo={true} streak={true}/>
+            <ScreenHeader title="Welcome" name={user?.username + '!'} logo={true} streak={true}/>
 
             {/* Display each assigned routine */}
+            {!routines && (
+                <ScrollView style={{ flex: 1}}>  
+                    <ThemedText style={{ alignSelf: 'center', color : 'black', paddingTop: 80}}>Loading Routines...</ThemedText>
+                </ScrollView>
+            )}
+            {routines && routines.length === 0 && (
+                <ScrollView style={{ flex: 1}}>
+                    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                    <ThemedText style={{ alignSelf: 'center', color : 'black', paddingTop: 80}}>No Routines Assigned</ThemedText>
+                </View>
+                </ScrollView>)}
+            {routines && routines.length > 0 && (
+                
             <FlatList
                 data={routines}
                 keyExtractor={(item, index) => item._id["$oid"] || index.toString()}
-                style={{ padding: 12, marginBottom: 80 }}
+                style={{ padding: 8, marginBottom: 80 }}
                 renderItem={({ item: routine }) => (
                     
                     <View style={styles.routine}>
-                        <Text style={styles.routineTitle}>{routine.name}</Text>
+                        {}
+                        <Text style={styles.routineTitle}>{capitalizeWords(routine.name)}</Text>
 
                         {/* Exercises within routine */}
                         <View style={styles.exerciseList}>
@@ -116,7 +132,7 @@ export default function HomeScreen() {
 
                                         <Image source={{ uri: exercise.thumbnail_url }} style={styles.exerciseThumbnail} />
                                         <View style={styles.exerciseInfo}>
-                                            <ThemedText style={styles.exerciseName}>{exercise.title}</ThemedText>
+                                            <ThemedText style={styles.exerciseName}>{capitalizeWords(exercise.title)}</ThemedText>
                                             <ThemedText>
                                                 <Text style={styles.exerciseDetails}>Reps: </Text> 
                                                 {exercise.reps}
@@ -140,6 +156,7 @@ export default function HomeScreen() {
                     
                 )}
             />
+            )}
             
         </LinearGradient>
     );
@@ -164,7 +181,7 @@ const styles = StyleSheet.create({
     },
 
     routine: {
-        marginVertical: 10,
+        marginVertical: 0,
         padding: 15,
         borderRadius: 10,
     },
@@ -214,7 +231,7 @@ const styles = StyleSheet.create({
     exerciseItem: {
         flexDirection: "row",
         alignItems: "center",
-        paddingVertical: 10,
+        paddingVertical: 5,
     },
 
     separator: {
