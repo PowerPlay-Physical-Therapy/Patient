@@ -7,7 +7,8 @@ import {
   FlatList,
   ScrollView,
   Image,
-  TextInput
+  TextInput,
+  Modal
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { AppColors } from "@/constants/Colors";
@@ -18,31 +19,33 @@ import { useUser } from "@clerk/clerk-expo";
 import { useEvent } from "expo";
 import * as FileSystem from "expo-file-system";
 import { router, useRouter } from "expo-router";
-import aws from 'aws-sdk'
+import aws from "aws-sdk";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
-const region = "us-east-2"
-const bucketName = "powerplaypatientvids"
-const accessKeyId = process.env.EXPO_PUBLIC_AWS_KEY
-const secretAccessKey = process.env.EXPO_PUBLIC_AWS_SECRET_KEY
+
+const region = "us-east-2";
+const bucketName = "powerplaypatientvids";
+const accessKeyId = process.env.EXPO_PUBLIC_AWS_KEY;
+const secretAccessKey = process.env.EXPO_PUBLIC_AWS_SECRET_KEY;
 
 const s3 = new aws.S3({
   region,
   accessKeyId,
   secretAccessKey,
-  signatureVersion: 'v4'
-})
+  signatureVersion: "v4",
+});
 
 async function generateUploadURL() {
   const imageName = `${Date.now()}.mov`;
 
-  const params = ({
+  const params = {
     Bucket: bucketName,
     Key: imageName,
-    Expires: 60
-  })
-  
-  const uploadURL = await s3.getSignedUrlPromise('putObject', params)
-  return {uploadURL}
+    Expires: 60,
+  };
+
+  const uploadURL = await s3.getSignedUrlPromise("putObject", params);
+  return { uploadURL };
 }
 
 const { height: screenHeight, width: screenWidth } = Dimensions.get("window");
@@ -76,6 +79,7 @@ export default function Share() {
   const [selectedTherapists, setSelectedTherapists] = useState<any[]>([]);
   const router = useRouter();
   const [text, onChangeText] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchTherapists = async () => {
@@ -100,17 +104,17 @@ export default function Share() {
   }, []);
 
   const triggerTherapist = (therapist: any) => {
-    if (selectedTherapists.includes(therapist._id)) {
+    if (selectedTherapists.includes(therapist.therapist_id)) {
       setSelectedTherapists(
-        selectedTherapists.filter((id) => id !== therapist._id)
+        selectedTherapists.filter((id) => id !== therapist.therapist_id)
       );
     } else {
-      setSelectedTherapists([...selectedTherapists, therapist._id]);
+      setSelectedTherapists([...selectedTherapists, therapist.therapist_id]);
     }
   };
 
   const handleUpload = async () => {
-
+    setLoading(true);
     const fileInfo = await FileSystem.getInfoAsync(uri);
 
     if (!fileInfo.exists) {
@@ -120,15 +124,18 @@ export default function Share() {
     const video = await FileSystem.readAsStringAsync(uri, {
       encoding: FileSystem.EncodingType.Base64,
     });
-    console.log("pressed")
+
     const binaryData = Uint8Array.from(atob(video), (char) =>
       char.charCodeAt(0)
     );
-    
+
     const url = await generateUploadURL();
-    console.log("uploadUrl", url.uploadURL)
-    
-    
+    const messageUrl = url.uploadURL.split("?")[0];
+    const sendingMessage = {
+      video_url: messageUrl,
+      thumbnail: thumbnail,
+    };
+
     const response = await fetch(url.uploadURL, {
       method: "PUT",
       headers: {
@@ -137,12 +144,52 @@ export default function Share() {
       body: binaryData,
     });
 
+    for (const therapistId of selectedTherapists) {
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_BACKEND_URL}/message/${userId}/${therapistId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: sendingMessage,
+            type: "feedback",
+          }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to send video to therapist");
+      }
+
+      if (text) {
+        const response = await fetch(
+          `${process.env.EXPO_PUBLIC_BACKEND_URL}/message/${userId}/${therapistId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              message: text,
+              type: "text",
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to send message to therapist");
+        }
+      }
+    }
+
     if (!response.ok) {
       throw new Error("Failed to upload video to S3");
     }
 
     console.log("✅ Video uploaded!");
-    router.push('/home')
+    setLoading(false);
+    router.push("/home");
   };
 
   return (
@@ -151,7 +198,21 @@ export default function Share() {
       colors={[AppColors.OffWhite, AppColors.LightBlue]}
     >
       <View style={styles.container}>
-        <TextInput returnKeyType="done" editable multiline numberOfLines={4} maxLength={120} style={{ color: "gray", width: screenWidth * 0.6, height: screenHeight * 0.12}} onChangeText={onChangeText} value={text} placeholder="Add Description"/>
+        <TextInput
+          returnKeyType="done"
+          editable
+          multiline
+          numberOfLines={4}
+          maxLength={120}
+          style={{
+            color: "gray",
+            width: screenWidth * 0.6,
+            height: screenHeight * 0.12,
+          }}
+          onChangeText={onChangeText}
+          value={text}
+          placeholder="Add Description"
+        />
         <View
           style={{
             height: screenHeight * 0.12,
@@ -160,9 +221,29 @@ export default function Share() {
             borderRadius: 4,
           }}
         >
-          <View style={{position: "absolute", width: "100%", height: "100%", justifyContent: "center", alignItems: "center", zIndex: 1 }}>
-          <ThemedText style={{fontSize: 10, color: 'white', }}>Video Preview</ThemedText>
-          </View><Image source={{ uri: thumbnail }} style={{borderRadius: 4, width: "100%", height: "100%", zIndex: -1 }} />
+          <View
+            style={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 1,
+            }}
+          >
+            <ThemedText style={{ fontSize: 10, color: "white" }}>
+              Video Preview
+            </ThemedText>
+          </View>
+          <Image
+            source={{ uri: thumbnail }}
+            style={{
+              borderRadius: 4,
+              width: "100%",
+              height: "100%",
+              zIndex: -1,
+            }}
+          />
         </View>
       </View>
       <ScrollView style={{ maxHeight: screenHeight * 0.54 }}>
@@ -180,7 +261,7 @@ export default function Share() {
             <RadioButton
               key={therapist._id}
               label={""}
-              selected={selectedTherapists.includes(therapist._id)}
+              selected={selectedTherapists.includes(therapist.therapist_id)}
               onPress={() => triggerTherapist(therapist)}
             />
           </View>
@@ -231,6 +312,18 @@ export default function Share() {
           </TouchableOpacity>
         </LinearGradient>
       </View>
+      <Modal 
+      transparent={true}
+      visible={loading}
+      >
+        <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
+
+            <View style={styles.modalView}>
+              <ThemedText style={{fontSize: 16}}>Uploading...</ThemedText>
+              <LoadingSpinner color={AppColors.Blue} durationMs={1000}/>
+            </View>
+          </View>
+      </Modal>
     </LinearGradient>
   );
 }
@@ -239,7 +332,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     paddingLeft: 40,
-    
+
     borderBottomColor: "white",
     borderBottomWidth: 1,
     flexDirection: "row",
@@ -287,5 +380,20 @@ const styles = StyleSheet.create({
   },
   radioLabel: {
     fontSize: 16,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: AppColors.OffWhite,
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
 });

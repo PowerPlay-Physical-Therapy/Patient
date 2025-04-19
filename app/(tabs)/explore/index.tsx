@@ -1,4 +1,4 @@
-import { StyleSheet, Image, Platform, ScrollView, View, Dimensions, Text, TouchableOpacity, SafeAreaView } from 'react-native';
+import { StyleSheet, Image, Platform, ScrollView, View, Dimensions, Text, TouchableOpacity, SafeAreaView, RefreshControl } from 'react-native';
 import { AppColors } from '@/constants/Colors';
 import { Collapsible } from '@/components/Collapsible';
 import { ExternalLink } from '@/components/ExternalLink';
@@ -7,14 +7,16 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { LinearGradient } from 'expo-linear-gradient';
 import ScreenHeader from '@/components/ScreenHeader';
-import { useEffect, useState } from 'react';
+import { useEffect, useState , memo, useCallback, useRef} from 'react';
 import { Link, router, Stack } from 'expo-router';
 import { rgbaColor } from 'react-native-reanimated/lib/typescript/Colors';
 import { setStatusBarTranslucent } from 'expo-status-bar';
 import { SearchBar, Skeleton } from '@rneui/themed';
 import { BlurView } from 'expo-blur'
 import { useRouter } from "expo-router";
-
+import capitalizeWords from '@/utils/capitalizeWords';
+import { FETCH_RESULTS, useFetchRoutines } from '@/hooks/useFetchRoutines';
+import { Loader } from '@/components/Loader';
 
 const { height, width } = Dimensions.get("window")
 
@@ -69,7 +71,7 @@ export default function ExploreScreen() {
                     ) : (
                         filteredResults.map((category, index) =>
                             <View key={index} style={{ padding: 16 }}>
-                                <ThemedText style={{ fontSize: 18, paddingLeft: 10, fontWeight: 'bold' }}>{category.title}</ThemedText>
+                                <ThemedText style={{ fontSize: 18, paddingLeft: 10, fontWeight: 'bold' }}>{capitalizeWords(category.title)}</ThemedText>
                                 {category["subcategory"].map((subcategory: any, index2: any) => (
                                     <View style={{ margin: 5, padding: 5, backgroundColor: AppColors.OffWhite, borderRadius: 15 }} key={index2}>
                                         <ThemedText style={{ paddingLeft: 5, fontWeight: 'bold'}}>{subcategory.subtitle}</ThemedText>
@@ -83,7 +85,7 @@ export default function ExploreScreen() {
                                                 }} key={index3}>
                                                     <View style={{ alignItems: "center", width: '100%', justifyContent: "flex-end", margin: 5, borderRadius: 15, zIndex: 0, shadowOffset: { height: 0.2, width: 0.2 }, shadowRadius: 3, shadowOpacity: 0.5 }}>
                                                         <Image source={{ uri: exercise.thumbnail_url }} style={{ width: width * 0.5, height: height * 0.2, borderRadius: 15, zIndex: 2 }} />
-                                                        <ThemedText style={{ fontWeight: 'bold', position: "absolute", zIndex: 3, backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: 5, padding: 2.5, margin: 4 }} >{exercise.name}</ThemedText>
+                                                        <ThemedText style={{ fontWeight: 'bold', position: "absolute", zIndex: 3, backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: 5, padding: 2.5, margin: 4 }} >{capitalizeWords(exercise.name)}</ThemedText>
                                                     </View>
                                                 </TouchableOpacity>
                                             ))}

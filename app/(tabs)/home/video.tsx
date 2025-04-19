@@ -5,6 +5,8 @@ import { useLocalSearchParams, Link } from "expo-router";
 import {WebView} from 'react-native-webview';
 import { TouchableOpacity, Image, Dimensions } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
+import capitalizeWords from "@/utils/capitalizeWords";
+import {Animated} from "react-native";
 
 
 const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
@@ -39,6 +41,8 @@ export default function Video() {
     video_url: "",
   });
   const [summary, setSummary] = useState<boolean>(false);
+  const slideAnim = useRef(new Animated.Value(-300)).current;
+
   // Fallback URL if exercise.video_url is not available
 
   useEffect(() => {
@@ -62,11 +66,31 @@ export default function Video() {
     fetchData();
   }, []);
 
+  const toggleSummary = () => {
+    if (summary) {
+      // Slide up (hide)
+      Animated.timing(slideAnim, {
+        toValue: -300, // Move off-screen
+        duration: 200,
+        useNativeDriver: true,
+      }).start(() => setSummary(false));
+    } else {
+      setSummary(true);
+      // Slide down (show)
+      Animated.timing(slideAnim, {
+        toValue: 0, // Move to visible position
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
+
   
   // video source url is not supported, consider another solution
   return (
     <View style={styles.contentContainer}>
-      <TouchableOpacity onPress={() => setSummary(!summary)}>
+      
+      <TouchableOpacity onPress={toggleSummary}>
                   {!summary && (
                     <Image
                       source={require("@/assets/images/chevron-down.png")}
@@ -75,8 +99,8 @@ export default function Video() {
                   )}
                 </TouchableOpacity>
       {summary && (          
-      <View style={styles.exerciseSummary}>
-        <View style={{width: '56%', flexDirection: 'row', justifyContent: 'space-between', alignItems: "center"}}>
+      <Animated.View style={[styles.exerciseSummary, {transform: [{ translateY: slideAnim }]}]}>
+        <View style={{width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: "center"}}>
         <Link
           dismissTo
           href={`/(tabs)/home/exerciseDetails?exerciseId=${exercise_id}`}
@@ -84,33 +108,21 @@ export default function Video() {
           <Image source={require("@/assets/images/chevron-back.png")} />
         </Link>
         <TouchableOpacity
-          onPress={() => setSummary(false)}
+          onPress={toggleSummary}
           >
           <Image
             source={require("@/assets/images/chevron-up.png")}
             
           />
         </TouchableOpacity>
+        <View style={{width: 32}}></View>
         </View>
         <View>
-          <ThemedText style={styles.text}>{exercise.title}</ThemedText>
+          <ThemedText style={styles.text}>{capitalizeWords(exercise.title)}</ThemedText>
         </View>
         
           <ThemedText style={styles.desc}>{exercise.description}</ThemedText>
-        {/*<View style={{width: '100%',flexDirection: "row", justifyContent: "space-between", paddingTop: 20}}>
-          <TouchableOpacity>
-            <Image
-              source={require("@/assets/images/cc.png")}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Image
-              source={require("@/assets/images/Cog.png")}
-            />
-          </TouchableOpacity>
-            
-        </View>*/}
-      </View>)}
+      </Animated.View>)}
       <WebView
       source={{uri: exercise.video_url}} style={styles.video}
       />
@@ -126,12 +138,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     backgroundColor: "black",
+    zIndex: -1,
   },
   video: {
-    position: 'relative',
+    position: "relative",
     backgroundColor: "black",
+    bottom: 60,
     width: screenWidth,
-    height: screenHeight / 3,
+    height: screenHeight,
     zIndex: 1,
 
   },

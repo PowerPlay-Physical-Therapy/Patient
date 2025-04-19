@@ -7,23 +7,19 @@ type ScreenHeaderProps = {
   title?: string;
   name?: string | null;
   logo?: boolean;
-  leftButton?: React.ReactNode;
-  rightButton?: React.ReactNode;
   streak?: boolean;
 };
 
-const ScreenHeader = ({ title, name, logo = false, leftButton, rightButton, streak=false }: ScreenHeaderProps) => {
+const ScreenHeader = ({ title, name, logo = false, streak=false }: ScreenHeaderProps) => {
   return (
     <View style={styles.header}>
-      <View style={styles.headerRow}>
-        
-        <View style={styles.side}>{leftButton}</View>
-
-        <View style={styles.center}>
+      
           {logo ? (
             <View style={styles.logoRow}>
-              <ThemedText style={styles.headerText}>{title} {name}</ThemedText>
               {streak &&<Streak/>}
+              <ThemedText style={!streak? styles.headerText : {fontSize: 20,
+    fontWeight: 'bold',
+    color: 'black',}}>{title} {name}</ThemedText>
               <Image
                 source={require('@/assets/images/app-logo.png')}
                 resizeMode="contain"
@@ -33,10 +29,8 @@ const ScreenHeader = ({ title, name, logo = false, leftButton, rightButton, stre
           ) : (
             <ThemedText style={styles.headerText}>{title} {name}</ThemedText>
           )}
-        </View>
         
-        <View style={styles.side}>{rightButton}</View>
-      </View>
+      
     </View>
   );
 };
@@ -48,8 +42,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
+    paddingHorizontal: 24,
   },
   headerRow: {
+    width: '100%',
+    height: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -58,7 +55,7 @@ const styles = StyleSheet.create({
   side: {
     width: 40,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
   },
   center: {
     flex: 1,
@@ -68,19 +65,21 @@ const styles = StyleSheet.create({
   logoRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    
   },
   headerText: {
     fontSize: 20,
     fontWeight: 'bold',
     color: 'black',
-    marginLeft: 30,
-    marginRight: 20,
-
+    textAlign: 'center'
   },
   image: {
     width: 40,
     height: 40,
-    marginLeft: 10,
+    marginLeft: 20,
+    position: 'relative',
+    bottom: 12
   },
 });
 

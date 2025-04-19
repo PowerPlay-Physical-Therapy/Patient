@@ -75,5 +75,7 @@ const styles = StyleSheet.create({
     maxWidth: 52,
     height: 30,
     borderRadius: 8,
+    marginBottom: 8,
+    marginLeft: 8
   },
 });

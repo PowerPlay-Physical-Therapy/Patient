@@ -1,4 +1,4 @@
-import { StyleSheet, View, Image, TextInput, TouchableOpacity, Platform, Alert } from 'react-native';
+import { StyleSheet, View, Image, TextInput, TouchableOpacity, Platform, Alert, RefreshControl } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { AppColors } from '@/constants/Colors';
 import { ThemedText } from '@/components/ThemedText';
@@ -19,6 +19,7 @@ export default function ManageTherapists() {
   const [therapists, setTherapists] = useState<any[]>([]);
   const [email, setEmail] = useState('');
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const toggleModal = () => setModalVisible(!isModalVisible);
 
@@ -60,6 +61,12 @@ export default function ManageTherapists() {
     }
   };
 
+  const onRefresh = async () => {
+    setIsRefreshing(true);
+    await fetchTherapists(); // Fetch new data
+    setIsRefreshing(false); // Hide the refreshing indicator
+  };
+
   const connectTherapist = async () => {
     try {
       const res = await fetch(`${BACKEND_URL}/therapist/get_therapist_by_email/?email=${email}`);
@@ -96,6 +103,7 @@ export default function ManageTherapists() {
         style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 50 : 0 }}
         colors={[AppColors.OffWhite, AppColors.LightBlue]}
       >
+        {/*
         <ScreenHeader
           title="Manage Your Therapists"
           leftButton={
@@ -116,9 +124,28 @@ export default function ManageTherapists() {
               />
             </TouchableOpacity>
           }
-        />
+        /> */}
+        <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.push('/profile')}>
+              <Image
+                source={require('@/assets/images/chevron-left.png')}
+                style={{ width: 24, height: 24 }}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+            <ThemedText style={{fontWeight: 'bold', fontSize: 20}}>Manage Therapists</ThemedText>
+            <TouchableOpacity onPress={toggleModal}>
+              <Image
+                source={require('@/assets/images/user-add-icon.png')}
+                style={{ width: 24, height: 24 }}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
 
-        <ScrollView style={{ flex: 1 }}>
+        </View>
+
+        <ScrollView style={{ flex: 1 }}
+          refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}>
           {therapists.map((therapist) => (
             <View key={therapist.id} style={styles.therapistItem}>
               <View style={styles.therapistInfo}>
@@ -265,4 +292,18 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 16,
   },
+  header: {
+    height: 70,
+    paddingTop: 30,
+    width: '100%',
+    justifyContent: 'space-between',
+    backgroundColor: AppColors.OffWhite,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+    alignItems: 'center',
+    flexDirection: 'row',
+    alignSelf: 'center',
+    paddingLeft: 20,
+    paddingRight: 20,
+},
 });

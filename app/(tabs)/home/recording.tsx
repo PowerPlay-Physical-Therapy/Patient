@@ -9,7 +9,8 @@ import {
   View,
   Image,
   Touchable,
-  Dimensions
+  Dimensions,
+  Animated
 } from "react-native";
 import { Redirect, useRouter, useLocalSearchParams, Link } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
@@ -17,7 +18,7 @@ import { AppColors } from "@/constants/Colors";
 import { LinearGradient } from "expo-linear-gradient";
 import {ResizeMode, Video} from "expo-av";
 import * as VideoThumbnails from "expo-video-thumbnails";
-
+import capitalizeWords from "@/utils/capitalizeWords";
 
 const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
 
@@ -44,7 +45,7 @@ export default function Recording() {
   const [thumbnail, setThumbnail] = useState(null);
   const router = useRouter();
   const [recording, setRecording] = useState(false); // State to track if recording is in progress
-  const [uri, setUri] = useState<String>(""); // State to store the recorded video URI
+  const [uri, setUri] = useState<string>(""); // State to store the recorded video URI
   const [facing, setFacing] = useState<CameraType>("front");
   const [permission, requestPermission] = useCameraPermissions();
   const [exercise, setExercise] = useState<Exercise>({
@@ -62,6 +63,7 @@ export default function Recording() {
   }); // State to store exercise data
   const ref = useRef<CameraView>(null); // Create a ref for the CameraView to access methods like recordAsync
   const videoRef = useRef<Video>(null); // Create a ref for the Video component to access methods like playAsync
+  const slideAnim = useRef(new Animated.Value(-300)).current; // Animation value for sliding in the exercise summary
 
   useEffect(() => {
     const fetchData = async () => {
@@ -119,6 +121,25 @@ export default function Recording() {
     }
   };
 
+  const toggleSummary = () => {
+    if (summary) {
+      // Slide up (hide)
+      Animated.timing(slideAnim, {
+        toValue: -300, // Move off-screen
+        duration: 200,
+        useNativeDriver: true,
+      }).start(() => setSummary(false));
+    } else {
+      setSummary(true);
+      // Slide down (show)
+      Animated.timing(slideAnim, {
+        toValue: 0, // Move to visible position
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }
+  }
+
   useEffect(() => {
     if (uri) {
       generateThumbnail();
@@ -141,13 +162,10 @@ export default function Recording() {
       </View>
     );
   }
-  console.log("thumbnail", thumbnail);
   const startOver = () => {
     setUri("");
     setRecording(false);
   }
-
-  console.log("uri", uri);
 
   const mute = async () => {
     if (videoRef.current) {
@@ -169,7 +187,7 @@ export default function Recording() {
         
       />
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={() => setSummary(!summary)}>
+          <TouchableOpacity onPress={toggleSummary}>
             {!summary && (
               <Image
                 source={require("@/assets/images/chevron-down.png")}
@@ -178,9 +196,9 @@ export default function Recording() {
             )}
           </TouchableOpacity>
           {summary && (
-            <View style={styles.exerciseSummary}>
-              <View>
-                <ThemedText style={styles.text}>{exercise.title}</ThemedText>
+            <Animated.View style={[styles.exerciseSummary, { transform: [{ translateY: slideAnim }] }]}>
+              <View style={{width: '100%', justifyContent: 'space-between'}}>
+                <ThemedText style={styles.text}>{capitalizeWords(exercise.title)}</ThemedText>
                 <ThemedText style={styles.text}>
                   Reps: {exercise.reps}
                 </ThemedText>
@@ -190,6 +208,7 @@ export default function Recording() {
                 <ThemedText style={styles.text}>
                   Hold: {exercise.hold} seconds
                 </ThemedText>
+                {exercise.video_url && 
                 <Link href={`/(tabs)/home/video?exerciseId=${exercise._id}`}>
                   <View
                     style={{
@@ -213,15 +232,15 @@ export default function Recording() {
                       source={require("@/assets/images/chevron-right.png")}
                     />
                   </View>
-                </Link>
+                </Link>}
               </View>
               <TouchableOpacity
-                onPress={() => setSummary(false)}
+                onPress={toggleSummary}
                 style={{ marginTop: 10 }}
               >
                 <Image source={require("@/assets/images/chevron-up.png")} />
               </TouchableOpacity>
-            </View>
+            </Animated.View>
           )}
           <View style={{flexDirection: "column", alignItems: "center", justifyContent: "center", width: "100%"}}>
           <View
@@ -290,7 +309,7 @@ export default function Recording() {
         responsiveOrientationWhenOrientationLocked
       >
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={() => setSummary(!summary)}>
+        <TouchableOpacity onPress={toggleSummary}>
             {!summary && (
               <Image
                 source={require("@/assets/images/chevron-down.png")}
@@ -299,9 +318,9 @@ export default function Recording() {
             )}
           </TouchableOpacity>
           {summary && (
-            <View style={styles.exerciseSummary}>
-              <View>
-                <ThemedText style={styles.text}>{exercise.title}</ThemedText>
+            <Animated.View style={[styles.exerciseSummary, { transform: [{ translateY: slideAnim }] }]}>
+              <View style={{width: '100%', justifyContent: 'space-between'}}>
+                <ThemedText style={styles.text}>{capitalizeWords(exercise.title)}</ThemedText>
                 <ThemedText style={styles.text}>
                   Reps: {exercise.reps}
                 </ThemedText>
@@ -311,6 +330,7 @@ export default function Recording() {
                 <ThemedText style={styles.text}>
                   Hold: {exercise.hold} seconds
                 </ThemedText>
+                {exercise.video_url &&
                 <Link href={`/(tabs)/home/video?exerciseId=${exercise._id}`}>
                   <View
                     style={{
@@ -334,15 +354,15 @@ export default function Recording() {
                       source={require("@/assets/images/chevron-right.png")}
                     />
                   </View>
-                </Link>
+                </Link>}
               </View>
               <TouchableOpacity
-                onPress={() => setSummary(false)}
+                onPress={toggleSummary}
                 style={{ marginTop: 10 }}
               >
                 <Image source={require("@/assets/images/chevron-up.png")} />
               </TouchableOpacity>
-            </View>
+            </Animated.View>
           )}
           <View style={{flexDirection: "column", alignItems: "center", justifyContent: "center", width: "100%"}}>
           <View
@@ -457,7 +477,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     position: "relative",
     bottom: 300,
-    paddingTop: 200,
+    paddingTop: 160,
+    width: screenWidth,
   },
   buttonInner: {
     padding: 12,
