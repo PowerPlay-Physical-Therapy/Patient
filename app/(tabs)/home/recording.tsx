@@ -45,7 +45,7 @@ export default function Recording() {
   const [thumbnail, setThumbnail] = useState(null);
   const router = useRouter();
   const [recording, setRecording] = useState(false); // State to track if recording is in progress
-  const [uri, setUri] = useState<String>(""); // State to store the recorded video URI
+  const [uri, setUri] = useState<string>(""); // State to store the recorded video URI
   const [facing, setFacing] = useState<CameraType>("front");
   const [permission, requestPermission] = useCameraPermissions();
   const [exercise, setExercise] = useState<Exercise>({
@@ -162,13 +162,10 @@ export default function Recording() {
       </View>
     );
   }
-  console.log("thumbnail", thumbnail);
   const startOver = () => {
     setUri("");
     setRecording(false);
   }
-
-  console.log("uri", uri);
 
   const mute = async () => {
     if (videoRef.current) {
@@ -200,7 +197,7 @@ export default function Recording() {
           </TouchableOpacity>
           {summary && (
             <Animated.View style={[styles.exerciseSummary, { transform: [{ translateY: slideAnim }] }]}>
-              <View>
+              <View style={{width: '100%', justifyContent: 'space-between'}}>
                 <ThemedText style={styles.text}>{capitalizeWords(exercise.title)}</ThemedText>
                 <ThemedText style={styles.text}>
                   Reps: {exercise.reps}
@@ -211,6 +208,7 @@ export default function Recording() {
                 <ThemedText style={styles.text}>
                   Hold: {exercise.hold} seconds
                 </ThemedText>
+                {exercise.video_url && 
                 <Link href={`/(tabs)/home/video?exerciseId=${exercise._id}`}>
                   <View
                     style={{
@@ -234,7 +232,7 @@ export default function Recording() {
                       source={require("@/assets/images/chevron-right.png")}
                     />
                   </View>
-                </Link>
+                </Link>}
               </View>
               <TouchableOpacity
                 onPress={toggleSummary}
@@ -321,7 +319,7 @@ export default function Recording() {
           </TouchableOpacity>
           {summary && (
             <Animated.View style={[styles.exerciseSummary, { transform: [{ translateY: slideAnim }] }]}>
-              <View>
+              <View style={{width: '100%', justifyContent: 'space-between'}}>
                 <ThemedText style={styles.text}>{capitalizeWords(exercise.title)}</ThemedText>
                 <ThemedText style={styles.text}>
                   Reps: {exercise.reps}
@@ -332,6 +330,7 @@ export default function Recording() {
                 <ThemedText style={styles.text}>
                   Hold: {exercise.hold} seconds
                 </ThemedText>
+                {exercise.video_url &&
                 <Link href={`/(tabs)/home/video?exerciseId=${exercise._id}`}>
                   <View
                     style={{
@@ -355,7 +354,7 @@ export default function Recording() {
                       source={require("@/assets/images/chevron-right.png")}
                     />
                   </View>
-                </Link>
+                </Link>}
               </View>
               <TouchableOpacity
                 onPress={toggleSummary}
@@ -478,7 +477,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     position: "relative",
     bottom: 300,
-    paddingTop: 200,
+    paddingTop: 160,
+    width: screenWidth,
   },
   buttonInner: {
     padding: 12,

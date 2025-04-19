@@ -16,10 +16,8 @@ import capitalizeWords from "@/utils/capitalizeWords";
 const { height, width } = Dimensions.get("window")
 
 export default function RoutineDetails() {
-
     const { user } = useUser();
     let exercise_id = "";
-
     const local = useLocalSearchParams();
     const parse = () => {
         try {
@@ -29,14 +27,13 @@ export default function RoutineDetails() {
         }
     };
     const parsedId = parse();
-
     if (parsedId) {
         exercise_id = parsedId.$oid;}
     else {
         exercise_id = local.exerciseId;
     }
     
-    const [routine,setRoutine] = useState([]);
+    const [routine, setRoutine] = useState([]);
     
     const [notification, setNotification] = useState(null);
 
@@ -66,8 +63,9 @@ export default function RoutineDetails() {
             }
         };
         fetchData();
+        
     }, []);
-
+    console.log(routine);
     const handleAddRoutine = () => {
         showNotification();
         // Toast.show({ text1: "Hello", type: "success" })
@@ -133,9 +131,10 @@ export default function RoutineDetails() {
                                         colors={[AppColors.Purple, AppColors.Blue]}
                                         style={styles.button}
                                     >
+                                        {exercise.video_url && 
                                         <Link style={styles.buttonInner} href={`/explore/video?exerciseId=${exercise_id}`}>
                                             <ThemedText style={styles.buttonText}>Watch Video</ThemedText>
-                                        </Link>
+                                        </Link>}
                                     </LinearGradient>
                                 </View>
 

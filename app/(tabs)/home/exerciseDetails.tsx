@@ -77,7 +77,8 @@ export default function ExerciseDetails() {
                                         {exercise.description}
                                     </ThemedText>
                                 </ScrollView>
-                                <View style={{ flexDirection: "row", justifyContent: 'space-between', marginTop: 10}}>
+                                <View style={{ flexDirection: "row", justifyContent: 'center', marginTop: 10}}>
+                                {exercise.video_url && 
                                 <View style={{ alignItems: "center", marginTop: 5, width: '50%' }}>
                                     <LinearGradient
                                         colors={[AppColors.Purple, AppColors.Blue]}
@@ -90,7 +91,7 @@ export default function ExerciseDetails() {
                                             <ThemedText style={styles.buttonText}>Watch Video</ThemedText>
                                         </TouchableOpacity>
                                     </LinearGradient>
-                                </View>
+                                </View>}
                                 <View style={{ alignItems: "center", marginTop: 5, width: '50%'}}>
                                     <LinearGradient
                                         colors={[AppColors.Purple, AppColors.Blue]}

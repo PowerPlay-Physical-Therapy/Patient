@@ -197,8 +197,10 @@ export default function Profile() {
                             </Pressable>
                         </View>
                     </View>
+                    <View style={{padding: 20}}>
                     <ThemedText style={styles.text}>Email: {user?.primaryEmailAddress?.emailAddress}</ThemedText>
-                    <ThemedText style={styles.text}>Password: Replace this with user password</ThemedText>
+                    <ThemedText style={styles.text}>Password: *********</ThemedText>
+                    </View>
                     <LinearGradient
                         colors={[AppColors.Purple, AppColors.Blue]}
                         style={styles.button}
@@ -315,6 +317,7 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 20,
+        paddingTop: 12,
     },
     cog: {
         position: 'relative',

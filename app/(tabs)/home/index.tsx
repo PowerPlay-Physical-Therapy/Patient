@@ -28,57 +28,64 @@ export default function HomeScreen() {
     const [error, setError] = useState<string | null>(null);
     const { user, isLoaded } = useUser();
     const [patientId, setPatientId] = useState<string | null>(null);
-
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [isTabVisible, setIsTabVisible] = useState(true);
     const [activeTab, setActiveTab] = useState(0);
+
+    const fetchAssignedRoutines = async () => {
+        if (!isSignedIn) {
+            return <Redirect href={'/sign-up'} />
+        }
+
+        // Make sure user or user data is loaded
+        if (!user || !isLoaded) {
+            return;
+        }
+
+        // Display user id
+        const patientId = user?.id;
+        console.log("userid:", user?.id);
+        setPatientId(patientId);
+        setPatientName(user?.firstName || "Patient");
+
+        // Error message if no patientId is available
+        if (!patientId) {
+            setError('Patient ID is not defined');
+            return;
+        }
+
+        try {
+            // Fetch assigned routines
+            const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/get_assigned_routines/${patientId}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            // Throw an error if the response is not successful
+            if (!response.ok) {
+                throw new Error(`Failed to fetch assigned routines. Status: ${response.status}`);
+            }
+
+            // Parse the response as JSON
+            const data = await response.json();
+            console.log("Fetched data:", data);
+            setRoutines(data);
+
+        } catch (err) {
+            setError("Fetching data unsuccessful");
+            console.error("Error fetching assigned routines:", err);
+        }
+    };
     
     useEffect(() => {
-        const fetchAssignedRoutines = async () => {
-            if (!isSignedIn) {
-                return <Redirect href={'/sign-up'} />
-            }
-
-            // Make sure user or user data is loaded
-            if (!user || !isLoaded) {
-                return;
-            }
-
-            // Display user id
-            const patientId = user?.id;
-            console.log("userid:", user?.id);
-            setPatientId(patientId);
-            setPatientName(user?.firstName || "Patient");
-
-            // Error message if no patientId is available
-            if (!patientId) {
-                setError('Patient ID is not defined');
-                return;
-            }
-
-            try {
-                // Fetch assigned routines
-                const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/get_assigned_routines/${patientId}`, {
-                    method: 'GET',
-                    headers: { 'Content-Type': 'application/json' },
-                });
-
-                // Throw an error if the response is not successful
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch assigned routines. Status: ${response.status}`);
-                }
-
-                // Parse the response as JSON
-                const data = await response.json();
-                console.log("Fetched data:", data);
-                setRoutines(data);
-
-            } catch (err) {
-                setError("Fetching data unsuccessful");
-                console.error("Error fetching assigned routines:", err);
-            }
-        };
         fetchAssignedRoutines();
     }, [isLoaded, user]);
+
+    const onRefresh = async () => {
+        setIsRefreshing(true);
+        await fetchAssignedRoutines();
+        setIsRefreshing(false);
+    }
 
 
     // Display the error message
@@ -112,6 +119,8 @@ export default function HomeScreen() {
                 data={routines}
                 keyExtractor={(item, index) => item._id["$oid"] || index.toString()}
                 style={{ padding: 8, marginBottom: 80 }}
+                refreshing={isRefreshing}
+                onRefresh={onRefresh}
                 renderItem={({ item: routine }) => (
                     
                     <View style={styles.routine}>
