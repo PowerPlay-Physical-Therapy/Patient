@@ -79,6 +79,7 @@ export default function HomeScreen() {
     
     useEffect(() => {
         fetchAssignedRoutines();
+        updateUser();
     }, [isLoaded, user]);
 
     const onRefresh = async () => {
@@ -86,6 +87,28 @@ export default function HomeScreen() {
         await fetchAssignedRoutines();
         setIsRefreshing(false);
     }
+
+    const updateUser = async () => {
+        const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/update_patient/${user?.username}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: patientId,
+            username: user?.username,
+            firstname: user?.firstName,
+            lastname: user?.lastName,
+            email: user?.emailAddresses[0].emailAddress,
+            imageUrl: user?.imageUrl
+          }),
+        }) 
+  
+        if (!response.ok) {
+          throw new Error('Failed to update user');
+        }
+        console.log('User updated successfully!');
+      }
 
 
     // Display the error message
