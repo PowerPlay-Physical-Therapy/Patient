@@ -162,7 +162,7 @@ export default function HomeScreen() {
                                         
                                         <View style={styles.exerciseItem}>
 
-                                        <Image source={{ uri: exercise.thumbnail_url }} style={styles.exerciseThumbnail} />
+                                        <Image source={exercise.thumbnail_url? { uri: exercise.thumbnail_url } : require(`@/assets/images/default-thumbnail.png`)} style={styles.exerciseThumbnail} />
                                         <View style={styles.exerciseInfo}>
                                             <ThemedText style={styles.exerciseName}>{capitalizeWords(exercise.title)}</ThemedText>
                                             <ThemedText>
