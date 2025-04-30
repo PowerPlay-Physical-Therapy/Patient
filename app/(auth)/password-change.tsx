@@ -208,7 +208,7 @@ export default function ForgotPassword() {
 
 const styles = StyleSheet.create({
     buttonText: {
-        fontWeight: 'normal',
+        fontWeight: 'bold',
     },
 
     button: {
