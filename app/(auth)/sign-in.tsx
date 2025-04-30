@@ -58,7 +58,7 @@ export default function signIN() {
       if (signInAttempt.status == "complete") {
         await setActive({ session: signInAttempt.createdSessionId });
         console.log("Signed in Successfully");
-        router.replace("/");
+        router.replace("/home");
       } else {
         console.error(JSON.stringify(signInAttempt, null, 2));
       }
@@ -85,12 +85,12 @@ export default function signIN() {
           }}
         />
         <ThemedView style={{ alignSelf: "center" }}>
-          <ThemedText style={{ color: "Black", alignSelf: "center", fontSize: 24 }}>
+          <ThemedText style={{ color: "Black", alignSelf: "center", fontSize: 24 , lineHeight: 24}}>
             Welcome!
           </ThemedText>
-          <ThemedText style={{ color: "Black", fontSize: 24, marginTop: 10 }}>
+          <ThemedText style={{ color: "Black", fontSize: 24, marginTop: 10, lineHeight: 24 }}>
             to{" "}
-            <ThemedText style={{ color: AppColors.Blue, fontSize: 24}}>Powerplay Patient</ThemedText>
+            <ThemedText style={{ color: AppColors.Blue, fontSize: 24, lineHeight: 24}}>Powerplay Patient</ThemedText>
           </ThemedText>
         </ThemedView>
         <LinearGradient
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   buttonText: {
-    fontWeight: "bold",
+    fontWeight: "normal",
   },
   bottomView: {
     backgroundColor: "white",

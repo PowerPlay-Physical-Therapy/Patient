@@ -7,11 +7,21 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 import {Colors, AppColors} from '@/constants/Colors';
 import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo'
-// import { Slot } from 'expo-router'
+import { tokenCache } from '@clerk/clerk-expo/token-cache'
+import * as Notifications from 'expo-notifications';
+import { NotificationProvider } from '@/context/NotificationContext';
+
 
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { LinearGradient } from 'expo-linear-gradient';
-import {Button} from 'react-native';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }), 
+})
+
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -38,24 +48,28 @@ export default function RootLayout() {
   }
 
   return (
+    <NotificationProvider>
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <ClerkProvider publishableKey={publishableKey}>
+      <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
         <ClerkLoaded>
           
           <Stack
           screenOptions={{
             headerShown: true,
           }}
-          >
-            <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          > 
+            <Stack.Screen name="(tabs)"/>
+
             <Stack.Screen name="+not-found" />
-            <Stack.Screen name="privacy-policy" options={{headerStyle: {
+            <Stack.Screen name="privacy-policy" options={{
+              headerStyle: {
               backgroundColor: AppColors.OffWhite,
             },
+            headerShown: true,
             headerBackTitle: 'Back',
             title: "Privacy Notice",
           }}/>
+          
           </Stack>
           <StatusBar style="auto" />
           
@@ -63,6 +77,8 @@ export default function RootLayout() {
       </ClerkProvider>
 
     </ThemeProvider>
+    </NotificationProvider>
   );
 }
+
 
