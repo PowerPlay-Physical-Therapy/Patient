@@ -24,14 +24,14 @@ export default function MessagesScreen() {
         console.log("Patient ID: ", patientId); 
         const fetchConnections = async () => {
             try {
-                const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/get_connections/${patientId}`, {
+                const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/get_connections/${patientId}/patient`, {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' }
                 });
 
                 if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                 const data = await response.json();
-                setConnections(data);
+                setConnections(data.connections);
             } catch (error) {
                 console.error("Error Fetching Connections",error);
             }
