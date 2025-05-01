@@ -47,6 +47,10 @@ export default function HomeScreen() {
         console.log("userid:", user?.id);
         setPatientId(patientId);
         setPatientName(user?.firstName || "Patient");
+        const storedStreak = parseInt(
+            (await AsyncStorage.getItem("streak")) || "0",
+            10
+        );
 
         // Error message if no patientId is available
         if (!patientId) {
@@ -82,7 +86,8 @@ export default function HomeScreen() {
                   firstname: user?.firstName,
                   lastname: user?.lastName,
                   email: user?.emailAddresses[0].emailAddress,
-                  imageUrl: user?.imageUrl
+                  imageUrl: user?.imageUrl,
+                  streak: storedStreak,
                 }),
               }) 
         
