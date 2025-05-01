@@ -85,7 +85,7 @@ export default function Share() {
     const fetchTherapists = async () => {
       try {
         const response = await fetch(
-          `${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/get_patient/?patient_id=${userId}`,
+          `${process.env.EXPO_PUBLIC_BACKEND_URL}/get_connections/${userId}/patient`,
           {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -96,6 +96,7 @@ export default function Share() {
 
         const data = await response.json();
         setTherapists(data.connections);
+        console.log("Fetched therapists:", data.connections);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -247,7 +248,7 @@ export default function Share() {
         </View>
       </View>
       <ScrollView style={{ maxHeight: screenHeight * 0.54 }}>
-        {therapists.map((therapist) => (
+        {therapists.map((therapist, index) => (
           <View
             style={{
               flexDirection: "row",
@@ -255,9 +256,9 @@ export default function Share() {
               justifyContent: "space-between",
               alignContent: "center",
             }}
-            key={therapist._id}
+            key={index}
           >
-            <ThemedText>{therapist.username}</ThemedText>
+            <ThemedText>{therapist.firstname} {therapist.lastname}</ThemedText>
             <RadioButton
               key={therapist._id}
               label={""}
