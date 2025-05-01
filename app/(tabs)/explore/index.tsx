@@ -74,7 +74,7 @@ export default function ExploreScreen() {
                                 <ThemedText style={{ fontSize: 18, paddingLeft: 10, fontWeight: 'bold' }}>{capitalizeWords(category.title)}</ThemedText>
                                 {category["subcategory"].map((subcategory: any, index2: any) => (
                                     <View style={{ margin: 5, padding: 5, backgroundColor: AppColors.OffWhite, borderRadius: 15 }} key={index2}>
-                                        <ThemedText style={{ paddingLeft: 5, fontWeight: 'bold'}}>{subcategory.subtitle}</ThemedText>
+                                        <ThemedText style={{ paddingLeft: 5, fontWeight: 'bold'}}>{subcategory.subtitle? capitalizeWords(subcategory.subtitle) : ""}</ThemedText>
                                         <ScrollView horizontal={true}>
                                             {subcategory["exercises"].map((exercise: any, index3: any) => (
                                                 <TouchableOpacity onPress={() => {

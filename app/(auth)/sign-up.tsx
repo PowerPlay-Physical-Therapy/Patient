@@ -1,17 +1,19 @@
 import * as React from 'react';
-import { Text, TextInput, View, Image, TouchableOpacity, StyleSheet, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
-import { useSignUp } from '@clerk/clerk-expo';
+import { Text, TextInput, View, Image, TouchableOpacity, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, Modal } from 'react-native';
+import { useSignUp, } from '@clerk/clerk-expo';
 import { Link, useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { AppColors } from '@/constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
 import Checkbox from 'expo-checkbox';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function signUP() {
-    const { isLoaded, signUp } = useSignUp();
+    
+    const { isLoaded, signUp, setActive } = useSignUp();
     const router = useRouter();
-
+    const [loading, setLoading] = React.useState(false);
     const [emailAddress, setEmailAddress] = React.useState('');
     const [password, setPassword] = React.useState('');
     const [username, setUsername] = React.useState('');
@@ -75,12 +77,14 @@ export default function signUP() {
 
     // ✅ Sign-Up Button Handler
     const onSignUpPress = async () => {
+        
         if (!isLoaded) return;
 
         if (!validateInputs()) {
             return; // Stop if validation fails
         }
 
+        setLoading(true);
         try {
             const response = await signUp.create({
                 username,
@@ -89,6 +93,8 @@ export default function signUP() {
                 emailAddress,
                 password,
             });
+
+            
 
             if(response.status == 'complete') {
                 const backend_response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/create_patient`, {
@@ -107,9 +113,12 @@ export default function signUP() {
                 const data = await backend_response.json();
                 console.log("Successfully created new Patient with ID : ", JSON.stringify(data));
                 console.log("Signed up successfully")
-                router.replace('/home')
+                await setActive({ session: response.createdSessionId });
+                setLoading(false);
+                router.push('/home')
             }
         } catch (err) {
+            setLoading(false);
             console.error("Sign-up error:", JSON.stringify(err, null, 2));
         }
     };
@@ -172,6 +181,18 @@ export default function signUP() {
                     </ThemedView>
                 </ThemedView>
             </ScrollView>
+            <Modal 
+      transparent={true}
+      visible={loading}
+      >
+        <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
+
+            <View style={styles.modalView}>
+              <ThemedText style={{fontSize: 16}}>Creating Account...</ThemedText>
+              <LoadingSpinner color={AppColors.Blue} durationMs={1000}/>
+            </View>
+          </View>
+      </Modal>
         </KeyboardAvoidingView>
     );
 }
@@ -194,6 +215,17 @@ const InputField = ({ value, placeholder, onChangeText, secureTextEntry = false,
 );
 
 const styles = StyleSheet.create({
+    modalView: {
+        margin: 20,
+        backgroundColor: AppColors.OffWhite,
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        }, },
     button: { borderRadius: 25, marginTop: 10, padding: 12, alignItems: 'center', backgroundColor: 'transparent' },
     buttonInner: { alignItems: 'center' },
     buttonText: { fontWeight: 'normal' },
