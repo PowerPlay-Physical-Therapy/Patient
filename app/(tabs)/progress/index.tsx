@@ -16,14 +16,30 @@ export default function ProgressScreen() {
                 <ThemedText style={{ fontSize: 20 }} type='subtitle'>Progress</ThemedText>
                 <Image source={require('@/assets/images/Tracking.png')}></Image>
             </View>
-            <Image source={require('@/assets/images/mountain.png')} style={{flex: 1}}>
+            <Image source={require('@/assets/images/mountain.png')} style={{position: 'absolute', flex: 1, bottom: 40}}/>
+            <View style={{bottom: 20, flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <View style={[styles.rotatedView, {top: 148, left: 34, height: 100, transform: [{rotate: '-30deg'}]}]}></View>
+            <View style={[styles.rotatedView, {top: 130, left: 30, height: 80}]}></View>
+                <View style={[styles.rotatedView, {top: 104, left: 38, height: 100, transform: [{rotate: '-45deg'}]}]}></View>
+                <View style={[styles.rotatedView, {top: 70, left: 24}]}></View>
+                <View style={[styles.rotatedView, {top: 36, left: 12, height: 100, transform: [{rotate: '-45deg'}]}]}></View>
+                <View style={styles.rotatedView}></View>
+                </View>
+                    
                 
-            </Image>
         </LinearGradient>
     )
 }
 
 const styles = StyleSheet.create({
+    rotatedView: {
+        width: 2,
+        height: 140,
+        backgroundColor: 'grey',
+        justifyContent: 'center',
+        alignItems: 'center',
+        transform: [{ rotate: '45deg' }], // Rotate the view by 45 degrees
+      },
     title: {
         alignItems: 'center',
         justifyContent: 'center',
@@ -42,5 +58,6 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         paddingLeft: 20,
         paddingRight: 20,
+        zIndex: 1,
     },
 });

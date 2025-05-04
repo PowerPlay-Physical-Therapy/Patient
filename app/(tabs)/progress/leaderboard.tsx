@@ -96,7 +96,7 @@ export default function LeaderboardScreen() {
                         <ThemedText style={{ fontSize: 18, fontWeight: 'bold' }}>
                             {index + 4}.
                         </ThemedText>
-                        <Image source={{ uri: patient.imageUrl }} style={{ width: 50, height: 50, borderRadius: 25 }} />
+                        <Image source={{ uri: patient.imageUrl }} style={{ width: 50, height: 50, borderRadius: 25, marginLeft: 12 }} />
                         <ThemedText style={styles.patientName}>
                             {patient.firstname} {patient.lastname}
                         </ThemedText>
