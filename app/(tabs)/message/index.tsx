@@ -60,7 +60,7 @@ export default function MessagesScreen() {
                     renderItem={({ item }) => (
                         <TouchableOpacity style={styles.messageRow} onPress={() => {
                             const params = { patientId: user?.id, therapistId: item["therapist_id"], therapistName: item["firstname"]+" "+item["lastname"] };
-                            router.push(`/message/${JSON.stringify(params)}`)
+                            router.push(`/(tabs)/message/[chat]?patientId=${params.patientId}&therapistId=${params.therapistId}&therapistName=${params.therapistName}`);
                         }}>
                             <View style={{ flexDirection: 'row',alignItems: 'center'}}>
                                 <Image source={{ uri: item["imageUrl"] }} style={{

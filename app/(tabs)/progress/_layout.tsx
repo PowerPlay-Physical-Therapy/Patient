@@ -6,14 +6,7 @@ export default function ProfileLayout() {
     return (
         <Stack>
             <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="completedExercises" options={{headerStyle: {
-                backgroundColor: AppColors.OffWhite,
-                },
-                headerBackTitle: 'Progress',
-                headerShown: true,
-                title: "Completion Exercise History",
-            }}/>
-            <Stack.Screen name="completedRoutines" options={{headerStyle: {
+            <Stack.Screen name="patientHistory" options={{headerStyle: {
                 backgroundColor: AppColors.OffWhite,
                 },
                 headerBackTitle: 'Progress',
