@@ -1,5 +1,6 @@
 
 import { RefreshControl, Image, StyleSheet, Platform, TextInput, SafeAreaView, TouchableOpacity, Touchable } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState } from 'react';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -15,10 +16,13 @@ import * as React from 'react';
 import { Text, View, FlatList, Dimensions, ScrollView } from 'react-native';
 import capitalizeWords from '@/utils/capitalizeWords';
 import { SearchBar } from '@rneui/themed';
+import { useNotification } from '@/context/NotificationContext';
+
 
 const { height, width } = Dimensions.get("window");
 
 export default function HomeScreen() {
+    const { expoPushToken } = useNotification();
     const { isSignedIn } = useAuth()
     const router = useRouter();
     const [patientName, setPatientName] = useState<string | null>(null);
@@ -47,6 +51,10 @@ export default function HomeScreen() {
         console.log("userid:", user?.id);
         setPatientId(patientId);
         setPatientName(user?.firstName || "Patient");
+        const storedStreak = parseInt(
+            (await AsyncStorage.getItem("streak")) || "0",
+            10
+        );
 
         // Error message if no patientId is available
         if (!patientId) {
@@ -54,6 +62,7 @@ export default function HomeScreen() {
             return;
         }
 
+        console.log(expoPushToken, "expoPushToken")
         try {
             // Fetch assigned routines
             const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/get_assigned_routines/${patientId}`, {
@@ -82,7 +91,9 @@ export default function HomeScreen() {
                   firstname: user?.firstName,
                   lastname: user?.lastName,
                   email: user?.emailAddresses[0].emailAddress,
-                  imageUrl: user?.imageUrl
+                  imageUrl: user?.imageUrl,
+                  streak: storedStreak,
+                  expoPushToken: expoPushToken
                 }),
               }) 
         

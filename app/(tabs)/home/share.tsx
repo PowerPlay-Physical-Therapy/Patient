@@ -73,6 +73,7 @@ export default function Share() {
   const local = useLocalSearchParams();
   const uri = local.videoUri.toString();
   const thumbnail = local.thumbnailUri.toString();
+  const exerciseId = local.exerciseId.toString();
   const { user, isLoaded } = useUser();
   const userId = String(user?.id);
   const [therapists, setTherapists] = useState<any[]>([]);
@@ -144,6 +145,17 @@ export default function Share() {
       },
       body: binaryData,
     });
+
+    const complete_exercise = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/complete_exercise/${userId}/${exerciseId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    if (!complete_exercise.ok) {
+      throw new Error("Failed to complete exercise");
+    }
+    console.log("✅ Exercise completed!");
 
     for (const therapistId of selectedTherapists) {
       const response = await fetch(

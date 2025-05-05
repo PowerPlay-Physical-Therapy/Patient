@@ -16,7 +16,7 @@ const ScreenHeader = ({ title, name, logo = false, streak=false }: ScreenHeaderP
       
           {logo ? (
             <View style={styles.logoRow}>
-              {streak &&<Streak/>}
+              {streak &&<Streak usedbStreak={false}/>}
               <ThemedText style={!streak? styles.headerText : {fontSize: 20,
     fontWeight: 'bold',
     color: 'black',}}>{title} {name}</ThemedText>
