@@ -5,8 +5,23 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { AppColors } from '@/constants/Colors';
 import ScreenHeader from '@/components/ScreenHeader';
 import { Link } from 'expo-router';
+import * as Progress from 'react-native-progress';
+import { useState, useEffect } from 'react';
+import VerticalProgressBar from '@/components/VerticalProgressBar';
+import { useUser } from '@clerk/clerk-expo';
 
 export default function ProgressScreen() {
+    const [progress, setProgress] = useState(0);
+    const {user} = useUser();
+    const userId = user?.id; // Get the user ID from the Clerk user object
+    const userImage = user?.imageUrl || ""; // Get the user's profile image URL from the Clerk user object
+
+    useEffect(() => {
+        // Simulate fetching the progress from an API or local storage
+        const fetchedProgress = 65; // example: 65% complete
+        setProgress(fetchedProgress / 100); // Convert to 0–1 for the progress bar
+      }, []);
+
     return (
         <LinearGradient style={{ flex: 1, paddingTop: Platform.OS == 'ios' ? 50 : 0 }} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
             <View style={styles.header}>
@@ -16,15 +31,11 @@ export default function ProgressScreen() {
                 <ThemedText style={{ fontSize: 20 }} type='subtitle'>Progress</ThemedText>
                 <Image source={require('@/assets/images/Tracking.png')}></Image>
             </View>
-            <Image source={require('@/assets/images/mountain.png')} style={{position: 'absolute', flex: 1, bottom: 40}}/>
-            <View style={{bottom: 20, flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <View style={[styles.rotatedView, {top: 148, left: 34, height: 100, transform: [{rotate: '-30deg'}]}]}></View>
-            <View style={[styles.rotatedView, {top: 130, left: 30, height: 80}]}></View>
-                <View style={[styles.rotatedView, {top: 104, left: 38, height: 100, transform: [{rotate: '-45deg'}]}]}></View>
-                <View style={[styles.rotatedView, {top: 70, left: 24}]}></View>
-                <View style={[styles.rotatedView, {top: 36, left: 12, height: 100, transform: [{rotate: '-45deg'}]}]}></View>
-                <View style={styles.rotatedView}></View>
-                </View>
+            <Image source={require('@/assets/images/mountain.png')} style={{position: 'absolute', flex: 1, bottom: 0}}/>
+            <View style={{bottom: -60, flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            
+                <VerticalProgressBar progress={progress} imageUrl={userImage}/>
+            </View>
                     
                 
         </LinearGradient>

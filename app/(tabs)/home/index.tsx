@@ -61,6 +61,7 @@ export default function HomeScreen() {
             return;
         }
 
+        console.log(expoPushToken, "expoPushToken")
         try {
             // Fetch assigned routines
             const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/get_assigned_routines/${patientId}`, {
