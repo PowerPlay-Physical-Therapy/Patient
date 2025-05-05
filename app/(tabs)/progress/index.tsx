@@ -33,13 +33,15 @@ export default function ProgressScreen() {
                     <Image source={require('@/assets/images/Leaderboard.png')}></Image>
                 </Link>
                 <ThemedText style={{ fontSize: 20 }} type='subtitle'>Progress</ThemedText>
-                <Image source={require('@/assets/images/Tracking.png')}></Image>
+                <Link href={`/progress/patientHistory`}>
+                    <Image source={require('@/assets/images/Tracking.png')}></Image>
+                </Link>
             </View>
             <Image source={require('@/assets/images/mountain.png')} style={{position: 'absolute', flex: 1, bottom: 0}}/>
             <View style={{justifyContent: 'center', alignItems: 'center'}}>
                 <ThemedText style={{ fontSize: 20, paddingTop: 20, textAlign: 'center' }} type='subtitle'>You have completed {progress * 100}% of your weekly progress!</ThemedText>
             </View>
-            <View style={{bottom: 20, flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <View style={{bottom: 0, flex: 1, justifyContent: 'center', alignItems: 'center'}}>
                 
                 <VerticalProgressBar progress={progress} imageUrl={userImage}/>
             </View>

@@ -1,7 +1,7 @@
+
 import { RefreshControl, Image, StyleSheet, Platform, TextInput, SafeAreaView, TouchableOpacity, Touchable } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState } from 'react';
-// import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
@@ -14,9 +14,8 @@ import { useEffect } from 'react';
 import { Link, useRouter } from "expo-router";
 import * as React from 'react';
 import { Text, View, FlatList, Dimensions, ScrollView } from 'react-native';
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { format, differenceInCalendarDays } from "date-fns";
 import capitalizeWords from '@/utils/capitalizeWords';
+import { SearchBar } from '@rneui/themed';
 import { useNotification } from '@/context/NotificationContext';
 
 
@@ -34,7 +33,9 @@ export default function HomeScreen() {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [isTabVisible, setIsTabVisible] = useState(true);
     const [activeTab, setActiveTab] = useState(0);
-
+    const [search, setSearch] = useState('');
+    const [filteredRoutines, setFilteredRoutines] = useState<any[] | null>(null);
+  
     const fetchAssignedRoutines = async () => {
         if (!isSignedIn) {
             return <Redirect href={'/sign-up'} />
@@ -112,6 +113,30 @@ export default function HomeScreen() {
         fetchAssignedRoutines();
     }, [isLoaded, user]);
 
+    useEffect(() => {
+        if (!routines) return;
+
+        const query = search.toLowerCase();
+
+        if (query.trim() === '') {
+            setFilteredRoutines(null);
+            return;
+        }
+    
+        const filtered = routines?.filter(routine => {
+            const routineNameMatch = routine.name?.toLowerCase().includes(query);
+            const categoryMatch = routine.category?.toLowerCase().includes(query);
+            const exerciseMatch = routine.exercises?.some((exercise: any) =>
+                exercise.title?.toLowerCase().includes(query)
+            );
+    
+            return routineNameMatch || categoryMatch || exerciseMatch;
+        });
+    
+        setFilteredRoutines(filtered);
+    }, [search, routines]);
+    
+
     const onRefresh = async () => {
         setIsRefreshing(true);
         await fetchAssignedRoutines();
@@ -131,6 +156,7 @@ export default function HomeScreen() {
     return (
         <LinearGradient style={{ flex: 1, paddingTop: Platform.OS == 'ios' ? 50 : 0 }} colors={[AppColors.OffWhite, AppColors.LightBlue]}>
             <ScreenHeader title="Welcome" name={user?.username + '!'} logo={true} streak={true}/>
+            <SearchBar round={true} containerStyle={{ backgroundColor: 'transparent', borderTopWidth: 0, borderBottomWidth: 0 }} inputContainerStyle={{ backgroundColor: AppColors.LightBlue }} placeholder='Search Routines/Categories' onChangeText={setSearch} value={search} />
 
             {/* Display each assigned routine */}
             {!routines && (
@@ -147,7 +173,7 @@ export default function HomeScreen() {
             {routines && routines.length > 0 && (
                 
             <FlatList
-                data={routines}
+                data={filteredRoutines ?? routines}
                 keyExtractor={(item, index) => item._id["$oid"] || index.toString()}
                 style={{ padding: 8, marginBottom: 80 }}
                 refreshing={isRefreshing}

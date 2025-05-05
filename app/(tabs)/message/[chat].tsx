@@ -17,8 +17,7 @@ import {
 
 export default function ChatMessagesScreen() {
     const { user } = useUser();
-    const { chat } = useLocalSearchParams<{ chat: string }>();
-    const { patientId, therapistId } = JSON.parse(chat);
+    const { patientId, therapistId } = useLocalSearchParams();
     const [chatHistory, setChatHistory] = useState([]);
     const [message, setMessage] = useState("");
     const [newMessage, setNewMessage] = useState(false);

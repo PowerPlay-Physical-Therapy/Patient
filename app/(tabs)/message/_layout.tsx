@@ -1,25 +1,27 @@
 
 import { AppColors } from "@/constants/Colors";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { Stack, useGlobalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 
 export default function MessageLayout() {
-    const { chat } = useLocalSearchParams<{ chat: string }>();
-    // const socket = io(`${EXPO_PUBLIC_BACKEND_URL}/common/chat` );
-    const [therapistName, setTherapistName] = useState<string | null>(null);
+    const params = useGlobalSearchParams();
+    console.log("Layout params:", params);
+    const therapistId = params.therapistId;
+    // Extract the ID portion if it's a full user ID format
+    const [therapistName, setTherapistName] = useState<any | null>(null);
 
     useEffect(() => {
-        if (chat) {
+        if (params) {
             try {
-                const parsed = JSON.parse(chat);
-                if (parsed.therapistId) {
-                    setTherapistName(parsed.therapistName);
+                if (params.therapistId) {
+                    setTherapistName(params.therapistName);
                 }
             } catch (e) {
                 console.error('Invalid chat param', e);
             }
         }
-    }, [chat]);
+    }, [params]);
+
     return (
         <Stack>
             <Stack.Screen name="index" options={{ headerShown: false }} />
