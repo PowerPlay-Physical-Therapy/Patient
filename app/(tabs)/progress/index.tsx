@@ -16,10 +16,14 @@ export default function ProgressScreen() {
     const userId = user?.id; // Get the user ID from the Clerk user object
     const userImage = user?.imageUrl || ""; // Get the user's profile image URL from the Clerk user object
 
+    const fetchProgress = async () => {
+        const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/get_progress/${userId}`);
+        const data = await response.json();
+        setProgress(data.progress / 100); // Assuming the API returns progress as a percentage
+    }
+
     useEffect(() => {
-        // Simulate fetching the progress from an API or local storage
-        const fetchedProgress = 65; // example: 65% complete
-        setProgress(fetchedProgress / 100); // Convert to 0–1 for the progress bar
+        fetchProgress();
       }, []);
 
     return (
@@ -32,10 +36,15 @@ export default function ProgressScreen() {
                 <Image source={require('@/assets/images/Tracking.png')}></Image>
             </View>
             <Image source={require('@/assets/images/mountain.png')} style={{position: 'absolute', flex: 1, bottom: 0}}/>
-            <View style={{bottom: -60, flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            
+            <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                <ThemedText style={{ fontSize: 20, paddingTop: 20, textAlign: 'center' }} type='subtitle'>You have completed {progress * 100}% of your weekly progress!</ThemedText>
+            </View>
+            <View style={{bottom: 20, flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                
                 <VerticalProgressBar progress={progress} imageUrl={userImage}/>
             </View>
+
+            
                     
                 
         </LinearGradient>
