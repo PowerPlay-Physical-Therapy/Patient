@@ -17,10 +17,13 @@ import { Text, View, FlatList, Dimensions, ScrollView } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { format, differenceInCalendarDays } from "date-fns";
 import capitalizeWords from '@/utils/capitalizeWords';
+import { useNotification } from '@/context/NotificationContext';
+
 
 const { height, width } = Dimensions.get("window");
 
 export default function HomeScreen() {
+    const { expoPushToken } = useNotification();
     const { isSignedIn } = useAuth()
     const router = useRouter();
     const [patientName, setPatientName] = useState<string | null>(null);
@@ -88,6 +91,7 @@ export default function HomeScreen() {
                   email: user?.emailAddresses[0].emailAddress,
                   imageUrl: user?.imageUrl,
                   streak: storedStreak,
+                  expoPushToken: expoPushToken
                 }),
               }) 
         
