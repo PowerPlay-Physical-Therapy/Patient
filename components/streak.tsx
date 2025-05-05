@@ -13,7 +13,7 @@ import { ThemedText } from "@/components/ThemedText";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { format, differenceInCalendarDays } from "date-fns";
 
-export default function Streak() {
+export default function Streak({dbStreak, usedbStreak}: {dbStreak?: number, usedbStreak: boolean}) {
   const [streak, setStreak] = useState<number>(0);
 
   const initializeStreak = async () => {
@@ -56,12 +56,11 @@ export default function Streak() {
   useEffect(() => {
     initializeStreak();
   }, []);
-  console.log(streak)
 
   return (
     <LinearGradient style={styles.container}colors={[AppColors.Purple, AppColors.Blue]}>
         <Image style={{width: 24, height: 24}}source={require('@/assets/images/streak.png')}/>
-      <ThemedText style={{color: 'white', marginRight: 4}}>{streak}</ThemedText>
+      <ThemedText style={{color: 'white', marginRight: 4}}>{usedbStreak? dbStreak : streak}</ThemedText>
     </LinearGradient>
   );
 }
