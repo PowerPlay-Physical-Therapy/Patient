@@ -109,7 +109,7 @@ export default function RoutineDetails() {
                             <Card containerStyle={{ width: width * 0.9, borderRadius: 15, shadowOffset: { height: 0.2, width: 0.2 }, shadowRadius: 3, shadowOpacity: 0.7, backgroundColor: AppColors.OffWhite }}>
                                 <Card.Title style={{ fontSize: 20, fontFamily: 'Montserrat' }}>{capitalizeWords(exercise.title)}</Card.Title>
                                 <Card.Divider />
-                                <Card.Image source={{ uri: exercise.thumbnail_url }} style={{ borderRadius: 15 }} containerStyle={{ borderRadius: 15, shadowOffset: { height: 0.5, width: 0.5 }, shadowRadius: 3, shadowOpacity: 0.7 }} />
+                                <Card.Image source={exercise.thumbnail_url? { uri: exercise.thumbnail_url } : require(`@/assets/images/default-thumbnail.png`)} style={{ borderRadius: 15 }} containerStyle={{ borderRadius: 15, shadowOffset: { height: 0.5, width: 0.5 }, shadowRadius: 3, shadowOpacity: 0.7 }} />
                                 <View style={{ flexDirection: "row", justifyContent: 'space-between', paddingTop: 12}}>
                                     <View style={{}}>
                                         <ThemedText style={{ fontSize: 20 }}><ThemedText style={{ fontWeight: "bold" , fontSize: 20}}>Reps : </ThemedText>{exercise.reps}</ThemedText>

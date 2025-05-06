@@ -88,7 +88,7 @@ export default function LeaderboardScreen() {
             <FlatList 
             data={restOfPatients}
             keyExtractor={(item, index) => item._id}
-            style={{ padding: 8, minHeight: '100%', paddingBottom: 80 }}
+            style={{ padding: 20, minHeight: '100%', paddingBottom: 80 }}
             renderItem={({ item: patient, index }) => (
             
                     <View key={patient._id} style={styles.patientCard2}>

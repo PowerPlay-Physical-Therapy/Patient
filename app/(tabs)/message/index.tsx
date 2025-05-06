@@ -21,7 +21,6 @@ export default function MessagesScreen() {
 
     useEffect(() => {
         const patientId = user?.id;
-        console.log("Patient ID: ", patientId); 
         const fetchConnections = async () => {
             try {
                 const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/get_connections/${patientId}/patient`, {

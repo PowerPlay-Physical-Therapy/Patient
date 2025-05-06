@@ -13,6 +13,8 @@ import { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import * as React from 'react';
 import * as Notifications from 'expo-notifications';
+import {useNotification} from '@/context/NotificationContext';
+import * as FileSystem from 'expo-file-system';
 
 async function schedulePushNotification() {
     await Notifications.scheduleNotificationAsync({
@@ -29,6 +31,7 @@ async function schedulePushNotification() {
 
 
 export default function Profile() {
+    const { expoPushToken } = useNotification();
     const { isSignedIn, user, isLoaded } = useUser();
     const { signOut } = useAuth();
     const router = useRouter();
@@ -63,41 +66,56 @@ export default function Profile() {
           allowsEditing: true,
           quality: 1,
         });
+
+        console.log("Image picker result:", result);
       
         if (!result.canceled) {
-          const uri = result.assets[0].uri;
-      
-          setImage(uri); // Update local display
-          await user?.setProfileImage({ file: uri }); // Upload to Clerk
-      
-          // After upload, refetch user data so we get the latest URL
-          await user?.reload();
-      
-          const imageUrl = user?.imageUrl; // Get latest Clerk-hosted image URL
-      
-          try {
-            const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/update_patient/${user?.username}`, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                id: user?.id,
-                username: user?.username,
-                firstname: user?.firstName,
-                lastname: user?.lastName,
-                email: user?.primaryEmailAddress?.emailAddress,
-                imageUrl: imageUrl
-              }),
+            try {
+                // Fetch the image from the URI and convert it to a Blob
+                const fileUri = result.assets[0].uri;
+
+            // Read the file as a Base64 string
+            const base64Image = await FileSystem.readAsStringAsync(fileUri, {
+                encoding: FileSystem.EncodingType.Base64,
             });
-      
-            const data = await response.json();
-            console.log("Updated profile image in Mongo:", data);
-          } catch (error) {
-            console.error("Failed to update image in backend:", error);
-          }
-        }
+
+            const base64WithPrefix = `data:image/jpeg;base64,${base64Image}`;
+    
+                // Upload to Clerk
+                await user?.setProfileImage({ file: base64WithPrefix});
+                setImage(fileUri); // Update local display
+                console.log("Image uploaded to Clerk:", result.assets[0].uri);
+    
+                // After upload, refetch user data to get the latest URL
+                await user?.reload();
+    
+                const imageUrl = user?.imageUrl; // Get the latest Clerk-hosted image URL
+                console.log("Updated image URL:", imageUrl);
+    
+                // Update the backend with the new image URL
+                const responseBackend = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/update_patient/${user?.username}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id: user?.id,
+                        username: user?.username,
+                        firstname: user?.firstName,
+                        lastname: user?.lastName,
+                        email: user?.primaryEmailAddress?.emailAddress,
+                        imageUrl: imageUrl,
+                        expoPushToken: expoPushToken,
+                    }),
+                });
+    
+                const data = await responseBackend.json();
+                console.log("Updated profile image in backend:", data);
+            } catch (error) {
+                console.error("Error uploading image to Clerk:", error);
+            }
       };
+    };
 
     const changeIcon = async () => {
         setIsEditing(!isEditing);
@@ -117,7 +135,8 @@ export default function Profile() {
                     firstname: user?.firstName,
                     lastname: user?.lastName,
                     email: user?.emailAddresses[0].emailAddress,
-                    image: image
+                    imageUrl: image,
+                    expoPushToken: expoPushToken,
                 }),
             });
             const data = await response.json();
