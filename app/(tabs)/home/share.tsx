@@ -122,16 +122,20 @@ export default function Share() {
     if (!fileInfo.exists) {
       throw new Error("File does not exist at the specified URI");
     }
+    console.log("File exists at the specified URI");
 
     const video = await FileSystem.readAsStringAsync(uri, {
       encoding: FileSystem.EncodingType.Base64,
     });
+    console.log("Video read as base64 string");
 
     const binaryData = Uint8Array.from(atob(video), (char) =>
       char.charCodeAt(0)
     );
+    console.log("Video converted to binary data");
 
     const url = await generateUploadURL();
+    console.log("Upload URL generated:", url.uploadURL);
     const messageUrl = url.uploadURL.split("?")[0];
     const sendingMessage = {
       video_url: messageUrl,
@@ -146,7 +150,7 @@ export default function Share() {
       body: binaryData,
     });
 
-    const complete_exercise = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/complete_exercise/${userId}/${exerciseId}`, {
+    const complete_exercise = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/complete_exercise/${userId}/${exerciseId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

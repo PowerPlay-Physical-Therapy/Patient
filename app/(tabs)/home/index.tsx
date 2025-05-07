@@ -48,7 +48,6 @@ export default function HomeScreen() {
 
         // Display user id
         const patientId = user?.id;
-        console.log("userid:", user?.id);
         setPatientId(patientId);
         setPatientName(user?.firstName || "Patient");
         const storedStreak = parseInt(
@@ -62,7 +61,6 @@ export default function HomeScreen() {
             return;
         }
 
-        console.log(expoPushToken, "expoPushToken")
         try {
             // Fetch assigned routines
             const response = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/get_assigned_routines/${patientId}`, {
@@ -77,7 +75,6 @@ export default function HomeScreen() {
 
             // Parse the response as JSON
             const data = await response.json();
-            console.log("Fetched data:", data);
             setRoutines(data);
 
             const response2 = await fetch(`${process.env.EXPO_PUBLIC_BACKEND_URL}/patient/update_patient/${user?.username}`, {
@@ -100,7 +97,6 @@ export default function HomeScreen() {
               if (!response2.ok) {
                 throw new Error('Failed to update user');
               }
-              console.log('User updated successfully!');
 
 
         } catch (err) {

@@ -27,7 +27,6 @@ export default function LeaderboardScreen() {
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
             const data = await response.json();
-            console.log("Fetched data:", data);
 
             // Sort patients by streak
             const sortedPatients = data.sort((a: Patient, b: Patient) => b.streak - a.streak);
