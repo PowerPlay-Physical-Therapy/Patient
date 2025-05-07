@@ -4,7 +4,7 @@ import { AppColors } from "@/constants/Colors";
 import { useUser } from "@clerk/clerk-expo";
 import { Card } from "@rneui/base";
 import { LinearGradient } from "expo-linear-gradient";
-import { router, Stack, useGlobalSearchParams, useLocalSearchParams, useRouter } from "expo-router";
+import { router, Stack, useGlobalSearchParams, useLocalSearchParams, useRouter, Link } from "expo-router";
 import React, { useEffect, useState } from "react"
 import { ScrollView, View, Text, Platform, Dimensions, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -15,9 +15,7 @@ import capitalizeWords from "@/utils/capitalizeWords";
 const { height, width } = Dimensions.get("window")
 
 export default function ExerciseDetails() {
-
     const { user } = useUser();
-
     const local = useLocalSearchParams();
     const parsedId = local.exerciseId;
     const exercise_id = parsedId;
@@ -96,13 +94,13 @@ export default function ExerciseDetails() {
                                     <LinearGradient
                                         colors={[AppColors.Purple, AppColors.Blue]}
                                         style={styles.button}
-                                    >
+                                    >  
+                                    <Link href={`/home/recording?exerciseId=${exercise_id}`} asChild>
                                         <TouchableOpacity
-                                            style={styles.buttonInner}
-                                            onPress={() => { router.push(`/home/recording?exerciseId=${exercise_id}`) }}
-                                        >
+                                            style={styles.buttonInner}>
                                             <ThemedText style={styles.buttonText}>Start</ThemedText>
                                         </TouchableOpacity>
+                                        </Link>
                                     </LinearGradient>
                                 </View>
                                 </View>

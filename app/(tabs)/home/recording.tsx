@@ -411,7 +411,7 @@ export default function Recording() {
               colors={[AppColors.Purple, AppColors.Blue]}
               style={styles.button}
             >
-              <Link href={`/home/share?videoUri=${uri}&exerciseId=${exercise_id}`} style={styles.buttonInner}>
+              <Link href={`/home/share?videoUri=${uri}&exerciseId=${exercise_id}`} style={styles.buttonInner} asChild>
                 <ThemedText style={styles.buttonText}>Next</ThemedText>
               </Link>
             </LinearGradient>

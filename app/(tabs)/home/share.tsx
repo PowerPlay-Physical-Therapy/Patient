@@ -285,7 +285,7 @@ export default function Share() {
         ))}
       </ScrollView>
 
-      <Link href={`/home`} style={{ width: "100%", marginBottom: 12 }}>
+      <Link dismissTo href={`/home`} style={{ width: "100%", marginBottom: 12 }}>
         <ThemedText
           style={{ textAlign: "center", width: "100%", color: AppColors.Blue }}
         >
