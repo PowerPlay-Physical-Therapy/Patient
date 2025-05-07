@@ -19,6 +19,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import {ResizeMode, Video} from "expo-av";
 import * as VideoThumbnails from "expo-video-thumbnails";
 import capitalizeWords from "@/utils/capitalizeWords";
+import { set } from "date-fns";
 
 const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
 
@@ -105,6 +106,7 @@ export default function Recording() {
     if (recording) {
       setRecording(false);
       const video = ref.current?.stopRecording();
+      setUri(video.uri);
       return;
     }
     setRecording(true);
@@ -114,7 +116,7 @@ export default function Recording() {
       }
       const video = await ref.current?.recordAsync(options);
       setUri(video.uri);
-      
+      console.log("Video URI:", video.uri);
       
     } catch (error) {
       console.error("Error recording video:", error);
@@ -409,7 +411,7 @@ export default function Recording() {
               colors={[AppColors.Purple, AppColors.Blue]}
               style={styles.button}
             >
-              <Link href={`/home/share?videoUri=${uri}&exerciseId=${exercise_id}`} style={styles.buttonInner}>
+              <Link href={`/home/share?videoUri=${uri}&exerciseId=${exercise_id}`} style={styles.buttonInner} asChild>
                 <ThemedText style={styles.buttonText}>Next</ThemedText>
               </Link>
             </LinearGradient>

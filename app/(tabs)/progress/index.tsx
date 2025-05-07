@@ -41,8 +41,7 @@ export default function ProgressScreen() {
             <View style={{justifyContent: 'center', alignItems: 'center'}}>
                 <ThemedText style={{ fontSize: 20, paddingTop: 20, textAlign: 'center' }} type='subtitle'>You have completed {progress * 100}% of your weekly progress!</ThemedText>
             </View>
-            <View style={{bottom: 0, flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                
+            <View style={{bottom: -10, flex: 1, justifyContent: 'center', alignItems: 'center'}}>
                 <VerticalProgressBar progress={progress} imageUrl={userImage}/>
             </View>
 

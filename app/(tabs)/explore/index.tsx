@@ -84,7 +84,7 @@ export default function ExploreScreen() {
 
                                                 }} key={index3}>
                                                     <View style={{ alignItems: "center", width: '100%', justifyContent: "flex-end", margin: 5, borderRadius: 15, zIndex: 0, shadowOffset: { height: 0.2, width: 0.2 }, shadowRadius: 3, shadowOpacity: 0.5 }}>
-                                                        <Image source={{ uri: exercise.thumbnail_url }} style={{ width: width * 0.5, height: height * 0.2, borderRadius: 15, zIndex: 2 }} />
+                                                        <Image source={exercise.thumbnail_url? { uri: exercise.thumbnail_url} : require('@/assets/images/default-thumbnail.png')} style={{ width: width * 0.5, height: height * 0.2, borderRadius: 15, zIndex: 2 }} />
                                                         <ThemedText style={{ fontWeight: 'bold', position: "absolute", zIndex: 3, backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: 5, padding: 2.5, margin: 4 }} >{capitalizeWords(exercise.name)}</ThemedText>
                                                     </View>
                                                 </TouchableOpacity>

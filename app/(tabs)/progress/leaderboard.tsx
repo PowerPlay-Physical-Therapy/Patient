@@ -27,7 +27,6 @@ export default function LeaderboardScreen() {
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
             const data = await response.json();
-            console.log("Fetched data:", data);
 
             // Sort patients by streak
             const sortedPatients = data.sort((a: Patient, b: Patient) => b.streak - a.streak);
@@ -52,11 +51,11 @@ export default function LeaderboardScreen() {
             <View>
             <View style={styles.topContainer}>
             <View style={styles.patientCard}>
-                        <View style= {{flexDirection: 'row', alignItems: 'center', width: '30%', justifyContent: 'space-between'}}>
+                        <View style= {{flexDirection: 'row', alignItems: 'center', width: '40%', justifyContent: 'space-between'}}>
                         <Image source={require(`@/assets/images/1.png`)} style={{ width: 50, height: 50, borderRadius: 25 }} />
                         <Image source={{ uri: topThreePatients[0].imageUrl }} style={{ width: 50, height: 50, borderRadius: 25 }} />
                         <ThemedText style={styles.patientName}>
-                            {topThreePatients[0].firstname} {topThreePatients[0].lastname}
+                            {topThreePatients[0].username}
                         </ThemedText>
                         </View>
                         <Streak usedbStreak={true} dbStreak={topThreePatients[0].streak}/>
@@ -67,7 +66,7 @@ export default function LeaderboardScreen() {
                         <Image source={require(`@/assets/images/2.png`)} style={{ width: 50, height: 50, borderRadius: 25 }} />
                         <Image source={{ uri: topThreePatients[1].imageUrl }} style={{ width: 50, height: 50, borderRadius: 25 }} />
                         <ThemedText style={styles.patientName}>
-                            {topThreePatients[1].firstname} {topThreePatients[1].lastname}
+                            {topThreePatients[1].username}
                         </ThemedText>
                         </View>
                         <Streak usedbStreak={true} dbStreak={topThreePatients[1].streak}/>
@@ -78,7 +77,7 @@ export default function LeaderboardScreen() {
                         <Image source={require(`@/assets/images/3.png`)} style={{ width: 50, height: 50, borderRadius: 25 }} />
                         <Image source={{ uri: topThreePatients[2].imageUrl }} style={{ width: 50, height: 50, borderRadius: 25 }} />
                         <ThemedText style={styles.patientName}>
-                            {topThreePatients[2].firstname} {topThreePatients[2].lastname}
+                            {topThreePatients[2].username}
                         </ThemedText>
                         </View>
                         <Streak usedbStreak={true} dbStreak={topThreePatients[2].streak}/>
@@ -88,7 +87,7 @@ export default function LeaderboardScreen() {
             <FlatList 
             data={restOfPatients}
             keyExtractor={(item, index) => item._id}
-            style={{ padding: 8, minHeight: '100%', paddingBottom: 80 }}
+            style={{ padding: 20, minHeight: '100%', paddingBottom: 80 }}
             renderItem={({ item: patient, index }) => (
             
                     <View key={patient._id} style={styles.patientCard2}>
@@ -98,7 +97,7 @@ export default function LeaderboardScreen() {
                         </ThemedText>
                         <Image source={{ uri: patient.imageUrl }} style={{ width: 50, height: 50, borderRadius: 25, marginLeft: 12 }} />
                         <ThemedText style={styles.patientName}>
-                            {patient.firstname} {patient.lastname}
+                            {patient.username}
                         </ThemedText>
                         </View>
                         <Streak usedbStreak={true} dbStreak={patient.streak}/>

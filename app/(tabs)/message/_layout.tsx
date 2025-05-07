@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 
 export default function MessageLayout() {
     const params = useGlobalSearchParams();
-    console.log("Layout params:", params);
     const therapistId = params.therapistId;
     // Extract the ID portion if it's a full user ID format
     const [therapistName, setTherapistName] = useState<any | null>(null);
