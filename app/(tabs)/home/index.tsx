@@ -178,7 +178,7 @@ export default function HomeScreen() {
                     
                     <View style={styles.routine}>
                         {}
-                        <Text style={styles.routineTitle}>{capitalizeWords(routine.name)}</Text>
+                        <Text style={styles.routineTitle}>{routine.name? capitalizeWords(routine.name) : "No Routine Name Provided"}</Text>
 
                         {/* Exercises within routine */}
                         <View style={styles.exerciseList}>
