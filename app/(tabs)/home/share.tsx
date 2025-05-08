@@ -106,13 +106,14 @@ export default function Share() {
   }, []);
 
   const triggerTherapist = (therapist: any) => {
-    if (selectedTherapists.includes(therapist.therapist_id)) {
+    if (selectedTherapists.includes(therapist._id)) {
       setSelectedTherapists(
-        selectedTherapists.filter((id) => id !== therapist.therapist_id)
+        selectedTherapists.filter((id) => id !== therapist._id)
       );
     } else {
-      setSelectedTherapists([...selectedTherapists, therapist.therapist_id]);
+      setSelectedTherapists([...selectedTherapists, therapist._id]);
     }
+
   };
 
   const handleUpload = async () => {
@@ -278,7 +279,7 @@ export default function Share() {
             <RadioButton
               key={therapist._id}
               label={""}
-              selected={selectedTherapists.includes(therapist.therapist_id)}
+              selected={selectedTherapists.includes(therapist._id)}
               onPress={() => triggerTherapist(therapist)}
             />
           </View>
